@@ -1,0 +1,461 @@
+{
+    "type": "Program",
+    "start": 0,
+    "end": 348,
+    "body": [
+      {
+        "type": "VariableDeclaration",
+        "start": 0,
+        "end": 50,
+        "declarations": [
+          {
+            "type": "VariableDeclarator",
+            "start": 6,
+            "end": 50,
+            "id": {
+              "type": "ObjectPattern",
+              "start": 6,
+              "end": 28,
+              "properties": [
+                {
+                  "type": "Property",
+                  "start": 8,
+                  "end": 11,
+                  "method": false,
+                  "shorthand": true,
+                  "computed": false,
+                  "key": {
+                    "type": "Identifier",
+                    "start": 8,
+                    "end": 11,
+                    "name": "app"
+                  },
+                  "kind": "init",
+                  "value": {
+                    "type": "Identifier",
+                    "start": 8,
+                    "end": 11,
+                    "name": "app"
+                  }
+                },
+                {
+                  "type": "Property",
+                  "start": 13,
+                  "end": 26,
+                  "method": false,
+                  "shorthand": true,
+                  "computed": false,
+                  "key": {
+                    "type": "Identifier",
+                    "start": 13,
+                    "end": 26,
+                    "name": "BrowserWindow"
+                  },
+                  "kind": "init",
+                  "value": {
+                    "type": "Identifier",
+                    "start": 13,
+                    "end": 26,
+                    "name": "BrowserWindow"
+                  }
+                }
+              ]
+            },
+            "init": {
+              "type": "CallExpression",
+              "start": 31,
+              "end": 50,
+              "callee": {
+                "type": "Identifier",
+                "start": 31,
+                "end": 38,
+                "name": "require"
+              },
+              "arguments": [
+                {
+                  "type": "Literal",
+                  "start": 39,
+                  "end": 49,
+                  "value": "electron",
+                  "raw": "\"electron\""
+                }
+              ],
+              "optional": false
+            }
+          }
+        ],
+        "kind": "const"
+      },
+      {
+        "type": "VariableDeclaration",
+        "start": 52,
+        "end": 199,
+        "declarations": [
+          {
+            "type": "VariableDeclarator",
+            "start": 58,
+            "end": 199,
+            "id": {
+              "type": "Identifier",
+              "start": 58,
+              "end": 70,
+              "name": "createWindow"
+            },
+            "init": {
+              "type": "ArrowFunctionExpression",
+              "start": 73,
+              "end": 199,
+              "id": null,
+              "expression": false,
+              "generator": false,
+              "async": false,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "start": 79,
+                "end": 199,
+                "body": [
+                  {
+                    "type": "VariableDeclaration",
+                    "start": 85,
+                    "end": 165,
+                    "declarations": [
+                      {
+                        "type": "VariableDeclarator",
+                        "start": 91,
+                        "end": 165,
+                        "id": {
+                          "type": "Identifier",
+                          "start": 91,
+                          "end": 94,
+                          "name": "win"
+                        },
+                        "init": {
+                          "type": "NewExpression",
+                          "start": 97,
+                          "end": 165,
+                          "callee": {
+                            "type": "Identifier",
+                            "start": 101,
+                            "end": 114,
+                            "name": "BrowserWindow"
+                          },
+                          "arguments": [
+                            {
+                              "type": "ObjectExpression",
+                              "start": 115,
+                              "end": 164,
+                              "properties": [
+                                {
+                                  "type": "Property",
+                                  "start": 125,
+                                  "end": 136,
+                                  "method": false,
+                                  "shorthand": false,
+                                  "computed": false,
+                                  "key": {
+                                    "type": "Identifier",
+                                    "start": 125,
+                                    "end": 130,
+                                    "name": "width"
+                                  },
+                                  "value": {
+                                    "type": "Literal",
+                                    "start": 133,
+                                    "end": 136,
+                                    "value": 800,
+                                    "raw": "800"
+                                  },
+                                  "kind": "init"
+                                },
+                                {
+                                  "type": "Property",
+                                  "start": 146,
+                                  "end": 158,
+                                  "method": false,
+                                  "shorthand": false,
+                                  "computed": false,
+                                  "key": {
+                                    "type": "Identifier",
+                                    "start": 146,
+                                    "end": 152,
+                                    "name": "height"
+                                  },
+                                  "value": {
+                                    "type": "Literal",
+                                    "start": 155,
+                                    "end": 158,
+                                    "value": 600,
+                                    "raw": "600"
+                                  },
+                                  "kind": "init"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    ],
+                    "kind": "const"
+                  },
+                  {
+                    "type": "ExpressionStatement",
+                    "start": 171,
+                    "end": 197,
+                    "expression": {
+                      "type": "CallExpression",
+                      "start": 171,
+                      "end": 197,
+                      "callee": {
+                        "type": "MemberExpression",
+                        "start": 171,
+                        "end": 183,
+                        "object": {
+                          "type": "Identifier",
+                          "start": 171,
+                          "end": 174,
+                          "name": "win"
+                        },
+                        "property": {
+                          "type": "Identifier",
+                          "start": 175,
+                          "end": 183,
+                          "name": "loadFile"
+                        },
+                        "computed": false,
+                        "optional": false
+                      },
+                      "arguments": [
+                        {
+                          "type": "Literal",
+                          "start": 184,
+                          "end": 196,
+                          "value": "index.html",
+                          "raw": "\"index.html\""
+                        }
+                      ],
+                      "optional": false
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "kind": "const"
+      },
+      {
+        "type": "ExpressionStatement",
+        "start": 201,
+        "end": 251,
+        "expression": {
+          "type": "CallExpression",
+          "start": 201,
+          "end": 251,
+          "callee": {
+            "type": "MemberExpression",
+            "start": 201,
+            "end": 221,
+            "object": {
+              "type": "CallExpression",
+              "start": 201,
+              "end": 216,
+              "callee": {
+                "type": "MemberExpression",
+                "start": 201,
+                "end": 214,
+                "object": {
+                  "type": "Identifier",
+                  "start": 201,
+                  "end": 204,
+                  "name": "app"
+                },
+                "property": {
+                  "type": "Identifier",
+                  "start": 205,
+                  "end": 214,
+                  "name": "whenReady"
+                },
+                "computed": false,
+                "optional": false
+              },
+              "arguments": [],
+              "optional": false
+            },
+            "property": {
+              "type": "Identifier",
+              "start": 217,
+              "end": 221,
+              "name": "then"
+            },
+            "computed": false,
+            "optional": false
+          },
+          "arguments": [
+            {
+              "type": "ArrowFunctionExpression",
+              "start": 222,
+              "end": 250,
+              "id": null,
+              "expression": false,
+              "generator": false,
+              "async": false,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "start": 227,
+                "end": 250,
+                "body": [
+                  {
+                    "type": "ExpressionStatement",
+                    "start": 233,
+                    "end": 248,
+                    "expression": {
+                      "type": "CallExpression",
+                      "start": 233,
+                      "end": 247,
+                      "callee": {
+                        "type": "Identifier",
+                        "start": 233,
+                        "end": 245,
+                        "name": "createWindow"
+                      },
+                      "arguments": [],
+                      "optional": false
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "optional": false
+        }
+      },
+      {
+        "type": "ExpressionStatement",
+        "start": 253,
+        "end": 348,
+        "expression": {
+          "type": "CallExpression",
+          "start": 253,
+          "end": 348,
+          "callee": {
+            "type": "MemberExpression",
+            "start": 253,
+            "end": 259,
+            "object": {
+              "type": "Identifier",
+              "start": 253,
+              "end": 256,
+              "name": "app"
+            },
+            "property": {
+              "type": "Identifier",
+              "start": 257,
+              "end": 259,
+              "name": "on"
+            },
+            "computed": false,
+            "optional": false
+          },
+          "arguments": [
+            {
+              "type": "Literal",
+              "start": 260,
+              "end": 279,
+              "value": "window-all-closed",
+              "raw": "\"window-all-closed\""
+            },
+            {
+              "type": "ArrowFunctionExpression",
+              "start": 281,
+              "end": 347,
+              "id": null,
+              "expression": false,
+              "generator": false,
+              "async": false,
+              "params": [],
+              "body": {
+                "type": "BlockStatement",
+                "start": 286,
+                "end": 347,
+                "body": [
+                  {
+                    "type": "IfStatement",
+                    "start": 292,
+                    "end": 345,
+                    "test": {
+                      "type": "BinaryExpression",
+                      "start": 296,
+                      "end": 325,
+                      "left": {
+                        "type": "MemberExpression",
+                        "start": 296,
+                        "end": 312,
+                        "object": {
+                          "type": "Identifier",
+                          "start": 296,
+                          "end": 303,
+                          "name": "process"
+                        },
+                        "property": {
+                          "type": "Identifier",
+                          "start": 304,
+                          "end": 312,
+                          "name": "platform"
+                        },
+                        "computed": false,
+                        "optional": false
+                      },
+                      "operator": "!==",
+                      "right": {
+                        "type": "Literal",
+                        "start": 317,
+                        "end": 325,
+                        "value": "darwin",
+                        "raw": "\"darwin\""
+                      }
+                    },
+                    "consequent": {
+                      "type": "ExpressionStatement",
+                      "start": 335,
+                      "end": 345,
+                      "expression": {
+                        "type": "CallExpression",
+                        "start": 335,
+                        "end": 345,
+                        "callee": {
+                          "type": "MemberExpression",
+                          "start": 335,
+                          "end": 343,
+                          "object": {
+                            "type": "Identifier",
+                            "start": 335,
+                            "end": 338,
+                            "name": "app"
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "start": 339,
+                            "end": 343,
+                            "name": "quit"
+                          },
+                          "computed": false,
+                          "optional": false
+                        },
+                        "arguments": [],
+                        "optional": false
+                      }
+                    },
+                    "alternate": null
+                  }
+                ]
+              }
+            }
+          ],
+          "optional": false
+        }
+      }
+    ],
+    "sourceType": "module"
+  }

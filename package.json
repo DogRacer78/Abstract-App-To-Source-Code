@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "acorn": "^8.8.1",
+    "estree-util-to-js": "^1.1.0",
+    "filbert": "^0.1.20",
+    "rapydscript": "^0.5.62",
+    "rapydscript-ng": "^0.7.22"
+  },
+  "type": "module",
+  "scripts": {
+    "start": "Convert.js"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.12"
+  }
+}
