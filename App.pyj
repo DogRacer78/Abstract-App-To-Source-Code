@@ -4,6 +4,7 @@
 
 
 
+
 def start_up():
     for i in range(10):
         print("STARTING")
@@ -12,3 +13,15 @@ def start_up():
         x = 2
         x = x + 100
         console.log(x)
+
+    otherFunc("Hello from another function")
+
+    testName = "Hello"
+    print(len(testName))
+
+
+def otherFunc(name):
+    #nums = []
+    #nums.append(100)
+    #print(nums[0])
+    print(name)

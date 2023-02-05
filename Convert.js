@@ -1,11 +1,11 @@
 // takes in a main.js file, converts to a syntax tree, then appends the available functions to the main.js tree, then back to js
 
-import fs from "fs"
-import {toJs} from 'estree-util-to-js'
-import filbert from "filbert"
-import exec from "child_process"
-import * as acorn from "acorn"
-import rapydscript from "rapydscript";
+import fs from "fs";
+import {toJs} from 'estree-util-to-js';
+import filbert from "filbert";
+import exec from "child_process";
+import * as acorn from "acorn";
+import * as rapydscript from "rapydscript";
 
 /*
 // read in the python file
@@ -94,7 +94,7 @@ function updateElectronJS(projectName){
     var stdLibTree = acorn.parse(fs.readFileSync("./baselib.js", "utf-8"), {ecmaVersion : 2022});
 
     // load in the python file
-    var pythonAppTree;
+    let pythonAppTree;
     try{
         
     }
@@ -103,20 +103,28 @@ function updateElectronJS(projectName){
         return;
     }
 
-    var pythonApp = fs.readFileSync("./App.pyj", "utf-8");
-    var rapid = rapydscript.compile(pythonApp, {});
-    console.log(rapid);
+    let pythonApp = fs.readFileSync("./App.pyj", "utf-8");
+    let rapid = rapydscript.compile(pythonApp, {});
+    //console.log(rapid);
     pythonAppTree = acorn.parse(rapid, {ecmaVersion : 2022});
+    console.log(JSON.stringify(pythonAppTree, null, 3))
+
+    //python tree parswd
+    let pythonCodeParsed = parsePythonTree(pythonAppTree);
+    //console.log(JSON.stringify(pythonCodeParsed, null, 3));
+
 
     // traversers the tree and inserts the start up code into the start_up of the index.js
-    addToWhenReady(indexJSTree, parsePythonTree(pythonAppTree.body).start_up);
+    addToWhenReady(indexJSTree, pythonCodeParsed.start_up);
 
-    // add the library to the end of the code
-    addMultipleNodesToEnd(indexJSTree, stdLibTree.body);
-    console.log(JSON.stringify(indexJSTree, null, 3));
+    // add any other code that is added that is outside of any function
+    addMultipleNodesToEnd(indexJSTree, pythonCodeParsed.nonKeyCode);
+
+    // add the stdlib to the end of the program
+    addMultipleNodesToEnd(indexJSTree, pythonCodeParsed.stdLib);
 
     // output to the index.js file with the correct info
-    var newIndexJS = toJs(indexJSTree);
+    let newIndexJS = toJs(indexJSTree);
     fs.writeFileSync("./" + projectName + "/index.js", newIndexJS.value);
 }
 
@@ -131,25 +139,41 @@ function addMultipleNodesToEnd(tree, nodes){
 }
 
 // function to extract the start_up method for now
+/**
+ * 
+ * @param {Object} tree tree of a pyj file
+ * @returns Object containing the methods and all other code
+ */
 function parsePythonTree(tree){
-    var code = {nonKeyCode : []};
-    visit(tree, (node, parent, key) => {
-        // looking for the start up method
-        if (node.type === "FunctionDeclaration"){
-            if (node.id.type === "Identifier"){
-                if (node.id.name === "start_up"){
-                    // found the node now extract the function body
-                    code.start_up = node.body.body;
-                    console.log(node.body.body);
-                }
+    let code = {nonKeyCode : [], stdLib : []};
+
+    // the code I want is nested in many trees
+    code.stdLib = tree.body[0].expression.callee.body.body;
+    code.stdLib = code.stdLib.slice(0, code.stdLib.length - 2);
+    let programBody = tree.body[0].expression.callee.body.body[tree.body[0].expression.callee.body.body.length - 1].expression.callee.body.body;
+
+    for (let i = 0; i < programBody.length; i++){
+        if (checkForStartUp(programBody[i])){
+            code.start_up = programBody[i].body.body;
+        }
+        else{
+            code.nonKeyCode.push(programBody[i]);
+        }
+    }
+
+    return code;
+}
+
+// returns true if the start_up node is found
+function checkForStartUp(node){
+    if (node.type === "FunctionDeclaration"){
+        if (node.id.type === "Identifier"){
+            if (node.id.name === "start_up"){
+                return true;
             }
         }
-        // if it does not match any key methods then just treat it as a normal method
-        else if (parent == "undefined"){
-            code.nonKeyCode.push(node);
-        }
-    });
-    return code;
+    }
+    return false;
 }
 
 // a recursive function to traverse the tree
@@ -204,29 +228,6 @@ function addToWhenReady(node, codeToAdd){
         }
         return false;
     });
-}
-
-// custom callback that performs a simple traversal of the 
-function search(node, nodeToFind){
-    // get the keys
-    let nodeKeys = Object.keys(node);
-    let nodeToFindKeys = Object.keys(nodeToFind);
-    // check the length of the key arrays
-    // if they are the same then the nodes can be serached
-    if (nodeKeys.length !== nodeToFindKeys.length)
-        return false;
-
-    // check for all the keys if they are the same
-    for (let i = 0; i < nodeKeys.length; i++){
-        if (nodeKeys[i] !== nodeToFind[i])
-            return false;
-    }
-
-    // check for all the keys if the values are the same and if it is an object check its children
-    for (let i = 0; i < nodeKeys.length; i++){
-        //if ()
-    }
-
 }
 
 /**
