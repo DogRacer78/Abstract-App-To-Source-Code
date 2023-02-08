@@ -17,20 +17,21 @@ console.log(pythonTree.type)
 
 // the entry point of the program
 function main(){
-    var nameProject = process.argv[2]
-    var typeAppToCreate = process.argv[3]
+    var nameProject = process.argv[2];
+    var typeAppToCreate = process.argv[3];
 
     //console.log(pathToProject)
     //console.log(typeAppToCreate)
 
     if (typeAppToCreate === "-electron"){
-        createElectronApp(nameProject)
+        createElectronApp(nameProject);
+        updateElectronJS(nameProject);
     }
     else if (typeAppToCreate === "-uelectron"){
-        updateElectronJS(nameProject)
+        updateElectronJS(nameProject);
     }
     else{
-        console.error(typeAppToCreate + " not recognised as a project type")
+        console.error(typeAppToCreate + " not recognised as a project type");
     }
 
     
@@ -55,15 +56,16 @@ function createElectronApp(name){
     });
 
     // edit the json to contain the start script
-    var packageJSON = JSON.parse(fs.readFileSync("./" + name + "/package.json", "utf-8"))
+    var packageJSON = JSON.parse(fs.readFileSync("./" + name + "/package.json", "utf-8"));
     console.log(packageJSON)
-    packageJSON.scripts.start = "electron ."
+    packageJSON.scripts.start = "electron .";
+    packageJSON.main = "main.js";
     fs.writeFileSync("./" + name + "/package.json", JSON.stringify(packageJSON, null, 4));
 
     // get the syntax tree of a typical main.js for electron
     var mainJSTree = JSON.parse(fs.readFileSync("./templates/mainJS.json", "utf-8"))
     var mainJs = toJs(mainJSTree)
-    fs.writeFileSync("./" + name + "/index.js", mainJs.value)
+    fs.writeFileSync("./" + name + "/main.js", mainJs.value)
 
     //copy the basic html file to the app dir
     var htmlFile = fs.readFileSync("./templates/index.html", "utf-8");
@@ -74,7 +76,7 @@ function createElectronApp(name){
 // will take the current index.js file in a project and add a console.log to the start up method
 function updateElectronJS(projectName){
     // first we need to call the python script and obtain the code
-    PythonShell.run('ConvertAppToJS.py', null, (err, results) =>{
+    PythonShell.run('./Tools/ConvertAppToJS.py', null, (err, results) =>{
         try{
             if (err) throw err;
         }
@@ -92,26 +94,36 @@ An App.py file created in your project directory
         console.log(results);
         let pythonApp = results.join('');
 
-        let indexJSTree = JSON.parse(fs.readFileSync("./templates/mainJS.json", "utf-8"));
-
-        // load in the python file
+        // define all file variables
+        let indexJSTree;
         let pythonAppTree;
-        pythonAppTree = acorn.parse(pythonApp, {ecmaVersion : 2022});
-        //console.log(JSON.stringify(pythonAppTree, null, 3));
+        let pythonCodeParsed;
+        let newIndexJS;
 
-        //python tree parsed
-        let pythonCodeParsed = parsePythonTree(pythonAppTree);
-        //console.log(JSON.stringify(pythonCodeParsed, null, 3));
+        try{
+            // load the electron main.js template
+            indexJSTree = JSON.parse(fs.readFileSync("./templates/blank.json", "utf-8"));
+            // create the AST of the python code
+            pythonAppTree = acorn.parse(pythonApp, {ecmaVersion : 2022});
+            // parse the python AST
+            pythonCodeParsed = parsePythonTree(pythonAppTree);
+            // add the start_up method to the correct method within the index.js
+            //addToWhenReady(indexJSTree, pythonCodeParsed.start_up);
+            // add the other code to the index.js file
+            addMultipleNodesToEnd(indexJSTree, pythonCodeParsed.nonKeyCode);
+            addMultipleNodesToEnd(indexJSTree, pythonCodeParsed.events);
 
-        // traversers the tree and inserts the start up code into the start_up of the index.js
-        addToWhenReady(indexJSTree, pythonCodeParsed.start_up);
+            console.log(JSON.stringify(indexJSTree, null, 3));
 
-        // add any other code that is added that is outside of any function
-        addMultipleNodesToEnd(indexJSTree, pythonCodeParsed.nonKeyCode);
-
-        // output to the index.js file with the correct info
-        let newIndexJS = toJs(indexJSTree);
-        fs.writeFileSync("./" + projectName + "/index.js", newIndexJS.value);
+            // compile the modified AST back into JS
+            newIndexJS = toJs(indexJSTree);
+            // write back out to the index.js file
+            fs.writeFileSync("./" + projectName + "/index.js", newIndexJS.value);
+        }
+        catch (e){
+            console.error(e.message);
+            console.error(e.name);
+        }
     });
     
 }
@@ -142,11 +154,25 @@ function addMultipleNodesToEnd(tree, nodes){
  * @returns Object containing the methods and all other code
  */
 function parsePythonTree(tree){
-    let code = {nonKeyCode : []};
+    let code = {
+        nonKeyCode : [],
+        start_up : null,
+        events : []
+    };
 
     for (let i = 0; i < tree.body.length; i++){
         if (checkForStartUp(tree.body[i])){
+            if (code.start_up != null)
+                throw new Error("Multiple start_up nodes found\nPlease ensure you only have one start_up method");
             code.start_up = tree.body[i].body.body;
+        }
+        else if (checkEvent(tree.body[i])){
+            console.log("in event");
+            let eventCode = constructEvent(getEvent(tree.body[i]));
+            //console.log(eventCode);
+            code.events.push(eventCode);
+            code.nonKeyCode.push(tree.body[i]);
+            console.log(code.events);
         }
         else{
             code.nonKeyCode.push(tree.body[i]);
@@ -154,6 +180,42 @@ function parsePythonTree(tree){
     }
 
     return code;
+}
+
+/**
+ * Checks if a function declaration relates to an event
+ * @param {object} node Node to check
+ * @returns An object containing the event and the id of the element or null if it is not an event
+ */
+function getEvent(node){
+    let eventArray = node.id.name.split("_");
+    console.log(eventArray);
+    // for now just add the strings as they are may need to add some validation to this
+    // TODO
+    let event = {funcName : node.id.name, eventType : eventArray[1], elementId : eventArray[2]};
+    return event;
+}
+
+function checkEvent(node){
+    let eventFormat = /^[^_]*_[^_]*_[^_]*$/;
+
+    if (node.type === "FunctionDeclaration"){
+        if (node.id.type === "Identifier"){
+            // test the function name using regex to see if it matches the event format
+            if (eventFormat.test(node.id.name)){
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+function constructEvent(eventData){
+    let eventStructure = `document.getElementById('${eventData.elementId}\').addEventListener('${eventData.eventType}', ${eventData.funcName})`;
+    console.log(eventStructure);
+    let AST = codeToAST(eventStructure);
+    return AST[0];
 }
 
 /**

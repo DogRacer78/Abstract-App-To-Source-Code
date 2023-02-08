@@ -1,4 +1,6 @@
-def start_up():
+'''
+
+def sub_start_hh_up():
     for i in range(10):
         print("STARTING")
     name = "Jack"
@@ -32,3 +34,9 @@ def someOtherFunc():
 
     for y in myList:
         print(y)
+
+'''
+
+def output_click_testBtn():
+    # will console.log "hello world" to the console of the app
+    print("Hello world")
