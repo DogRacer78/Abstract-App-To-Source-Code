@@ -1,8 +1,6 @@
-'''
-
-def sub_start_hh_up():
+def start_up():
     for i in range(10):
-        print("STARTING")
+        print("STARTING\n\n")
     name = "Jack"
     if (name == "Jack"):
         x = 2
@@ -35,8 +33,10 @@ def someOtherFunc():
     for y in myList:
         print(y)
 
-'''
 
 def output_click_testBtn():
     # will console.log "hello world" to the console of the app
     print("Hello world")
+
+def testClickOfInput_click_testInput():
+    print("You have clicked the input button")

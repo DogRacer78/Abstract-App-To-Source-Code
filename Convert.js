@@ -5,6 +5,7 @@ import {toJs} from 'estree-util-to-js';
 import exec from "child_process";
 import * as acorn from "acorn";
 import { PythonShell } from "python-shell";
+import { Console } from "console";
 
 /*
 // read in the python file
@@ -98,7 +99,7 @@ An App.py file created in your project directory
         let indexJSTree;
         let pythonAppTree;
         let pythonCodeParsed;
-        let newIndexJS;
+        let newIndexJS
 
         try{
             // load the electron main.js template
@@ -107,11 +108,20 @@ An App.py file created in your project directory
             pythonAppTree = acorn.parse(pythonApp, {ecmaVersion : 2022});
             // parse the python AST
             pythonCodeParsed = parsePythonTree(pythonAppTree);
-            // add the start_up method to the correct method within the index.js
-            //addToWhenReady(indexJSTree, pythonCodeParsed.start_up);
             // add the other code to the index.js file
+            
+            addCommentsToEnd(indexJSTree, "Function Definitions")
             addMultipleNodesToEnd(indexJSTree, pythonCodeParsed.nonKeyCode);
+            //addCommentsToEnd(indexJSTree, "\n\n");
+
+            addCommentsToEnd(indexJSTree, "Event listeners new line");
             addMultipleNodesToEnd(indexJSTree, pythonCodeParsed.events);
+            //addCommentsToEnd(indexJSTree, "\n\n");
+
+            addCommentsToEnd(indexJSTree, "On load event listener");
+            addMultipleNodesToEnd(indexJSTree, pythonCodeParsed.start_up);
+
+            addCommentsToEnd(indexJSTree, "THIS IS MY TEST COMMENTNew Line");
 
             console.log(JSON.stringify(indexJSTree, null, 3));
 
@@ -126,6 +136,25 @@ An App.py file created in your project directory
         }
     });
     
+}
+
+// adds comments to the end of the tree
+// creates comment as an expression statement, will then do a replace on the comment
+function addCommentsToEnd(tree, comment){
+    let commentsArray = comment.split("\n");
+    console.log(commentsArray);
+    let code = "'/*";
+    for (let i = 0; i < commentsArray.length; i++){
+        code += commentsArray[i];
+        if (i !== commentsArray.length - 1 && commentsArray.length !== 1)
+            code += "\\n";
+    }
+    code += "*/'";
+    console.log(code);
+    let AST = codeToAST(code);
+    console.log(JSON.stringify(AST));
+    AST[0].expression.raw = AST[0].expression.value;
+    tree.body.push(AST[0]);
 }
 
 /**
@@ -156,15 +185,16 @@ function addMultipleNodesToEnd(tree, nodes){
 function parsePythonTree(tree){
     let code = {
         nonKeyCode : [],
-        start_up : null,
+        start_up : [],
         events : []
     };
 
     for (let i = 0; i < tree.body.length; i++){
         if (checkForStartUp(tree.body[i])){
-            if (code.start_up != null)
+            if (code.start_up.length !== 0)
                 throw new Error("Multiple start_up nodes found\nPlease ensure you only have one start_up method");
-            code.start_up = tree.body[i].body.body;
+            code.start_up = constructStartUp();
+            code.nonKeyCode.push(tree.body[i]);
         }
         else if (checkEvent(tree.body[i])){
             console.log("in event");
@@ -269,26 +299,13 @@ function visit(tree, callback){
 
 /**
  * Locates and inserts into the whenReady function definition
- * @param {object} node node to insert into the whenReady function
+ * @param {object} tree node to insert into the whenReady function
  * @param {Array} codeToAdd Array of code to add
  */
-function addToWhenReady(node, codeToAdd){
-    visit(node, (node, parent, key) => {
-        if (node.type === "CallExpression"){
-            if (node.callee.type === "MemberExpression"){
-                if (node.callee.object.type === "CallExpression" && node.callee.property.type === "Identifier"){
-                    if (node.callee.object.callee.type === "MemberExpression" && node.callee.property.name === "then"){
-                        if (node.callee.object.callee.object.name === "app" && node.callee.object.callee.property.name === "whenReady"){
-                            // the node is located append the code to the end of the tree
-                            addMultipleNodesToEnd(node.arguments[0].body, codeToAdd);
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    });
+function constructStartUp(){
+    let onLoadCode = `window.addEventListener('load', start_up);`;
+    let AST = codeToAST(onLoadCode);
+    return AST;
 }
 
 /**
