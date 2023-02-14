@@ -35,8 +35,19 @@ def someOtherFunc():
 
 
 def output_click_testBtn():
-    # will console.log "hello world" to the console of the app
-    print("Hello world")
+    # will convert from celcius to farenheit
+    __COMMENT__("This function will take input from the input withid of 'testInput' and will print a fahrenheit version of the temperature to the console will also contain error checking")
+    celcius = getValue_testInput()
+    if (celcius != ""):
+        celcius = int(celcius)
+        fahrenheit = (celcius * 9 / 5) + 32
+        print(str(fahrenheit) + "f")
+    else:
+        print("You need to enter a number")
+
 
 def testClickOfInput_click_testInput():
-    print("You have clicked the input button")
+    #num = getValue_testInput()
+    print("The value in the input is as below")
+    #print(getValue_testInput())
+    __COMMENT__("THIS IS MY TEST COMMENT I ADDED IN PYTHON")

@@ -83,9 +83,11 @@ function updateElectronJS(projectName){
         }
         catch (e){
             console.log(`\n********************************************************
-Please enure you have the following:
-Python
-JavaScripthon
+Error transpilation of App.py, enure the syntax is correct
+Please ensure you have the following:
+Python (www.python.org)
+JavaScripthon (https://pypi.org/project/javascripthon/)
+If you have pip installed simply run : pip install javascripthon
 An App.py file created in your project directory
 *******************************************************\n`);
             return;
@@ -121,14 +123,23 @@ An App.py file created in your project directory
             addCommentsToEnd(indexJSTree, "On load event listener");
             addMultipleNodesToEnd(indexJSTree, pythonCodeParsed.start_up);
 
-            addCommentsToEnd(indexJSTree, "THIS IS MY TEST COMMENTNew Line");
+            addCommentsToEnd(indexJSTree, "This is my test comment\non a new line");
 
-            console.log(JSON.stringify(indexJSTree, null, 3));
+            //console.log(JSON.stringify(indexJSTree, null, 3));
 
             // compile the modified AST back into JS
             newIndexJS = toJs(indexJSTree);
             // write back out to the index.js file
             fs.writeFileSync("./" + projectName + "/index.js", newIndexJS.value);
+
+            console.log(`
+   _____ __  ______________________________
+  / ___// / / / ____/ ____/ ____/ ___/ ___/
+  \\__ \\/ / / / /   / /   / __/  \\__ \\\\__ \\ 
+ ___/ / /_/ / /___/ /___/ /___ ___/ /__/ / 
+/____/\\____/\\____/\\____/_____//____/____/  
+                                                                                                           
+`)
         }
         catch (e){
             console.error(e.message);
@@ -141,20 +152,20 @@ An App.py file created in your project directory
 // adds comments to the end of the tree
 // creates comment as an expression statement, will then do a replace on the comment
 function addCommentsToEnd(tree, comment){
-    let commentsArray = comment.split("\n");
-    console.log(commentsArray);
-    let code = "'/*";
-    for (let i = 0; i < commentsArray.length; i++){
-        code += commentsArray[i];
-        if (i !== commentsArray.length - 1 && commentsArray.length !== 1)
-            code += "\\n";
-    }
-    code += "*/'";
+    tree.body.push(createComment(comment));
+}
+
+// creates the comment as needed and returns the correct expression statement
+function createComment(comment){
+    // add the comment declarators
+    let code = `/*${comment}*/`;
     console.log(code);
-    let AST = codeToAST(code);
-    console.log(JSON.stringify(AST));
-    AST[0].expression.raw = AST[0].expression.value;
-    tree.body.push(AST[0]);
+    console.log(comment);
+    // create a custom expression node that contains an identifier
+    // set the identifier node to contain the comment
+    // as identifers don't use strings it will just print it as is including the /* and */
+    let AST = {type : "ExpressionStatement", expression : {type : "Identifier", name :  code}}
+    return AST;
 }
 
 /**
@@ -189,6 +200,36 @@ function parsePythonTree(tree){
         events : []
     };
 
+    getComments(tree, (node, parent, key) => {
+        if (node.type === "ExpressionStatement"){
+            if (node.expression.type === "CallExpression"){
+                if (node.expression.callee.type === "Identifier"){
+                    if (node.expression.callee.name === "__COMMENT__"){
+                        console.log("FOUND COMMENT");
+                        // get the call expression
+                        // get the list of args
+                        let args = node.expression.arguments;
+
+                        // if the list of args is not correct throw an error
+                        if (args.length !== 1){
+                            throw new Error("Invalid Syntax for a comment block\nPlease check it follows the format __COMMENT__(comment)")
+                        }
+                        else{
+                            if (args[0].type !== "Literal"){
+                                throw new Error("invalid Syntax for a comment block\nMust contain a single string with no string concatanations");
+                            }
+                            let comment = createComment(args[0].value);
+                            node.expression = comment.expression;
+                        }
+                        return;
+                    }
+                }
+            }
+        }
+    });
+
+    manipulateGetValue(tree);
+
     for (let i = 0; i < tree.body.length; i++){
         if (checkForStartUp(tree.body[i])){
             if (code.start_up.length !== 0)
@@ -210,6 +251,50 @@ function parsePythonTree(tree){
     }
 
     return code;
+}
+
+function manipulateGetValue(tree){
+    visit(tree, (node, parent, key) => {
+        if (node.type === "CallExpression"){
+            if (node.callee.type === "Identifier"){
+                if (/^[^_]*_[^_]*$/.test(node.callee.name)){
+                    let data = node.callee.name.split("_");
+                    if (data[0] === "getValue"){
+                        // this is a good function now construct the function call
+                        let code = `document.getElementById('${data[1]}').value`;
+                        let AST = codeToAST(code);
+                        console.log("DOCUEMENT");
+                        console.log(JSON.stringify(AST[0], null, 3));
+                        console.log("NODE");
+                        console.log(JSON.stringify(node, null, 3));
+                        delete node.callee;
+                        delete node.arguments;
+                        delete node.optional;
+
+                        const keys = Object.keys(AST[0].expression);
+                        console.log(keys);
+                        for (let i = 0; i < keys.length; i++){
+                            node[keys[i]] = AST[0].expression[keys[i]];
+                        }
+                        //node.object = AST[0].expression.object;
+                        //node.type = AST[0].expression.type;
+                        //node.
+                        //node.type = AST[0].type;
+                        console.log("NODE AFTER");
+                        console.log(JSON.stringify(node, null, 3));
+                        //delete node.start;
+                        //delete node.end;
+                    }
+                }
+            }
+        }
+    });
+}
+
+// function to visit all nodes in the tree and locate the comment nodes
+function getComments(tree, callback){
+    console.log("GETTING COMMENTS");
+    visit(tree, callback);
 }
 
 /**
