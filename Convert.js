@@ -1,11 +1,9 @@
-// takes in a main.js file, converts to a syntax tree, then appends the available functions to the main.js tree, then back to js
-
 import fs from "fs";
 import {toJs} from 'estree-util-to-js';
 import exec from "child_process";
 import * as acorn from "acorn";
 import { PythonShell } from "python-shell";
-import { Console } from "console";
+import { parse } from "node-html-parser";
 
 /*
 // read in the python file
@@ -18,8 +16,9 @@ console.log(pythonTree.type)
 
 // the entry point of the program
 function main(){
-    var nameProject = process.argv[2];
-    var typeAppToCreate = process.argv[3];
+    let nameProject = process.argv[2];
+    let typeAppToCreate = process.argv[3];
+    let webflowAddress = process.argv[4];
 
     //console.log(pathToProject)
     //console.log(typeAppToCreate)
@@ -29,7 +28,7 @@ function main(){
         updateElectronJS(nameProject);
     }
     else if (typeAppToCreate === "-uelectron"){
-        updateElectronJS(nameProject);
+        updateElectronJS(nameProject, webflowAddress);
     }
     else{
         console.error(typeAppToCreate + " not recognised as a project type");
@@ -75,9 +74,9 @@ function createElectronApp(name){
 }
 
 // will take the current index.js file in a project and add a console.log to the start up method
-function updateElectronJS(projectName){
+async function updateElectronJS(projectName, htmlAddress){
     // first we need to call the python script and obtain the code
-    PythonShell.run('./Tools/ConvertAppToJS.py', null, (err, results) =>{
+    PythonShell.run('./Tools/ConvertAppToJS.py', null, async (err, results) =>{
         try{
             if (err) throw err;
         }
@@ -101,11 +100,22 @@ An App.py file created in your project directory
         let indexJSTree;
         let pythonAppTree;
         let pythonCodeParsed;
-        let newIndexJS
+        let newIndexJS;
+        let indexHTML;
+
+        let res = await fetch(htmlAddress);
+        indexHTML = await res.text();
+
+        console.log(indexHTML);
+        
 
         try{
             // load the electron main.js template
             indexJSTree = JSON.parse(fs.readFileSync("./templates/blank.json", "utf-8"));
+
+            //load the HTML from the webflow published site
+            
+
             // create the AST of the python code
             pythonAppTree = acorn.parse(pythonApp, {ecmaVersion : 2022});
             // parse the python AST
@@ -132,6 +142,28 @@ An App.py file created in your project directory
             // write back out to the index.js file
             fs.writeFileSync("./" + projectName + "/index.js", newIndexJS.value);
 
+            // now parse through the html from the WebFlow app and check for fake-form=true
+            //parse the HTML
+            let root = parse(indexHTML);
+            let divElements = root.getElementsByTagName("div");
+
+            for (let i = 0; i < divElements.length; i++){
+                let element = divElements[i];
+                if (element.getAttribute("fake-form") === "true"){
+                    console.log(element);
+                    element.setAttribute("class", element.getAttribute("class").replace("w-form", ""));
+                }
+            }
+
+            // add the index.js script tag to the end
+            root.insertAdjacentHTML("beforeend", "<script src='./index.js'></script>");
+
+            // now try and send to the correct HTML file
+            fs.writeFileSync("./" + projectName + "/index.html", root.toString());
+
+            //console.log(root.querySelector("[fake-form='true']"));
+
+
             console.log(`
    _____ __  ______________________________
   / ___// / / / ____/ ____/ ____/ ___/ ___/
@@ -147,6 +179,11 @@ An App.py file created in your project directory
         }
     });
     
+}
+
+// function to parse the HTML from the WebFlow site and look for the fake-form attribute
+function parseHTML(html){
+
 }
 
 // adds comments to the end of the tree

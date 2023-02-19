@@ -2,6 +2,7 @@
   "dependencies": {
     "acorn": "^8.8.1",
     "estree-util-to-js": "^1.1.0",
+    "node-html-parser": "^6.1.4",
     "python-shell": "^3.0.1"
   },
   "type": "module",
