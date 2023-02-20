@@ -102,19 +102,11 @@ An App.py file created in your project directory
         let pythonCodeParsed;
         let newIndexJS;
         let indexHTML;
-
-        let res = await fetch(htmlAddress);
-        indexHTML = await res.text();
-
-        console.log(indexHTML);
         
 
         try{
             // load the electron main.js template
             indexJSTree = JSON.parse(fs.readFileSync("./templates/blank.json", "utf-8"));
-
-            //load the HTML from the webflow published site
-            
 
             // create the AST of the python code
             pythonAppTree = acorn.parse(pythonApp, {ecmaVersion : 2022});
@@ -142,26 +134,26 @@ An App.py file created in your project directory
             // write back out to the index.js file
             fs.writeFileSync("./" + projectName + "/index.js", newIndexJS.value);
 
+            // tries to get the html
+            let res;
+            try{
+                res = await fetch(htmlAddress);
+                if (res.status === 200)
+                    indexHTML = await res.text();
+                else
+                    throw new Error(`Couldn't load HTML from ${htmlAddress}, please check the address supplied`);
+            }
+            catch(e){
+                throw new Error(`Couldn't load HTML from ${htmlAddress}, please check the address supplied`);
+            }
+            
+
             // now parse through the html from the WebFlow app and check for fake-form=true
             //parse the HTML
-            let root = parse(indexHTML);
-            let divElements = root.getElementsByTagName("div");
-
-            for (let i = 0; i < divElements.length; i++){
-                let element = divElements[i];
-                if (element.getAttribute("fake-form") === "true"){
-                    console.log(element);
-                    element.setAttribute("class", element.getAttribute("class").replace("w-form", ""));
-                }
-            }
-
-            // add the index.js script tag to the end
-            root.insertAdjacentHTML("beforeend", "<script src='./index.js'></script>");
+            indexHTML = handleFakeForm(indexHTML);
 
             // now try and send to the correct HTML file
-            fs.writeFileSync("./" + projectName + "/index.html", root.toString());
-
-            //console.log(root.querySelector("[fake-form='true']"));
+            fs.writeFileSync("./" + projectName + "/index.html", indexHTML);
 
 
             console.log(`
@@ -175,15 +167,37 @@ An App.py file created in your project directory
         }
         catch (e){
             console.error(e.message);
-            console.error(e.name);
+            //console.error(e.name);
         }
     });
     
 }
 
 // function to parse the HTML from the WebFlow site and look for the fake-form attribute
-function parseHTML(html){
+function handleFakeForm(html){
+    // parse using the node-parse lib
+    let root = parse(html);
+    // get all the elements with a div tag
+    let divElements = root.getElementsByTagName("div");
 
+    // loop through all the div elements and find any that have the attribute fake form
+    // remove the w-form from the class section
+    // also need to add onsubmit=return fasle to stop the form from being submitted
+    for (let i = 0; i < divElements.length; i++){
+        let element = divElements[i];
+        if (element.getAttribute("fake-form") === "true"){
+            console.log(element);
+            element.setAttribute("class", element.getAttribute("class").replace("w-form", ""));
+            // get the form tags
+            let forms = element.getElementsByTagName("form");
+            for (let j = 0; j < forms.length; j++){
+                forms[j].setAttribute("onsubmit", "return false");
+            }
+        }
+    }
+    // add the index.js script tag to the end
+    root.insertAdjacentHTML("beforeend", "<script src='./index.js'></script>");
+    return root.toString();
 }
 
 // adds comments to the end of the tree
