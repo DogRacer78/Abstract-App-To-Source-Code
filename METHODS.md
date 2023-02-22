@@ -29,6 +29,12 @@ To get data from any element that supports the .value attribute can be seen belo
 <pre>getValue_id-of-element()</pre>
 Again here the **_** is **required** for the call to work. This function can be thought of as a call to a function, with its return value the value in the element it is binded to.
 
+## Outputting data
+Data can simply be output to a div element
+<br>
+<pre>setOutput_id-of-element(data)</pre>
+
+
 ## Comments
 When generating code some comments will be added automatically. To add a comment manually use the syntax below:
 <pre>__COMMENT__("This is my comment")</pre>

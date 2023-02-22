@@ -113,6 +113,9 @@ An App.py file created in your project directory
             // parse the python AST
             pythonCodeParsed = parsePythonTree(pythonAppTree);
             // add the other code to the index.js file
+
+            // add the date time
+            addCommentsToEnd(indexJSTree, generateDateTime());
             
             addCommentsToEnd(indexJSTree, "Function Definitions")
             addMultipleNodesToEnd(indexJSTree, pythonCodeParsed.nonKeyCode);
@@ -171,6 +174,13 @@ An App.py file created in your project directory
         }
     });
     
+}
+
+// generates the date and time the current code was generated at
+// returns a string with the relevant info
+function generateDateTime(){
+    let date = new Date();
+    return `Generated on ${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()} @ ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
 }
 
 // function to parse the HTML from the WebFlow site and look for the fake-form attribute
@@ -248,7 +258,8 @@ function parsePythonTree(tree){
     let code = {
         nonKeyCode : [],
         start_up : [],
-        events : []
+        events : [],
+        output : []
     };
 
     getComments(tree, (node, parent, key) => {
@@ -383,6 +394,8 @@ function constructEvent(eventData){
     let AST = codeToAST(eventStructure);
     return AST[0];
 }
+
+// checks if a method call matches the form of setOutput_id
 
 /**
  * Checks if a node is the node for the start_up function
