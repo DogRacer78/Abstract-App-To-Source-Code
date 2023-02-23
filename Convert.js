@@ -89,6 +89,8 @@ JavaScripthon (https://pypi.org/project/javascripthon/)
 If you have pip installed simply run : pip install javascripthon
 An App.py file created in your project directory
 *******************************************************\n`);
+
+            console.log(e.type);
             return;
         }
         
@@ -292,6 +294,19 @@ function parsePythonTree(tree){
 
     manipulateGetValue(tree);
 
+    console.log("GETTING OUTPUT");
+    visit(tree, (node, parent, key) =>{
+        let check = checkSetOutput(node);
+        if (check !== null){
+            console.log("IS AN OUTPUT");
+            let code = constructSetOutput(check);
+            console.log("CODE IS:");
+            console.log(code);
+            node.type = code.type;
+            node.expression = code.expression;
+        }
+    });
+
     for (let i = 0; i < tree.body.length; i++){
         if (checkForStartUp(tree.body[i])){
             if (code.start_up.length !== 0)
@@ -396,6 +411,86 @@ function constructEvent(eventData){
 }
 
 // checks if a method call matches the form of setOutput_id
+// and then return an object that contains the data
+function checkSetOutput(node){
+    let outPutData = null;
+    let check = /^setOutput_[^_]*$/;
+    // check if the node is an expression
+    if (node.type === "ExpressionStatement"){
+        if (node.expression.type === "CallExpression"){
+            if (node.expression.callee.type === "Identifier"){
+                if (check.test(node.expression.callee.name)){
+                    // test the name of the method against the above regex
+                    let callData = node.expression.callee.name.split("_");
+                    console.log(callData[1]);
+                    // splits based on the _ and the second element is the id
+    
+                    // check if the args contain only one thing
+                    let args = node.expression.arguments;
+                    console.log(args[0]);
+                    if (args.length === 0)
+                        return outPutData;
+    
+                    // now create the node
+                    outPutData = 
+                    {
+                        id : callData[1],
+                        data : args[0]
+                    }
+                }
+            }
+        }
+    }
+    return outPutData;
+}
+
+// function to construct the code needed for an output
+function constructSetOutput(outputData){
+    let node = 
+    {
+        type: "ExpressionStatement",
+        expression: {
+          type: "AssignmentExpression",
+          operator: "=",
+          left: {
+            type: "MemberExpression",
+            object: {
+              type: "CallExpression",
+              callee: {
+                type: "MemberExpression",
+                object: {
+                  type: "Identifier",
+                  name: "document"
+                },
+                property: {
+                  type: "Identifier",
+                  name: "getElementById"
+                },
+                computed: false,
+                optional: false
+              },
+              arguments: [
+                {
+                  type: "Literal",
+                  value: outputData.id,
+                  raw: `'${outputData.id}'`
+                }
+              ],
+              optional: false
+            },
+            property: {
+              type: "Identifier",
+              name: "innerText"
+            },
+            computed: false,
+            optional: false
+          },
+          right: outputData.data
+        }
+    }
+    console.log(node);
+    return node;
+}
 
 /**
  * Checks if a node is the node for the start_up function

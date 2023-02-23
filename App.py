@@ -40,8 +40,9 @@ def output_click_testBtn():
     celcius = getValue_testInput()
     if (celcius != ""):
         celcius = int(celcius)
-        fahrenheit = (celcius * 9 / 5) + 32
-        print(str(fahrenheit) + "f")
+        fahrenheit = str((celcius * 9 / 5) + 32) + " f"
+        print(fahrenheit)
+        setOutput_outputTest(fahrenheit)
     else:
         print("You need to enter a number")
 
