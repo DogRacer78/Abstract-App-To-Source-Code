@@ -105,3 +105,6 @@ dist
 
 #Apps
 /My App
+
+# get webflow test file
+/getWebflow.js
