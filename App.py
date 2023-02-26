@@ -1,20 +1,5 @@
 def start_up():
-    for i in range(10):
-        print("STARTING\n\n")
-    name = "Jack"
-    if (name == "Jack"):
-        x = 2
-        x = x + 100
-        print("Hello world")
-
-    otherFunc("Hello from another function")
-
-    testName = "Hello"
-    print(len(testName))
-
-    print("THIS IS AN INSERT")
-
-    someOtherFunc()
+    print("Hello I am starting");
 
 
 def otherFunc(name):
