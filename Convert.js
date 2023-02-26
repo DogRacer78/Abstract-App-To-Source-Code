@@ -37,9 +37,7 @@ function main(){
         handler(argv){
             createWebApp(argv.name, argv.html_address);
         }
-    }).parse();
-
-    yargs(hideBin(process.argv)).command({
+    }).command({
         command : "gen-electron-app",
         describe : "Generates an electron app with all node dependancies",
         builder : {
@@ -58,6 +56,10 @@ function main(){
             createElectronApp(argv.name, argv.html_address);
         }
     }).parse();
+
+    //yargs(hideBin(process.argv)).command({
+        
+    //}).parse();
     
 }
 
