@@ -6,6 +6,16 @@ All commands follow a similar syntax of *method-name_extra-info_id-of-element*
 <br>
 Within this command the _ are the limiting factor, they are used to split the data within a command.
 
+## App File 
+Your abstract-app app must be called App.py for the time being, if it is not it will be ignored. If no App.py is found an error will be
+thrown
+
+## HTML
+The HTML must be created in <a href="https://www.webflow.com">Webflow</a> for now, sign up for a free account and keep a note of the published site URL. Any changes made in webflow must be published before they can be seen in your app.
+
+### Using HTML
+When using the HTML you must specify the id of any element you want to access in your App.py. Webflow does not support input fields that exist outside of a form. To fix this issue just add the attribute fake-form="true" to any form block you use in webflow.
+
 ## Events
 Any event can be added to any element, as long as it is a valid JavaScript event that can be added to a DOM element. For example 'click'. To create a new event listener declare it as a new function in App.py, within the body of this function is the code that will be run when the event is fired.
 <br>
@@ -39,4 +49,21 @@ Data can simply be output to a div element
 When generating code some comments will be added automatically. To add a comment manually use the syntax below:
 <pre>__COMMENT__("This is my comment")</pre>
 Note that these can not be used like normal comments, they can only be placed in places that a method call could be placed.
-At this point in time they only support constant strings to be used as an argument, this means any other data types must be cast to string before being passed as a comment and string conatenations do not work either, strings must be formed in whole before being passed to a comment. 
+At this point in time they only support constant strings to be used as an argument, this means any other data types must be cast to string before being passed as a comment and string conatenations do not work either, strings must be formed in whole before being passed to a comment.
+
+# Using the Tool
+To compile your python and webflow you have the following commands available:
+
+- gen-web-app - creates a web app from App.py
+- gen-electron-app - creates an electron app from App.py
+
+To view the help for each command view run:<br>
+<kbd>node ./Convert.js gen-web-app --help</kbd><br>
+or<br>
+<kbd>node ./Convert.js gen-electron-app --help</kbd>
+<br>
+To compile a web app run:<br>
+<kbd>node ./Convert.js gen-web-app --name="name of app" --html_address="Address of your published webflow site"</kbd>
+<br>
+To compile to an electron app run:<br>
+<kbd>node ./Convert.js gen-electron-app --name="name of app" --html_address="Address of your published webflow site"</kbd>

@@ -1,11 +1,20 @@
-// adds comments to the end of the tree
-// creates comment as an expression statement, will then do a replace on the comment
+/**
+ * Adds a comment to the end of an AST given a string
+ * @param {object} tree Tree to add the comment node to
+ * @param {String} comment Text to add
+ */
 function addCommentsToEnd(tree, comment){
     tree.body.push(createComment(comment));
 }
 
-// creates the comment as needed and returns the correct expression statement
+/**
+ * Creates a comment node given a supplied string
+ * @param {String} comment Text to use as a commnt
+ * @returns Comment node
+ */
 function createComment(comment){
+    // creates comment as an expression statement, will then do a replace on the comment
+
     // add the comment declarators
     let code = `/*${comment}*/`;
     console.log(code);

@@ -63,6 +63,11 @@ function main(){
     
 }
 
+/**
+ * Creates a webapp
+ * @param {String} name Name of the app
+ * @param {String} htmlAddress URL of the webflow site
+ */
 function createWebApp(name, htmlAddress){
     createApp(name, htmlAddress).then((appData) =>{
         if (!fs.existsSync(`./${name}`)) {
@@ -78,7 +83,11 @@ function createWebApp(name, htmlAddress){
 }
 
 
-// will create an electron app by running the appropriate command
+/**
+ * Creates an electron app
+ * @param {String} name Name of the app
+ * @param {String} htmlAddress URL of webflow site
+ */
 function createElectronApp(name, htmlAddress){
 
     // get the web app
@@ -123,45 +132,14 @@ function createElectronApp(name, htmlAddress){
         
     });
 
-    
-
-
-    /*
-    exec.execSync("./CreateElectron.sh " + "\"" + name + "\"", (err, stdout, stderr) => {
-        if (err){
-            console.log("ERROR")
-            console.log(err.message);
-            return;
-        }
-
-        if (stderr){
-            console.log(stderr);
-            return;
-        }
-
-        console.log(stdout.message)
-    });
-
-    // edit the json to contain the start script
-    var packageJSON = JSON.parse(fs.readFileSync("./" + name + "/package.json", "utf-8"));
-    console.log(packageJSON)
-    packageJSON.scripts.start = "electron .";
-    packageJSON.main = "main.js";
-    fs.writeFileSync("./" + name + "/package.json", JSON.stringify(packageJSON, null, 4));
-
-    // get the syntax tree of a typical main.js for electron
-    var mainJSTree = JSON.parse(fs.readFileSync("./templates/mainJS.json", "utf-8"))
-    var mainJs = toJs(mainJSTree)
-    fs.writeFileSync("./" + name + "/main.js", mainJs.value)
-
-    //copy the basic html file to the app dir
-    var htmlFile = fs.readFileSync("./templates/index.html", "utf-8");
-    fs.writeFileSync("./" + name + "/index.html", htmlFile);
-    */
-
 }
 
-// will take the current index.js file in a project and add a console.log to the start up method
+/**
+ * 
+ * @param {String} projectName Name of the project
+ * @param {String} htmlAddress URL of webflow site
+ * @returns {{indexJS : String, indexHTML : String}} Object with strings for the indexJS and indexHTML
+ */
 async function createApp(projectName, htmlAddress){
     let data = {};
 
@@ -210,15 +188,12 @@ An App.py file created in your project directory
         addMultipleNodesToEnd(indexJSTree, pythonCodeParsed.nonKeyCode);
         //addCommentsToEnd(indexJSTree, "\n\n");
 
-        addCommentsToEnd(indexJSTree, "Event listeners new line");
+        addCommentsToEnd(indexJSTree, "Event listeners");
         addMultipleNodesToEnd(indexJSTree, pythonCodeParsed.events);
         //addCommentsToEnd(indexJSTree, "\n\n");
 
         addCommentsToEnd(indexJSTree, "On load event listener");
         addMultipleNodesToEnd(indexJSTree, pythonCodeParsed.start_up);
-
-        addCommentsToEnd(indexJSTree, "This is my test comment\non a new line");
-
         //console.log(JSON.stringify(indexJSTree, null, 3));
 
         // compile the modified AST back into JS
@@ -259,46 +234,6 @@ An App.py file created in your project directory
         //console.error(e.name);
         process.exit(-1);
     }
-
-
-
-    /*
-    // first we need to call the python script and obtain the code
-    PythonShell.run('./Tools/ConvertAppToJS.py', null, async (err, results) =>{
-        try{
-            if (err) throw err;
-        }
-        catch (e){
-            console.log(`\n********************************************************
-Error transpilation of App.py, enure the syntax is correct
-Please ensure you have the following:
-Python (www.python.org)
-JavaScripthon (https://pypi.org/project/javascripthon/)
-If you have pip installed simply run : pip install javascripthon
-An App.py file created in your project directory
-*******************************************************\n`);
-
-            console.log(e.type);
-            process.exit(-1);
-        }
-        
-
-        console.log(results);
-        let pythonApp = results.join('');
-
-        // define all file variables
-        
-        
-
-        try{
-            
-        }
-        catch (e){
-            
-        }
-    });
-
-    */
     
 }
 

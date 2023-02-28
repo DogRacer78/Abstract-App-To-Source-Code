@@ -64,7 +64,8 @@ function addMultipleNodesToEnd(tree, nodes){
 
 /**
  * String of code to parse into an AST
- * @param {String} code 
+ * @param {String} codeString
+ * @returns AST of the supplied code string
  */
 function codeToAST(codeString){
     let code = acorn.parse(codeString, {ecmaVersion : 2022});

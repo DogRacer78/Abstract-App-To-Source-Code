@@ -1,6 +1,13 @@
 import { parse } from "node-html-parser";
 
 // function to parse the HTML from the WebFlow site and look for the fake-form attribute
+
+/**
+ * Parses the HTML provided and looks for fake-form="true" attributes,
+ * then manipulates the HTML as needed to stop webflow forms from posting
+ * @param {String} html String of HTML to parse
+ * @returns Manipulated HTML string
+ */
 function handleFakeForm(html){
     // parse using the node-parse lib
     let root = parse(html);

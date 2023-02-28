@@ -15,13 +15,17 @@ function parsePythonTree(tree){
         output : []
     };
 
+    // find comment nodes and manipulate
     manipulateComments(tree);
 
+    // find getValue nodes and manipulate
     manipulateGetValue(tree);
 
+    // find setOutput nodes and manipulate
     manipulateSetOutput(tree);
     
 
+    // look for events
     for (let i = 0; i < tree.body.length; i++){
         if (checkForStartUp(tree.body[i])){
             if (code.start_up.length !== 0)
@@ -45,6 +49,10 @@ function parsePythonTree(tree){
     return code;
 }
 
+/**
+ * Locates and manipulates the any getValue nodes found
+ * @param {object} tree Tree to manipulate
+ */
 function manipulateGetValue(tree){
     visit(tree, (node, parent, key) => {
         if (node.type === "CallExpression"){
@@ -83,7 +91,10 @@ function manipulateGetValue(tree){
     });
 }
 
-// function to visit all nodes in the tree and locate the comment nodes
+/**
+ * function to visit all nodes in the tree and locate the comment nodes
+ * @param {object} tree Tree to manipulate
+ */
 function manipulateComments(tree){
     console.log("GETTING COMMENTS");
     visit(tree, (node, parent, key) => {
@@ -115,6 +126,61 @@ function manipulateComments(tree){
     });
 }
 
+// *************************************** event methods ***************************************
+
+/**
+ * Checks if a function declaration relates to an event
+ * @param {object} node Node to check
+ * @returns An object containing the event and the id of the element or null if it is not an event
+ */
+function getEvent(node){
+    let eventArray = node.id.name.split("_");
+    console.log(eventArray);
+    // for now just add the strings as they are may need to add some validation to this
+    // TODO
+    let event = {funcName : node.id.name, eventType : eventArray[1], elementId : eventArray[2]};
+    return event;
+}
+
+/**
+ * Checks if a node is an event node
+ * @param {object} node Node to check
+ * @returns true if is an event, false otherwise
+ */
+function checkEvent(node){
+    let eventFormat = /^[^_]*_[^_]*_[^_]*$/;
+
+    if (node.type === "FunctionDeclaration"){
+        if (node.id.type === "Identifier"){
+            // test the function name using regex to see if it matches the event format
+            if (eventFormat.test(node.id.name)){
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Creates a node for the given event data
+ * @param {object} eventData Data for the event
+ * @returns The event node
+ */
+function constructEvent(eventData){
+    let eventStructure = `document.getElementById('${eventData.elementId}\').addEventListener('${eventData.eventType}', ${eventData.funcName})`;
+    console.log(eventStructure);
+    let AST = codeToAST(eventStructure);
+    return AST[0];
+}
+
+
+// *************************************** setOutput methods ***************************************
+
+/**
+ * Finds and manipulates all setOutput nodes
+ * @param {object} tree Tree to manipulate
+ */
 function manipulateSetOutput(tree){
     console.log("GETTING OUTPUT");
     visit(tree, (node, parent, key) =>{
@@ -131,43 +197,10 @@ function manipulateSetOutput(tree){
 }
 
 /**
- * Checks if a function declaration relates to an event
+ * Checks if a node is a setOutput node
  * @param {object} node Node to check
- * @returns An object containing the event and the id of the element or null if it is not an event
+ * @returns Object containing the data for a setOutput node or null if it not a node
  */
-function getEvent(node){
-    let eventArray = node.id.name.split("_");
-    console.log(eventArray);
-    // for now just add the strings as they are may need to add some validation to this
-    // TODO
-    let event = {funcName : node.id.name, eventType : eventArray[1], elementId : eventArray[2]};
-    return event;
-}
-
-function checkEvent(node){
-    let eventFormat = /^[^_]*_[^_]*_[^_]*$/;
-
-    if (node.type === "FunctionDeclaration"){
-        if (node.id.type === "Identifier"){
-            // test the function name using regex to see if it matches the event format
-            if (eventFormat.test(node.id.name)){
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
-
-function constructEvent(eventData){
-    let eventStructure = `document.getElementById('${eventData.elementId}\').addEventListener('${eventData.eventType}', ${eventData.funcName})`;
-    console.log(eventStructure);
-    let AST = codeToAST(eventStructure);
-    return AST[0];
-}
-
-// checks if a method call matches the form of setOutput_id
-// and then return an object that contains the data
 function checkSetOutput(node){
     let outPutData = null;
     let check = /^setOutput_[^_]*$/;
@@ -200,7 +233,11 @@ function checkSetOutput(node){
     return outPutData;
 }
 
-// function to construct the code needed for an output
+/**
+ * Creates a node for a setOutput node
+ * @param {object} outputData Data to construct the node from
+ * @returns A node created with the supplied data
+ */
 function constructSetOutput(outputData){
     let node = 
     {
