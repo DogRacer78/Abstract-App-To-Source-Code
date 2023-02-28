@@ -15,48 +15,12 @@ function parsePythonTree(tree){
         output : []
     };
 
-    getComments(tree, (node, parent, key) => {
-        if (node.type === "ExpressionStatement"){
-            if (node.expression.type === "CallExpression"){
-                if (node.expression.callee.type === "Identifier"){
-                    if (node.expression.callee.name === "__COMMENT__"){
-                        console.log("FOUND COMMENT");
-                        // get the call expression
-                        // get the list of args
-                        let args = node.expression.arguments;
-
-                        // if the list of args is not correct throw an error
-                        if (args.length !== 1){
-                            throw new Error("Invalid Syntax for a comment block\nPlease check it follows the format __COMMENT__(comment)")
-                        }
-                        else{
-                            if (args[0].type !== "Literal"){
-                                throw new Error("invalid Syntax for a comment block\nMust contain a single string with no string concatanations");
-                            }
-                            let comment = createComment(args[0].value);
-                            node.expression = comment.expression;
-                        }
-                        return;
-                    }
-                }
-            }
-        }
-    });
+    manipulateComments(tree);
 
     manipulateGetValue(tree);
 
-    console.log("GETTING OUTPUT");
-    visit(tree, (node, parent, key) =>{
-        let check = checkSetOutput(node);
-        if (check !== null){
-            console.log("IS AN OUTPUT");
-            let code = constructSetOutput(check);
-            console.log("CODE IS:");
-            console.log(code);
-            node.type = code.type;
-            node.expression = code.expression;
-        }
-    });
+    manipulateSetOutput(tree);
+    
 
     for (let i = 0; i < tree.body.length; i++){
         if (checkForStartUp(tree.body[i])){
@@ -120,9 +84,50 @@ function manipulateGetValue(tree){
 }
 
 // function to visit all nodes in the tree and locate the comment nodes
-function getComments(tree, callback){
+function manipulateComments(tree){
     console.log("GETTING COMMENTS");
-    visit(tree, callback);
+    visit(tree, (node, parent, key) => {
+        if (node.type === "ExpressionStatement"){
+            if (node.expression.type === "CallExpression"){
+                if (node.expression.callee.type === "Identifier"){
+                    if (node.expression.callee.name === "__COMMENT__"){
+                        console.log("FOUND COMMENT");
+                        // get the call expression
+                        // get the list of args
+                        let args = node.expression.arguments;
+
+                        // if the list of args is not correct throw an error
+                        if (args.length !== 1){
+                            throw new Error("Invalid Syntax for a comment block\nPlease check it follows the format __COMMENT__(comment)")
+                        }
+                        else{
+                            if (args[0].type !== "Literal"){
+                                throw new Error("invalid Syntax for a comment block\nMust contain a single string with no string concatanations");
+                            }
+                            let comment = createComment(args[0].value);
+                            node.expression = comment.expression;
+                        }
+                        return;
+                    }
+                }
+            }
+        }
+    });
+}
+
+function manipulateSetOutput(tree){
+    console.log("GETTING OUTPUT");
+    visit(tree, (node, parent, key) =>{
+        let check = checkSetOutput(node);
+        if (check !== null){
+            console.log("IS AN OUTPUT");
+            let code = constructSetOutput(check);
+            console.log("CODE IS:");
+            console.log(code);
+            node.type = code.type;
+            node.expression = code.expression;
+        }
+    });
 }
 
 /**
