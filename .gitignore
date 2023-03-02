@@ -108,3 +108,6 @@ dist
 
 # get webflow test file
 /getWebflow.js
+
+# App.py for testing
+/TestingApp.py
