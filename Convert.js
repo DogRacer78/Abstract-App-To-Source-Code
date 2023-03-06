@@ -32,10 +32,15 @@ function main(){
                 describe : "The URL to the web address of your published webflow site",
                 demandOption : true,
                 type : "string"
+            },
+            app_path : {
+                describe : "Direcroty of your python app",
+                demandOption : true,
+                type : "string"
             }
         },
         handler(argv){
-            createWebApp(argv.name, argv.html_address);
+            createWebApp(argv.name, argv.html_address, argv.app_path);
         }
     }).command({
         command : "gen-electron-app",
@@ -50,10 +55,15 @@ function main(){
                 describe : "The URL to the web address of your published webflow site",
                 demandOption : true,
                 type : "string"
+            },
+            app_path : {
+                describe : "Direcroty of your python app",
+                demandOption : true,
+                type : "string"
             }
         },
         handler(argv){
-            createElectronApp(argv.name, argv.html_address);
+            createElectronApp(argv.name, argv.html_address, argv.app_path);
         }
     }).parse();
 
@@ -68,8 +78,8 @@ function main(){
  * @param {String} name Name of the app
  * @param {String} htmlAddress URL of the webflow site
  */
-function createWebApp(name, htmlAddress){
-    createApp(name, htmlAddress).then((appData) =>{
+function createWebApp(name, htmlAddress, app_path){
+    createApp(name, htmlAddress, app_path).then((appData) =>{
         if (!fs.existsSync(`./${name}`)) {
             fs.mkdirSync(`./${name}`);
         }
@@ -88,10 +98,10 @@ function createWebApp(name, htmlAddress){
  * @param {String} name Name of the app
  * @param {String} htmlAddress URL of webflow site
  */
-function createElectronApp(name, htmlAddress){
+function createElectronApp(name, htmlAddress, app_path){
 
     // get the web app
-    createApp(name, htmlAddress).then((appData) => {
+    createApp(name, htmlAddress, app_path).then((appData) => {
         console.log(appData);
         if (!fs.existsSync(`./${name}`)) {
             fs.mkdirSync(`./${name}`);
@@ -140,7 +150,7 @@ function createElectronApp(name, htmlAddress){
  * @param {String} htmlAddress URL of webflow site
  * @returns {{indexJS : String, indexHTML : String}} Object with strings for the indexJS and indexHTML
  */
-async function createApp(projectName, htmlAddress){
+async function createApp(projectName, htmlAddress, appDir){
     let data = {};
 
     const runPythonFilePromise = util.promisify(PythonShell.run);
@@ -152,8 +162,13 @@ async function createApp(projectName, htmlAddress){
     let newIndexJS;
     let indexHTML;
 
+
+    let pythonOptions = 
+    {
+        args : [appDir]
+    };
     try{
-        pythonApp = await runPythonFilePromise('./Tools/ConvertAppToJS.py', null);
+        pythonApp = await runPythonFilePromise('./Tools/ConvertAppToJS.py', pythonOptions);
         console.log(pythonApp);
         pythonApp = pythonApp.join('');
     }
@@ -167,7 +182,6 @@ If you have pip installed simply run : pip install javascripthon
 An App.py file created in your project directory
 *******************************************************\n`);
 
-            console.log(e.type);
             process.exit(-1);
     }
 
@@ -204,13 +218,20 @@ An App.py file created in your project directory
         let res;
         try{
             res = await fetch(htmlAddress);
+            console.log(res);
             if (res.status === 200)
                 indexHTML = await res.text();
             else
                 throw new Error(`Couldn't load HTML from ${htmlAddress}, please check the address supplied`);
         }
         catch(e){
-            throw new Error(`Couldn't load HTML from ${htmlAddress}, please check the address supplied`);
+            // if it is not a valid address try and open the file
+            try{
+                indexHTML = fs.readFileSync(htmlAddress, "utf-8");
+            }
+            catch(fileErr){
+                throw new Error(`Couldn't load HTML from ${htmlAddress}, please check the address supplied is a valid URL or a valid file`);
+            }
         }
         
 
