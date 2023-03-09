@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import fs from "fs";
 import {toJs} from 'estree-util-to-js';
 import exec from "child_process";
@@ -11,6 +13,12 @@ import { handleFakeForm } from "./src/HTMLParser.js";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 import util from "util";
+import path from "path";
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+
+const __dirname = path.dirname(__filename);
 
 // the entry point of the program
 function main(){
@@ -167,8 +175,10 @@ async function createApp(projectName, htmlAddress, appDir){
     {
         args : [appDir]
     };
+    console.log(`Trying to load app from from ${appDir}`);
     try{
-        pythonApp = await runPythonFilePromise('./Tools/ConvertAppToJS.py', pythonOptions);
+        console.log(path.join(__dirname, "/Tools/ConvertAppToJS.py"));
+        pythonApp = await runPythonFilePromise(path.join(__dirname, "/Tools/ConvertAppToJS.py"), pythonOptions);
         console.log(pythonApp);
         pythonApp = pythonApp.join('');
     }
@@ -181,13 +191,13 @@ JavaScripthon (https://pypi.org/project/javascripthon/)
 If you have pip installed simply run : pip install javascripthon
 An App.py file created in your project directory
 *******************************************************\n`);
-
+            console.log(e);
             process.exit(-1);
     }
 
     try{
         // load the electron main.js template
-        indexJSTree = JSON.parse(fs.readFileSync("./templates/blank.json", "utf-8"));
+        indexJSTree = JSON.parse(fs.readFileSync(path.join(__dirname, "./templates/blank.json"), "utf-8"));
 
         // create the AST of the python code
         pythonAppTree = acorn.parse(pythonApp, {ecmaVersion : 2022});

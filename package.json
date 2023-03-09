@@ -6,11 +6,23 @@
     "python-shell": "^3.0.1",
     "yargs": "^17.7.1"
   },
+  "main": "Convert.js",
+  "description": "A tool to convert from the abstract-app framework to many different frameworks with just one version",
+  "name": "abstract-app",
+  "version": "1.0.0",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DogRacer78/Abstract-App-To-Source-Code"
+  },
+  "homepage": "https://github.com/DogRacer78/Abstract-App-To-Source-Code",
   "scripts": {
     "start": "Convert.js"
   },
   "devDependencies": {
     "@babel/core": "^7.20.12"
+  },
+  "bin": {
+    "abstract-app": "./Convert.js"
   }
 }
