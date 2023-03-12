@@ -72,4 +72,18 @@ function codeToAST(codeString){
     return code.body;
 }
 
-export {visit, addNodeToEnd, addMultipleNodesToEnd, codeToAST};
+/**
+ * Adds a node to specified index
+ * @param {Object} tree Tree to insert into
+ * @param {number} index Index to insert into
+ * @param {Object} node Data to add to the array
+ */
+function insertAtIndex(tree, index, node){
+    if (index < 0 || index >= tree.body.length){
+        return;
+    }
+
+    tree.body.splice(index, 0, node);
+}
+
+export {visit, addNodeToEnd, addMultipleNodesToEnd, codeToAST, insertAtIndex};

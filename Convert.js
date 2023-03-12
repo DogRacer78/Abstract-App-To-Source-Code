@@ -15,6 +15,7 @@ import { hideBin } from "yargs/helpers";
 import util from "util";
 import path from "path";
 import { fileURLToPath } from 'url';
+import { parseElectronDBTree } from "./src/ParseDatabase.js";
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -93,8 +94,10 @@ function createWebApp(name, htmlAddress, app_path){
         }
 
         process.chdir(`./${name}`);
+
+        let indexJSCode = toJs(appData.indexJS);
         
-        fs.writeFileSync("./index.js", appData.indexJS);
+        fs.writeFileSync("./index.js", indexJSCode.value);
         fs.writeFileSync("./index.html", appData.indexHTML);
 
     });
@@ -110,21 +113,28 @@ function createElectronApp(name, htmlAddress, app_path){
 
     // get the web app
     createApp(name, htmlAddress, app_path).then((appData) => {
-        console.log(appData);
+        // deal with database code
+
+        // load the main.js template
+        let mainJSTree = JSON.parse(fs.readFileSync(path.join(__dirname, "/templates/mainJS.json"), "utf-8"));
+        parseElectronDBTree(appData.indexJS, mainJSTree);
+
+        let mainJSCode = toJs(mainJSTree);
+        
+
+        console.log(appData.indexJS[0]);
         if (!fs.existsSync(`./${name}`)) {
             fs.mkdirSync(`./${name}`);
         }
 
-        // load the main.js template
-        let mainJSTree = JSON.parse(fs.readFileSync("./templates/mainJS.json", "utf-8"));
-        let mainJSCode = toJs(mainJSTree);
+        
     
         process.chdir(`./${name}`);
 
         console.log(process.cwd());
         
         console.log("Getting electron");
-        exec.exec("npm init -y && npm install electron --save-dev", (error, stdout, stderr) => {
+        exec.exec("npm init -y && npm install electron --save-dev && npm install mongodb", (error, stdout, stderr) => {
             if (error) {
                 console.log(`error: ${error.message}`);
                 return;
@@ -140,9 +150,11 @@ function createElectronApp(name, htmlAddress, app_path){
             console.log(packageJSON)
             packageJSON.scripts.start = "electron .";
             packageJSON.main = "main.js";
+
+            let indexJSCode = toJs(appData.indexJS);
     
             // write the files
-            fs.writeFileSync("./index.js", appData.indexJS);
+            fs.writeFileSync("./index.js", indexJSCode.value);
             fs.writeFileSync("./index.html", appData.indexHTML);
             fs.writeFileSync("./main.js", mainJSCode.value);
             fs.writeFileSync("./package.json", JSON.stringify(packageJSON, null, 4));
@@ -221,7 +233,7 @@ An App.py file created in your project directory
         //console.log(JSON.stringify(indexJSTree, null, 3));
 
         // compile the modified AST back into JS
-        newIndexJS = toJs(indexJSTree);
+        //newIndexJS = toJs(indexJSTree);
         // write back out to the index.js file
 
         // tries to get the html
@@ -249,7 +261,7 @@ An App.py file created in your project directory
         //parse the HTML
         indexHTML = handleFakeForm(indexHTML);
 
-        data.indexJS = newIndexJS.value;
+        data.indexJS = indexJSTree;
         data.indexHTML = indexHTML;
         
         return data;
