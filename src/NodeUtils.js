@@ -1,4 +1,5 @@
 import * as acorn from "acorn";
+import { toJs } from "estree-util-to-js";
 
 /**
  * Traverses through an AST using a depth first search, vising all nodes
@@ -72,6 +73,11 @@ function codeToAST(codeString){
     return code.body;
 }
 
+function ASTToCode(AST){
+    let codeString = toJs(AST);
+    return codeString.value;
+}
+
 /**
  * Adds a node to specified index
  * @param {Object} tree Tree to insert into
@@ -86,4 +92,4 @@ function insertAtIndex(tree, index, node){
     tree.body.splice(index, 0, node);
 }
 
-export {visit, addNodeToEnd, addMultipleNodesToEnd, codeToAST, insertAtIndex};
+export {visit, addNodeToEnd, addMultipleNodesToEnd, codeToAST, insertAtIndex, ASTToCode};
