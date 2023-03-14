@@ -160,7 +160,7 @@ function addipcLoadData(backendJS, loadDataObj, node){
     }
 
     addNodeToEnd(backendJS, codeToAST(backendIPC)[0]);
-    //eventID++;
+    eventID++;
 }
 
 export {parseElectronDBTree};
