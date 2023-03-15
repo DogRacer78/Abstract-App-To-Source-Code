@@ -8,7 +8,7 @@
   },
   "main": "Convert.js",
   "description": "A tool to convert from the abstract-app framework to many different frameworks with just one version",
-  "name": "abstract-app",
+  "name": "abstract-app-to-source",
   "version": "1.0.0",
   "type": "module",
   "repository": {
