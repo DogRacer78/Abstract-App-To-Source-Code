@@ -36,7 +36,9 @@ Some events are special and cannot be added to elements below is a list of teste
 
 ## Getting data
 To get data from any element that supports the .value attribute can be seen below
-<pre>getValue_id-of-element()</pre>
+```python
+getValue_id-of-element()
+```
 Again here the **_** is **required** for the call to work. This function can be thought of as a call to a function, with its return value the value in the element it is binded to.
 
 ## Outputting data
@@ -44,12 +46,33 @@ Data can simply be output to a div element
 <br>
 <pre>setOutput_id-of-element(data)</pre>
 
-
 ## Comments
 When generating code some comments will be added automatically. To add a comment manually use the syntax below:
 <pre>__COMMENT__("This is my comment")</pre>
 Note that these can not be used like normal comments, they can only be placed in places that a method call could be placed.
 At this point in time they only support constant strings to be used as an argument, this means any other data types must be cast to string before being passed as a comment and string conatenations do not work either, strings must be formed in whole before being passed to a comment.
+
+# MongoDB Integration
+The tool supports the integration of MongoDB. There is some limitations to how it works.
+
+## Connect to a Database
+To connect to a database simply put the following anywhere in the python App:
+```python
+connectDB("address to database", "db name")
+```
+This means the app will attempt to connect to the database with the given address and name.
+
+## Load Data
+To load data from the database simply use the following:
+```
+dbLoadData("collection name", searchDict)
+```
+This method will return an array with data found using the searchDict. The search dictionary in python must be as follows:
+```python
+{ "title" : "Money" }
+```
+This is not an enforcement but it is best practice to do so, as attribute names that are not strings may cause unexpected behaviour.
+
 
 # Using the Tool
 To compile your python and webflow you have the following commands available:

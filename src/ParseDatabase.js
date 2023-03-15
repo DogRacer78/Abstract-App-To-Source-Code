@@ -47,6 +47,15 @@ function parseElectronDBTree(frontendJS, backendJS){
             addipcLoadData(backendJS, loadDataNode, node);
         }
     });
+
+    // handle insert data nodes
+    visit(frontendJS, (node, parent, key) =>{
+        let insertDataNode = checkInsertDataNode(node);
+        if (insertDataNode !== null){
+            console.log("Found an insert data node");
+            addIpcInsertData(backendJS, insertDataNode, node);
+        }
+    });
 }
 
 function addMongoDBImport(backEnd){
@@ -137,6 +146,36 @@ function checkLoadDataNode(node){
     return null;
 }
 
+
+// checks for a node that inserts data
+function checkInsertDataNode(node){
+    // used to insert into the database dbInsertData("collection name", {dataname : data})
+    console.log("Looking for a load data node");
+
+    if (node.type === "CallExpression"){
+        if (node.callee.type === "Identifier"){
+            if (node.callee.name === "dbInsertData"){
+                // check if the node contains one arg of type string
+                let args = node.arguments;
+                if (args.length !== 2 || args[0].type !== "Literal" || typeof args[0].value !== "string" 
+                    || args[1].type !== "ObjectExpression"){
+                    throw new Error(`InsertData must have format dbInsertData("collection name", {dataname : data})`);
+                }
+                let insertDataString = ASTToCode(args[1]);
+                console.log(`Collection name: ${args[0].value}, data: ${insertDataString}`);
+                // create object with connection data
+                return { 
+                    collectionName : args[0].value,
+                    insertData : insertDataString
+                };
+            }
+        }
+    }
+    return null;
+}
+
+
+
 // creates the correct code for a load data between the front and backend
 function addipcLoadData(backendJS, loadDataObj, node){
     // backend ipc event listener
@@ -162,5 +201,41 @@ function addipcLoadData(backendJS, loadDataObj, node){
     addNodeToEnd(backendJS, codeToAST(backendIPC)[0]);
     eventID++;
 }
+
+// creates the necessary code for ipc communication for inserting data
+function addIpcInsertData(backendJS, insertDataObj, node){
+    // backend ipc data
+    let backendIPC = `ipcMain.on('${eventID}', async function(event, insertData){
+        let result;
+
+        try{
+            await database.collection('${insertDataObj.collectionName}').insertOne(insertData);
+            result = "Success";
+        }
+        catch(e){
+            result = "Error";
+        }
+    
+        event.returnValue = result;
+    });`;
+
+    let frontEndIpc = `ipc.sendSync('${eventID}', ${insertDataObj.insertData});`;
+    let frontEndAST = codeToAST(frontEndIpc);
+
+    delete node.callee;
+    delete node.arguments;
+    delete node.optional;
+
+    const keys = Object.keys(frontEndAST[0].expression);
+    console.log(keys);
+    for (let i = 0; i < keys.length; i++){
+        node[keys[i]] = frontEndAST[0].expression[keys[i]];
+    }
+
+    // add the ipc code to the backend
+    addNodeToEnd(backendJS, codeToAST(backendIPC)[0]);
+    eventID++;
+}
+
 
 export {parseElectronDBTree};
