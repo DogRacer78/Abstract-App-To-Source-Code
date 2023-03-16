@@ -56,6 +56,15 @@ function parseElectronDBTree(frontendJS, backendJS){
             addIpcInsertData(backendJS, insertDataNode, node);
         }
     });
+
+    // handle update data nodes
+    visit(frontendJS, (node, parent, key) => {
+        let updateDataNode = checkUpdateNode(node);
+        if (updateDataNode !== null){
+            console.log("Found an update data node");
+            addIpcUpdateData(backendJS, updateDataNode, node);
+        }
+    });
 }
 
 function addMongoDBImport(backEnd){
@@ -174,6 +183,33 @@ function checkInsertDataNode(node){
     return null;
 }
 
+// checks if an update node is prsent
+function checkUpdateNode(node){
+    if (node.type === "CallExpression"){
+        if (node.callee.type === "Identifier"){
+            if (node.callee.name === "dbUpdateData"){
+                // check if the node contains one arg of type string
+                let args = node.arguments;
+                if (args.length !== 3 || args[0].type !== "Literal" || typeof args[0].value !== "string" 
+                    || args[1].type !== "ObjectExpression" || args[2].type !== "ObjectExpression"){
+                    throw new Error(`dbUpdateData must follow pattern dbUpdateData("collection name", {filter}, {data})`);
+                }
+                let filterCode = ASTToCode(args[1]);
+                let updateDataCode = ASTToCode(args[2]);
+
+                console.log(`filter : ${filterCode}, update : ${updateDataCode}`);
+                // create object with connection data
+                return { 
+                    collectionName : args[0].value,
+                    filterData : filterCode,
+                    updateData : updateDataCode
+                };
+            }
+        }
+    }
+    return null;
+}
+
 
 
 // creates the correct code for a load data between the front and backend
@@ -234,6 +270,48 @@ function addIpcInsertData(backendJS, insertDataObj, node){
 
     // add the ipc code to the backend
     addNodeToEnd(backendJS, codeToAST(backendIPC)[0]);
+    eventID++;
+}
+
+function addIpcUpdateData(backendJS, updateData, node){
+    let backEndCode = `ipcMain.on('${eventID}', async function(event, filter, updateData){
+        let result;
+
+        try{
+            await database.collection('${updateData.collectionName}').updateOne(
+                filter, 
+                {$set : updateData}, 
+                { upsert : false }
+            );
+            result = "Success";
+        }
+        catch(e){
+            result = "Error";
+        }
+    
+        event.returnValue = result;
+    });`
+
+    let frontEndCode = `ipc.sendSync('${eventID}', ${updateData.filterData}, ${updateData.updateData});`
+
+    let backEndAST = codeToAST(backEndCode);
+    console.log("CREATED BACKEND");
+
+    let frontEndAST = codeToAST(frontEndCode);
+    console.log("CREATED FRONTEND");
+
+    delete node.callee;
+    delete node.arguments;
+    delete node.optional;
+
+    const keys = Object.keys(frontEndAST[0].expression);
+    console.log(keys);
+    for (let i = 0; i < keys.length; i++){
+        node[keys[i]] = frontEndAST[0].expression[keys[i]];
+    }
+
+    // add the ipc code to the backend
+    addNodeToEnd(backendJS, backEndAST[0]);
     eventID++;
 }
 
