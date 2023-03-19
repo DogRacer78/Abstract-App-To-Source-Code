@@ -88,9 +88,25 @@ const ipc = electron.ipcRenderer;`;
 function addClientElectron(tree, connString, dbName){
     let connectionCode = `let database;
 (async () =>{
-    const client = new MongoClient('${connString}');
-    const conn = await client.connect();
-    database = conn.db('${dbName}');
+    try{
+        const client = new MongoClient('${connString}', { serverSelectionTimeoutMS : 2000 });
+        const conn = await client.connect();
+        database = conn.db('${dbName}');
+        console.log("Connected to DB");
+    }
+    catch(e){
+        if (e.name === "MongoServerSelectionError"){
+          console.log("Could not connect to mongoDB, database operations will not function");
+        }
+        else{
+          throw e;
+        }
+    }
+    finally{
+        app.whenReady().then(() => {
+          createWindow();
+        });
+    }
 })();`
 
     let code = codeToAST(connectionCode);
@@ -210,15 +226,57 @@ function checkUpdateNode(node){
     return null;
 }
 
+// checks if a node is of type delete
+function checkDeleteNode(node){
+    if (node.type === "CallExpression"){
+        if (node.callee.type === "Identifier"){
+            if (node.callee.name === "dbDelete"){
+                // check if the node contains one arg of type string
+                let args = node.arguments;
+                if (args.length !== 3 || args[0].type !== "Literal" || typeof args[0].value !== "string" 
+                    || args[1].type !== "ObjectExpression" || args[2].type !== "ObjectExpression"){
+                    throw new Error(`dbUpdateData must follow pattern dbUpdateData("collection name", {filter}, {data})`);
+                }
+                let filterCode = ASTToCode(args[1]);
+                let updateDataCode = ASTToCode(args[2]);
+
+                console.log(`filter : ${filterCode}, update : ${updateDataCode}`);
+                // create object with connection data
+                return { 
+                    collectionName : args[0].value,
+                    filterData : filterCode,
+                    updateData : updateDataCode
+                };
+            }
+        }
+    }
+    return null;
+}
+
 
 
 // creates the correct code for a load data between the front and backend
 function addipcLoadData(backendJS, loadDataObj, node){
     // backend ipc event listener
     let backendIPC = `ipcMain.on('${eventID}', async function(event, searchData){
-    let dataOut = await database.collection('${loadDataObj.collectionName}').find(searchData).toArray();
+        let dataOut;
+    try{
+        dataOut = await database.collection('${loadDataObj.collectionName}').find(searchData).toArray();
+        dataOut = JSON.stringify(dataOut);
+    }
+    catch(e){
+        if (e.name === "UnhandledPromiseRejectionWarning" || e.name === "TypeError"){
+            dataOut = null;
+        }
+        else{
+            throw e;
+        }
+    }
+    finally{
+        event.returnValue = dataOut;
+    }
 
-    event.returnValue = JSON.stringify(dataOut);
+    
 });`;
 
     let frontEndCode = `JSON.parse(ipc.sendSync('${eventID}', ${loadDataObj.searchDict}))`
@@ -249,10 +307,16 @@ function addIpcInsertData(backendJS, insertDataObj, node){
             result = "Success";
         }
         catch(e){
-            result = "Error";
+            if (e.name === "UnhandledPromiseRejectionWarning" || e.name === "TypeError"){
+                result = null;
+            }
+            else{
+                throw e;
+            }
         }
-    
-        event.returnValue = result;
+        finally{
+            event.returnValue = result;
+        }
     });`;
 
     let frontEndIpc = `ipc.sendSync('${eventID}', ${insertDataObj.insertData});`;
@@ -286,10 +350,16 @@ function addIpcUpdateData(backendJS, updateData, node){
             result = "Success";
         }
         catch(e){
-            result = "Error";
+            if (e.name === "UnhandledPromiseRejectionWarning" || e.name === "TypeError"){
+                result = null;
+            }
+            else{
+                throw e;
+            }
         }
-    
-        event.returnValue = result;
+        finally{
+            event.returnValue = result;
+        }
     });`
 
     let frontEndCode = `ipc.sendSync('${eventID}', ${updateData.filterData}, ${updateData.updateData});`
