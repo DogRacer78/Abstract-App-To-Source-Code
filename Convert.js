@@ -23,10 +23,6 @@ const __dirname = path.dirname(__filename);
 
 // the entry point of the program
 function main(){
-    //let nameProject = argv.name;
-    //let typeAppToCreate = argv.type;
-    //let webflowAddress = argv.html;
-
     // create the yargs options
     yargs(hideBin(process.argv)).command({
         command : "gen-web-app",
@@ -110,6 +106,7 @@ function createWebApp(name, htmlAddress, app_path){
  * @param {String} htmlAddress URL of webflow site
  */
 function createElectronApp(name, htmlAddress, app_path){
+    console.log("Creating electron app");
 
     // get the web app
     createApp(name, htmlAddress, app_path).then((appData) => {
