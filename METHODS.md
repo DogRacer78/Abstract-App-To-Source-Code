@@ -90,3 +90,5 @@ To compile a web app run:<br>
 <br>
 To compile to an electron app run:<br>
 <kbd>node ./Convert.js gen-electron-app --name="name of app" --html_address="Address of your published webflow site"</kbd>
+
+This is a cool change I made in linux
