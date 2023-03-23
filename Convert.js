@@ -131,7 +131,7 @@ function createElectronApp(name, htmlAddress, app_path){
         console.log(process.cwd());
         
         console.log("Getting electron");
-        exec.exec("npm init -y && npm install electron --save-dev && npm install mongodb", (error, stdout, stderr) => {
+        exec.exec("npm init -y && npm install electron --save-dev && npm install mongodb && npm install socket.io-client", (error, stdout, stderr) => {
             if (error) {
                 console.log(`error: ${error.message}`);
                 return;

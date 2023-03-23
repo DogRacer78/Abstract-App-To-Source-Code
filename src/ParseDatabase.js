@@ -14,12 +14,13 @@ let eventID = 1;
  */
 function parseElectronDBTree(frontendJS, backendJS){
     // add the mongodb import
-    addMongoDBImport(backendJS);
+    //addMongoDBImport(backendJS);
 
     // add the fron end electron and ipc imports
     addElectronImport(frontendJS);
 
     // handles connection nodes
+    /*
     visit(frontendJS, (node, parent, key) =>{
         let connectionData = checkConnectNode(node);
         if (connectionData !== null){
@@ -34,9 +35,11 @@ function parseElectronDBTree(frontendJS, backendJS){
 
         }
     });
+    */
 
     // comments for ipc Communication
-    addCommentsToEnd(backendJS, "\nIPC for communicating with front end\n");
+    addCommentsToEnd(backendJS, "\n\n\nIPC for communicating with front end\n\n");
+    addCommentsToEnd(backendJS, "\n\nUpdate Nodes\n\n");
 
     // handle load data nodes
     visit(frontendJS, (node, parent, key) => {
@@ -47,6 +50,8 @@ function parseElectronDBTree(frontendJS, backendJS){
             addipcLoadData(backendJS, loadDataNode, node);
         }
     });
+
+    addCommentsToEnd(backendJS, "\n\nInsert Nodes\n\n");
 
     // handle insert data nodes
     visit(frontendJS, (node, parent, key) =>{
@@ -194,15 +199,17 @@ function checkInsertDataNode(node){
             if (node.callee.name === "dbInsertData"){
                 // check if the node contains one arg of type string
                 let args = node.arguments;
-                if (args.length !== 2 || args[0].type !== "Literal" || typeof args[0].value !== "string" 
-                    || args[1].type !== "ObjectExpression"){
-                    throw new Error(`InsertData must have format dbInsertData("collection name", {dataname : data})`);
+                if (args.length !== 3 || args[0].type !== "Literal" || typeof args[0].value !== "string" ||
+                    args[1].type !== "Literal" || typeof args[1].value !== "string"
+                    || args[2].type !== "ObjectExpression"){
+                    throw new Error(`InsertData must have format dbInsertData("DB Name", "collection name", {dataname : data})`);
                 }
-                let insertDataString = ASTToCode(args[1]);
+                let insertDataString = ASTToCode(args[2]);
                 console.log(`Collection name: ${args[0].value}, data: ${insertDataString}`);
                 // create object with connection data
                 return { 
-                    collectionName : args[0].value,
+                    dbName : args[0].value,
+                    collectionName : args[1].value,
                     insertData : insertDataString
                 };
             }
@@ -218,17 +225,19 @@ function checkUpdateNode(node){
             if (node.callee.name === "dbUpdateData"){
                 // check if the node contains one arg of type string
                 let args = node.arguments;
-                if (args.length !== 3 || args[0].type !== "Literal" || typeof args[0].value !== "string" 
-                    || args[1].type !== "ObjectExpression" || args[2].type !== "ObjectExpression"){
+                if (args.length !== 4 || args[0].type !== "Literal" || typeof args[0].value !== "string" ||
+                    args[1].type !== "Literal" || typeof args[1].value !== "string" 
+                    || args[2].type !== "ObjectExpression" || args[3].type !== "ObjectExpression"){
                     throw new Error(`dbUpdateData must follow pattern dbUpdateData("collection name", {filter}, {data})`);
                 }
-                let filterCode = ASTToCode(args[1]);
-                let updateDataCode = ASTToCode(args[2]);
+                let filterCode = ASTToCode(args[2]);
+                let updateDataCode = ASTToCode(args[3]);
 
                 console.log(`filter : ${filterCode}, update : ${updateDataCode}`);
                 // create object with connection data
                 return { 
-                    collectionName : args[0].value,
+                    dbName : args[0].value,
+                    collectionName : args[1].value,
                     filterData : filterCode,
                     updateData : updateDataCode
                 };
@@ -245,16 +254,18 @@ function checkDeleteNode(node){
             if (node.callee.name === "dbDeleteData"){
                 // check if the node contains two args of type string and ObjectExpression
                 let args = node.arguments;
-                if (args.length !== 2 || args[0].type !== "Literal" || typeof args[0].value !== "string" 
-                    || args[1].type !== "ObjectExpression"){
+                if (args.length !== 3 || args[0].type !== "Literal" || typeof args[0].value !== "string" ||
+                    args[1].type !== "Literal" || typeof args[1].value !== "string" 
+                    || args[2].type !== "ObjectExpression"){
                     throw new Error(`dbDeleteData must follow pattern dbDeletData("collection name", { delete filter })`);
                 }
-                let deleteFilterData = ASTToCode(args[1]);
+                let deleteFilterData = ASTToCode(args[2]);
 
                 console.log(`Delete Filter : ${deleteFilterData}`);
                 // create object with connection data
                 return { 
-                    collectionName : args[0].value,
+                    dbName : args[0].value,
+                    collectionName : args[1].value,
                     filterData : deleteFilterData
                 };
             }
@@ -309,11 +320,11 @@ function addipcLoadData(backendJS, loadDataObj, node){
 // creates the necessary code for ipc communication for inserting data
 function addIpcInsertData(backendJS, insertDataObj, node){
     // backend ipc data
-    let backendIPC = `ipcMain.on('${eventID}', async function(event, insertData){
+    let backendIPC = `ipcMain.on('${eventID}', async function(event, dbName, collName, dataForInsert){
         let result;
 
         try{
-            await database.collection('${insertDataObj.collectionName}').insertOne(insertData);
+            insertData(new BufferData(dbName, collName, dataForInsert, DataType.insert));
             result = "Success";
         }
         catch(e){
@@ -329,7 +340,7 @@ function addIpcInsertData(backendJS, insertDataObj, node){
         }
     });`;
 
-    let frontEndIpc = `ipc.sendSync('${eventID}', ${insertDataObj.insertData});`;
+    let frontEndIpc = `ipc.sendSync('${eventID}', '${insertDataObj.dbName}', '${insertDataObj.collectionName}', ${insertDataObj.insertData});`;
     let frontEndAST = codeToAST(frontEndIpc);
 
     delete node.callee;
@@ -348,16 +359,12 @@ function addIpcInsertData(backendJS, insertDataObj, node){
 }
 
 function addIpcUpdateData(backendJS, updateData, node){
-    let backEndCode = `ipcMain.on('${eventID}', async function(event, filter, updateData){
+    let backEndCode = `ipcMain.on('${eventID}', async function(event, dbName, collName, filter, dataForUpdate){
         let result;
 
         try{
-            let out = await database.collection('${updateData.collectionName}').updateOne(
-                filter, 
-                {$set : updateData}, 
-                { upsert : false }
-            );
-            result = out.modifiedCount;
+            updateData(new BufferData(dbName, collName, {'filter' : filter, 'updateData' : dataForUpdate}, DataType.update));
+            result = "Success";
         }
         catch(e){
             if (e.name === "UnhandledPromiseRejectionWarning" || e.name === "TypeError"){
@@ -372,7 +379,7 @@ function addIpcUpdateData(backendJS, updateData, node){
         }
     });`;
 
-    let frontEndCode = `ipc.sendSync('${eventID}', ${updateData.filterData}, ${updateData.updateData});`
+    let frontEndCode = `ipc.sendSync('${eventID}', '${updateData.dbName}', '${updateData.collectionName}', ${updateData.filterData}, ${updateData.updateData});`
 
     let backEndAST = codeToAST(backEndCode);
     console.log("CREATED BACKEND");
@@ -397,11 +404,11 @@ function addIpcUpdateData(backendJS, updateData, node){
 
 // adds the relvant ipc code for the delete node
 function addIpcDeleteData(backendJS, deleteNode, node){
-    let backEndCode = `ipcMain.on('${eventID}', async function(event, filter){
+    let backEndCode = `ipcMain.on('${eventID}', async function(event, dbName, collName, filter){
         let result;
         try{
-            let out = await database.collection('${deleteNode.collectionName}').deleteOne(filter);
-            result = out.deletedCount;
+            deleteData(new BufferData(dbName, collName, filter, DataType.delete));
+            result = "Success";
         }
         catch(e){
             if (e.name === "UnhandledPromiseRejectionWarning" || e.name === "TypeError"){
@@ -416,7 +423,7 @@ function addIpcDeleteData(backendJS, deleteNode, node){
         }
     });`;
 
-    let frontEndCode = `ipc.sendSync('${eventID}', ${deleteNode.filterData});`;
+    let frontEndCode = `ipc.sendSync('${eventID}', '${deleteNode.dbName}', '${deleteNode.collectionName}', ${deleteNode.filterData});`;
 
     // turn the code into ASTs
     let backEndAST = codeToAST(backEndCode);
