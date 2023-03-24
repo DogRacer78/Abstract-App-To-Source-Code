@@ -81,6 +81,23 @@ function parseElectronDBTree(frontendJS, backendJS){
             addIpcDeleteData(backendJS, deleteDataNode, node);
         }
     });
+
+    let updateChangeFound = false;
+    // loop through the front end JS and check for on update, delete and insert
+    for (let i = 0; i < frontendJS.body.length; i++){
+        if (checkOnUpdateNode(frontendJS.body[i])){
+            if (!updateChangeFound){
+                console.log("Found a update node");
+                updateChangeFound = true;
+                // make the changes
+                manipulateUpdateChange(frontendJS, backendJS);
+            }
+            else{
+                throw new Error("Can only contain one updateChangeMethod")
+            }
+            
+        }
+    }
     
 }
 
@@ -177,11 +194,16 @@ function checkLoadDataNode(node){
                 console.log("Found a load data node");
                 // get the args, should be 2
                 let args = node.arguments;
-                if (args.length !== 2 || args[0].type !== "Literal" || typeof args[0].value !== "string"){
-                    throw new Error(`DBLoadData must follow pattern DBLoadData("collection name", dict)`);
+                if (args.length !== 3 || args[0].type !== "Literal" || typeof args[0].value !== "string" ||
+                    args[1].type !== "Literal" || typeof args[1].value !== "string"){
+                    throw new Error(`DBLoadData must follow pattern dbLoadData("DB Name", "collection name", dict)`);
                 }
                 // split the data as needed
-                return { collectionName : args[0].value, searchDict : ASTToCode(args[1]) };
+                return { 
+                    dbName : args[0].value,
+                    collectionName : args[1].value, 
+                    searchDict : ASTToCode(args[2]) 
+                };
             }
         }
     }
@@ -274,33 +296,31 @@ function checkDeleteNode(node){
     return null;
 }
 
+function checkOnUpdateNode(node){
+    if (node.type === "FunctionDeclaration"){
+        if (node.id.type === "Identifier"){
+            if (node.id.name === "updateChange"){
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 
 
 // creates the correct code for a load data between the front and backend
 function addipcLoadData(backendJS, loadDataObj, node){
     // backend ipc event listener
-    let backendIPC = `ipcMain.on('${eventID}', async function(event, searchData){
-        let dataOut;
-    try{
-        dataOut = await database.collection('${loadDataObj.collectionName}').find(searchData).toArray();
-        dataOut = JSON.stringify(dataOut);
-    }
-    catch(e){
-        if (e.name === "UnhandledPromiseRejectionWarning" || e.name === "TypeError"){
-            dataOut = null;
-        }
-        else{
-            throw e;
-        }
-    }
-    finally{
-        event.returnValue = dataOut;
-    }
-
-    
+    let backendIPC = `ipcMain.on('${eventID}', async function(event, dbName, collName, searchData){
+    let res = await readData(new BufferData(dbName, collName, searchData, DataType.read));
+    if (res === false)
+        event.returnValue = null;
+    else
+        event.returnValue = JSON.stringify(res);
 });`;
 
-    let frontEndCode = `JSON.parse(ipc.sendSync('${eventID}', ${loadDataObj.searchDict}))`
+    let frontEndCode = `JSON.parse(ipc.sendSync('${eventID}', '${loadDataObj.dbName}', '${loadDataObj.collectionName}', ${loadDataObj.searchDict}))`;
     let frontEndAST = codeToAST(frontEndCode);
 
     delete node.callee;
@@ -321,23 +341,8 @@ function addipcLoadData(backendJS, loadDataObj, node){
 function addIpcInsertData(backendJS, insertDataObj, node){
     // backend ipc data
     let backendIPC = `ipcMain.on('${eventID}', async function(event, dbName, collName, dataForInsert){
-        let result;
-
-        try{
-            insertData(new BufferData(dbName, collName, dataForInsert, DataType.insert));
-            result = "Success";
-        }
-        catch(e){
-            if (e.name === "UnhandledPromiseRejectionWarning" || e.name === "TypeError"){
-                result = null;
-            }
-            else{
-                throw e;
-            }
-        }
-        finally{
-            event.returnValue = result;
-        }
+        let res = insertData(new BufferData(dbName, collName, dataForInsert, DataType.insert));
+        event.returnValue = res;
     });`;
 
     let frontEndIpc = `ipc.sendSync('${eventID}', '${insertDataObj.dbName}', '${insertDataObj.collectionName}', ${insertDataObj.insertData});`;
@@ -360,23 +365,8 @@ function addIpcInsertData(backendJS, insertDataObj, node){
 
 function addIpcUpdateData(backendJS, updateData, node){
     let backEndCode = `ipcMain.on('${eventID}', async function(event, dbName, collName, filter, dataForUpdate){
-        let result;
-
-        try{
-            updateData(new BufferData(dbName, collName, {'filter' : filter, 'updateData' : dataForUpdate}, DataType.update));
-            result = "Success";
-        }
-        catch(e){
-            if (e.name === "UnhandledPromiseRejectionWarning" || e.name === "TypeError"){
-                result = null;
-            }
-            else{
-                throw e;
-            }
-        }
-        finally{
-            event.returnValue = result;
-        }
+        let res = updateData(new BufferData(dbName, collName, {'filter' : filter, 'updateData' : dataForUpdate}, DataType.update));
+        event.returnValue = res;
     });`;
 
     let frontEndCode = `ipc.sendSync('${eventID}', '${updateData.dbName}', '${updateData.collectionName}', ${updateData.filterData}, ${updateData.updateData});`
@@ -405,22 +395,8 @@ function addIpcUpdateData(backendJS, updateData, node){
 // adds the relvant ipc code for the delete node
 function addIpcDeleteData(backendJS, deleteNode, node){
     let backEndCode = `ipcMain.on('${eventID}', async function(event, dbName, collName, filter){
-        let result;
-        try{
-            deleteData(new BufferData(dbName, collName, filter, DataType.delete));
-            result = "Success";
-        }
-        catch(e){
-            if (e.name === "UnhandledPromiseRejectionWarning" || e.name === "TypeError"){
-                result = null;
-            }
-            else{
-                throw e;
-            }
-        }
-        finally{
-            event.returnValue = result;
-        }
+        let res = deleteData(new BufferData(dbName, collName, filter, DataType.delete));
+        event.returnValue = res;
     });`;
 
     let frontEndCode = `ipc.sendSync('${eventID}', '${deleteNode.dbName}', '${deleteNode.collectionName}', ${deleteNode.filterData});`;
@@ -442,6 +418,24 @@ function addIpcDeleteData(backendJS, deleteNode, node){
     // add the ipc code to the backend
     addNodeToEnd(backendJS, backEndAST[0]);
     eventID++;
+}
+
+// makes the changes for an updateChange method
+function manipulateUpdateChange(frontendJS, backendJS){
+    let backEndCode = `socket.on("update_change", (data) => {
+        console.log("Update change");
+        win.webContents.send("update_change");
+      });`;
+
+    let frontEndCode = `ipc.on("update_change", (event) => {
+        updateChange()
+      });`;
+
+    // add to the end of backendJS
+    addNodeToEnd(backendJS, codeToAST(backEndCode)[0]);
+
+    // add to the end of 
+    addNodeToEnd(frontendJS, codeToAST(frontEndCode)[0]);
 }
 
 
