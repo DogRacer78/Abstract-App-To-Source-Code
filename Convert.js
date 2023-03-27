@@ -16,6 +16,7 @@ import util from "util";
 import path from "path";
 import { fileURLToPath } from 'url';
 import { parseElectronDBTree } from "./src/ParseDatabase.js";
+import { copyServerJS } from "./src/DatabaseServer.js";
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -69,6 +70,19 @@ function main(){
         },
         handler(argv){
             createElectronApp(argv.name, argv.html_address, argv.app_path);
+        }
+    }).command({
+        command : "gen-db",
+        describe : "Generates the database server needed",
+        builder : {
+            location : {
+                describe : "The path to build the server to",
+                demandOption : true,
+                type : "string"
+            }
+        },
+        handler(argv){
+            copyServerJS(argv.location, __dirname);
         }
     }).parse();
 

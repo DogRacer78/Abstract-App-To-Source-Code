@@ -83,6 +83,8 @@ function parseElectronDBTree(frontendJS, backendJS){
     });
 
     let updateChangeFound = false;
+    let insertChangeFound = false;
+    let deleteChangeFound = false;
     // loop through the front end JS and check for on update, delete and insert
     for (let i = 0; i < frontendJS.body.length; i++){
         if (checkOnUpdateNode(frontendJS.body[i])){
@@ -93,9 +95,32 @@ function parseElectronDBTree(frontendJS, backendJS){
                 manipulateUpdateChange(frontendJS, backendJS);
             }
             else{
-                throw new Error("Can only contain one updateChangeMethod")
+                throw new Error("Can only contain one updateChange Method")
             }
             
+        }
+        // checks for insert change events
+        else if (checkOnInsertChange(frontendJS.body[i])){
+            if (!insertChangeFound){
+                // manipulate the insert change node
+                console.log("Found an insert change event");
+                insertChangeFound = true;
+                manipulateInsertChange(frontendJS, backendJS);
+            }
+            else{
+                throw new Error("Can only contain one insertChange Method");
+            }
+        }
+        // checks for delete change events
+        else if (checkOnDeleteChange(frontendJS.body[i])){
+            if (!deleteChangeFound){
+                console.log("Found a delete change event");
+                deleteChangeFound = true;
+                manipulateDeleteChange(frontendJS, backendJS);
+            }
+            else{
+                throw new Error("Can only contain one deleteChange method");
+            }
         }
     }
     
@@ -307,6 +332,30 @@ function checkOnUpdateNode(node){
     return false;
 }
 
+// checks if the node is a insertChange node
+function checkOnInsertChange(node){
+    if (node.type === "FunctionDeclaration"){
+        if (node.id.type === "Identifier"){
+            if (node.id.name === "insertChange"){
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+// checks if the node is a deleteChange node
+function checkOnDeleteChange(node){
+    if (node.type === "FunctionDeclaration"){
+        if (node.id.type === "Identifier"){
+            if (node.id.name === "deleteChange"){
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 
 
 // creates the correct code for a load data between the front and backend
@@ -342,7 +391,12 @@ function addIpcInsertData(backendJS, insertDataObj, node){
     // backend ipc data
     let backendIPC = `ipcMain.on('${eventID}', async function(event, dbName, collName, dataForInsert){
         let res = insertData(new BufferData(dbName, collName, dataForInsert, DataType.insert));
-        event.returnValue = res;
+        if (res){
+            event.returnValue = null;
+        }
+        else{
+            event.returnValue = true;
+        }
     });`;
 
     let frontEndIpc = `ipc.sendSync('${eventID}', '${insertDataObj.dbName}', '${insertDataObj.collectionName}', ${insertDataObj.insertData});`;
@@ -366,7 +420,12 @@ function addIpcInsertData(backendJS, insertDataObj, node){
 function addIpcUpdateData(backendJS, updateData, node){
     let backEndCode = `ipcMain.on('${eventID}', async function(event, dbName, collName, filter, dataForUpdate){
         let res = updateData(new BufferData(dbName, collName, {'filter' : filter, 'updateData' : dataForUpdate}, DataType.update));
-        event.returnValue = res;
+        if (res){
+            event.returnValue = null;
+        }
+        else{
+            event.returnValue = true;
+        }
     });`;
 
     let frontEndCode = `ipc.sendSync('${eventID}', '${updateData.dbName}', '${updateData.collectionName}', ${updateData.filterData}, ${updateData.updateData});`
@@ -396,7 +455,12 @@ function addIpcUpdateData(backendJS, updateData, node){
 function addIpcDeleteData(backendJS, deleteNode, node){
     let backEndCode = `ipcMain.on('${eventID}', async function(event, dbName, collName, filter){
         let res = deleteData(new BufferData(dbName, collName, filter, DataType.delete));
-        event.returnValue = res;
+        if (res){
+            event.returnValue = null;
+        }
+        else{
+            event.returnValue = true;
+        }
     });`;
 
     let frontEndCode = `ipc.sendSync('${eventID}', '${deleteNode.dbName}', '${deleteNode.collectionName}', ${deleteNode.filterData});`;
@@ -429,6 +493,42 @@ function manipulateUpdateChange(frontendJS, backendJS){
 
     let frontEndCode = `ipc.on("update_change", (event) => {
         updateChange()
+      });`;
+
+    // add to the end of backendJS
+    addNodeToEnd(backendJS, codeToAST(backEndCode)[0]);
+
+    // add to the end of 
+    addNodeToEnd(frontendJS, codeToAST(frontEndCode)[0]);
+}
+
+// manipulates the insertChange nodes
+function manipulateInsertChange(frontendJS, backendJS){
+    let backEndCode = `socket.on("insert_change", (data) => {
+        console.log("Insert change");
+        win.webContents.send("insert_change");
+      });`;
+
+    let frontEndCode = `ipc.on("insert_change", (event) => {
+        insertChange()
+      });`;
+
+    // add to the end of backendJS
+    addNodeToEnd(backendJS, codeToAST(backEndCode)[0]);
+
+    // add to the end of 
+    addNodeToEnd(frontendJS, codeToAST(frontEndCode)[0]);
+}
+
+// manipulate the updateChange nodes
+function manipulateDeleteChange(frontendJS, backendJS){
+    let backEndCode = `socket.on("delete_change", (data) => {
+        console.log("Delete Change");
+        win.webContents.send("delete_change");
+      });`;
+
+    let frontEndCode = `ipc.on("delete_change", (event) => {
+        deleteChange()
       });`;
 
     // add to the end of backendJS

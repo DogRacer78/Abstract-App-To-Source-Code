@@ -3,6 +3,7 @@
     "acorn": "^8.8.1",
     "estree-util-to-js": "^1.1.0",
     "node-html-parser": "^6.1.4",
+    "prompt-sync": "^4.2.0",
     "python-shell": "^3.0.1",
     "yargs": "^17.7.1"
   },
