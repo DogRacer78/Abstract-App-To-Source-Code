@@ -11,9 +11,19 @@ import { dir } from "console";
 import fs from "fs";
 import path from "path";
 import promptSync from 'prompt-sync';
-import https from "https";
 import { exec } from "child_process";
 import { chdir, stderr, stdout } from "process";
+
+// for trying to download the exe
+// will leave here for now in case I want to go back to it later
+/*
+import https from "https";
+import http from "http";
+import { unzip } from "zlib";
+import AdmZip from "adm-zip";
+import progress from "progress-stream";
+import request from "request";
+*/
 
 /**
  * Copies the server.js file to the correct dir
@@ -64,6 +74,48 @@ function copyServerJS(dirToCopyTo, __dirname){
     console.log("Created shell command");
     createBAT(dirToCopyTo);
     console.log("Created BAT command");
+
+    // tried to download it but could not get it working
+    // so instead just using the old method of copying
+    // will keep this here in case I want to go back to it
+    /*
+    // download the package
+    const tempZipDir = path.join(dirToCopyTo, "/tempZip.zip");
+    const file = fs.createWriteStream(tempZipDir);
+    let str = progress({
+        drain : true,
+        time : 100,
+        speed : 20,
+    });
+
+    console.log("Trying to get length of file");
+    // get the length of the file
+    request("https://fastdl.mongodb.org/windows/mongodb-windows-x86_64-6.0.5.zip", {method : "HEAD"}, (err, res, body) =>{
+        console.log("Got response");
+        str.setLength(res.headers["content-length"]);
+    });
+
+    str.on("progress", (progress) =>{
+        process.stdout.write(`Downloading: ${Math.floor(progress.percentage).toString()}%\r`);
+    });
+
+    
+    console.log("Downloading mongod.exe");
+    https.get("https://fastdl.mongodb.org/windows/mongodb-windows-x86_64-6.0.5.zip", (res) => {
+        res.pipe(str).pipe(file);
+
+        file.on("finish", () => {
+            console.log("Finished downloading ZIP");
+            file.close();
+            const zip = new AdmZip(tempZipDir);
+            console.log("Finished downloading");
+            fs.mkdirSync(path.join(dirToCopyTo, "/zip_contents"));
+            zip.extractEntryToS(path.join("mongodb-win32-x86_64-windows-6.0.5/", "bin/mongod.exe"), path.join(dirToCopyTo, "/bin"));
+            console.log("Finsihed unzipping");
+        });
+        
+    });
+    */
 
     console.log("Installing required packages...");
 
