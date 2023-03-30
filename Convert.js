@@ -15,7 +15,7 @@ import { hideBin } from "yargs/helpers";
 import util from "util";
 import path from "path";
 import { fileURLToPath } from 'url';
-import { parseElectronDBTree } from "./src/ParseDatabase.js";
+import { parseElectronDBTree, parseWebDBTree } from "./src/ParseDatabase.js";
 import { copyServerJS } from "./src/DatabaseServer.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -103,6 +103,13 @@ function createWebApp(name, htmlAddress, app_path){
             fs.mkdirSync(`./${name}`);
         }
 
+        // load the web helper methods from JSON
+        let webHelperMethods = JSON.parse(fs.readFileSync(path.join(__dirname, "/templates/web_helper.json")));
+
+        // process the dbCode
+        parseWebDBTree(appData.indexJS, webHelperMethods);
+
+
         process.chdir(`./${name}`);
 
         let indexJSCode = toJs(appData.indexJS);
@@ -131,7 +138,6 @@ function createElectronApp(name, htmlAddress, app_path){
         parseElectronDBTree(appData.indexJS, mainJSTree);
 
         let mainJSCode = toJs(mainJSTree);
-        
 
         console.log(appData.indexJS[0]);
         if (!fs.existsSync(`./${name}`)) {

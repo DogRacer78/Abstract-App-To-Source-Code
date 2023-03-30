@@ -2,7 +2,7 @@
 // first is to connect to database
 // must be put in the start up
 import { addCommentsToEnd } from "./Comments.js";
-import { ASTToCode, visit } from "./NodeUtils.js";
+import { addMultipleNodesToEnd, ASTToCode, visit } from "./NodeUtils.js";
 import { codeToAST } from "./NodeUtils.js";
 import { insertAtIndex } from "./NodeUtils.js";
 import { addNodeToEnd } from "./NodeUtils.js";
@@ -126,6 +126,97 @@ function parseElectronDBTree(frontendJS, backendJS){
     
 }
 
+/**
+ * Parses the frontendJS and looks for db connections and creates the correct code
+ * @param {Object} frontendJS Object
+ * @param {Obj} backendJS Object
+ */
+function parseWebDBTree(frontendJS, webHelper){
+    // parses the tree and looks for the correct nodes
+    console.log("************** PARSING WEB DB TREE ******************");
+
+    // will need to loop through each tree and add the correct post
+    // dbLoadData(dbName, collName, data);
+    
+    // callbacks will not work correctly, I belive
+    // the best way to do this is to loop through all the function definitions, make them async, add to a list
+    // look for any calls and add an await in front of it
+
+    // add the web helper methods
+    addMultipleNodesToEnd(frontendJS, webHelper);
+
+    // all function defs
+    let functionDefNames = [];
+
+    visit(frontendJS.body, (node, parent, key) => {
+        if (node.type === "FunctionDeclaration" && node.id.name !== "BufferData"){
+            // if function make async
+            console.log("Found func def");
+            node.async = true;
+            functionDefNames.push(node.id.name);
+        }
+    });
+
+    console.log(functionDefNames);
+
+    // iterate again to find any functions and make them await
+    visit(frontendJS.body, (node, parent, key) => {
+        if (checkCall(node, parent)){
+            if (functionDefNames.includes(node.callee.name)){
+                manipulateAwaits(node);
+            }
+        }
+    });
+
+    // now look for the dbLoadData
+    // handle load data nodes
+    /*
+    visit(frontendJS, (node, parent, key) => {
+        let loadDataNode = checkLoadDataNode(node);
+        if (loadDataNode !== null){
+            console.log("Found a load data node");
+            // create ipc code needed
+            manipulateWebLoadData(node, loadDataNode);
+        }
+    });
+
+    */
+
+}
+
+function checkCall(node, parent){
+    if (parent != null){
+        if (parent.type === "AwaitExpression"){
+            return false;
+        }
+    }
+
+    if (node.type === "CallExpression"){
+        if (node.callee.type === "Identifier"){
+            return true;
+        }
+    }
+    return false;
+}
+
+// manipulates a call expression to become await
+function manipulateAwaits(node){
+    let name = node.callee.name;
+    let args = node.arguments;
+    let option = node.optional;
+
+    node.type = "AwaitExpression";
+    node.argument = {
+        "type" : "CallExpression",
+        "callee" : {
+            "type" : "Identifier",
+            "name" : name
+        },
+        "arguments" : args,
+        "optional" : option
+    };
+}
+
 function addMongoDBImport(backEnd){
     // turn the import into an import
     let importCode = "const { MongoClient } = require('mongodb');";
@@ -211,7 +302,7 @@ function checkConnectNode(node){
 
 function checkLoadDataNode(node){
     // a load data node : DBLoadData("collection name", dict);
-    console.log("Looking for a load data node");
+    //console.log("Looking for a load data node");
 
     if (node.type === "CallExpression"){
         if (node.callee.type === "Identifier"){
@@ -539,4 +630,4 @@ function manipulateDeleteChange(frontendJS, backendJS){
 }
 
 
-export {parseElectronDBTree};
+export {parseElectronDBTree, parseWebDBTree};

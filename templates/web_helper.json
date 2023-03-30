@@ -1,0 +1,458 @@
+[
+  {
+    "type": "FunctionDeclaration",
+    "start": 0,
+    "end": 181,
+    "id": {
+      "type": "Identifier",
+      "start": 9,
+      "end": 19,
+      "name": "BufferData"
+    },
+    "expression": false,
+    "generator": false,
+    "async": false,
+    "params": [
+      {
+        "type": "Identifier",
+        "start": 20,
+        "end": 32,
+        "name": "databaseName"
+      },
+      {
+        "type": "Identifier",
+        "start": 34,
+        "end": 48,
+        "name": "collectionName"
+      },
+      {
+        "type": "Identifier",
+        "start": 50,
+        "end": 54,
+        "name": "data"
+      },
+      {
+        "type": "Identifier",
+        "start": 56,
+        "end": 60,
+        "name": "type"
+      }
+    ],
+    "body": {
+      "type": "BlockStatement",
+      "start": 62,
+      "end": 181,
+      "body": [
+        {
+          "type": "ExpressionStatement",
+          "start": 66,
+          "end": 99,
+          "expression": {
+            "type": "AssignmentExpression",
+            "start": 66,
+            "end": 98,
+            "operator": "=",
+            "left": {
+              "type": "MemberExpression",
+              "start": 66,
+              "end": 83,
+              "object": {
+                "type": "ThisExpression",
+                "start": 66,
+                "end": 70
+              },
+              "property": {
+                "type": "Identifier",
+                "start": 71,
+                "end": 83,
+                "name": "databaseName"
+              },
+              "computed": false,
+              "optional": false
+            },
+            "right": {
+              "type": "Identifier",
+              "start": 86,
+              "end": 98,
+              "name": "databaseName"
+            }
+          }
+        },
+        {
+          "type": "ExpressionStatement",
+          "start": 102,
+          "end": 139,
+          "expression": {
+            "type": "AssignmentExpression",
+            "start": 102,
+            "end": 138,
+            "operator": "=",
+            "left": {
+              "type": "MemberExpression",
+              "start": 102,
+              "end": 121,
+              "object": {
+                "type": "ThisExpression",
+                "start": 102,
+                "end": 106
+              },
+              "property": {
+                "type": "Identifier",
+                "start": 107,
+                "end": 121,
+                "name": "collectionName"
+              },
+              "computed": false,
+              "optional": false
+            },
+            "right": {
+              "type": "Identifier",
+              "start": 124,
+              "end": 138,
+              "name": "collectionName"
+            }
+          }
+        },
+        {
+          "type": "ExpressionStatement",
+          "start": 142,
+          "end": 159,
+          "expression": {
+            "type": "AssignmentExpression",
+            "start": 142,
+            "end": 158,
+            "operator": "=",
+            "left": {
+              "type": "MemberExpression",
+              "start": 142,
+              "end": 151,
+              "object": {
+                "type": "ThisExpression",
+                "start": 142,
+                "end": 146
+              },
+              "property": {
+                "type": "Identifier",
+                "start": 147,
+                "end": 151,
+                "name": "data"
+              },
+              "computed": false,
+              "optional": false
+            },
+            "right": {
+              "type": "Identifier",
+              "start": 154,
+              "end": 158,
+              "name": "data"
+            }
+          }
+        },
+        {
+          "type": "ExpressionStatement",
+          "start": 162,
+          "end": 179,
+          "expression": {
+            "type": "AssignmentExpression",
+            "start": 162,
+            "end": 178,
+            "operator": "=",
+            "left": {
+              "type": "MemberExpression",
+              "start": 162,
+              "end": 171,
+              "object": {
+                "type": "ThisExpression",
+                "start": 162,
+                "end": 166
+              },
+              "property": {
+                "type": "Identifier",
+                "start": 167,
+                "end": 171,
+                "name": "type"
+              },
+              "computed": false,
+              "optional": false
+            },
+            "right": {
+              "type": "Identifier",
+              "start": 174,
+              "end": 178,
+              "name": "type"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "type": "VariableDeclaration",
+    "start": 183,
+    "end": 283,
+    "declarations": [
+      {
+        "type": "VariableDeclarator",
+        "start": 189,
+        "end": 282,
+        "id": {
+          "type": "Identifier",
+          "start": 189,
+          "end": 197,
+          "name": "DataType"
+        },
+        "init": {
+          "type": "ObjectExpression",
+          "start": 200,
+          "end": 282,
+          "properties": [
+            {
+              "type": "Property",
+              "start": 204,
+              "end": 221,
+              "method": false,
+              "shorthand": false,
+              "computed": false,
+              "key": {
+                "type": "Identifier",
+                "start": 204,
+                "end": 210,
+                "name": "insert"
+              },
+              "value": {
+                "type": "Literal",
+                "start": 213,
+                "end": 221,
+                "value": "insert",
+                "raw": "\"insert\""
+              },
+              "kind": "init"
+            },
+            {
+              "type": "Property",
+              "start": 225,
+              "end": 242,
+              "method": false,
+              "shorthand": false,
+              "computed": false,
+              "key": {
+                "type": "Identifier",
+                "start": 225,
+                "end": 231,
+                "name": "update"
+              },
+              "value": {
+                "type": "Literal",
+                "start": 234,
+                "end": 242,
+                "value": "update",
+                "raw": "\"update\""
+              },
+              "kind": "init"
+            },
+            {
+              "type": "Property",
+              "start": 246,
+              "end": 263,
+              "method": false,
+              "shorthand": false,
+              "computed": false,
+              "key": {
+                "type": "Identifier",
+                "start": 246,
+                "end": 252,
+                "name": "delete"
+              },
+              "value": {
+                "type": "Literal",
+                "start": 255,
+                "end": 263,
+                "value": "delete",
+                "raw": "\"delete\""
+              },
+              "kind": "init"
+            },
+            {
+              "type": "Property",
+              "start": 267,
+              "end": 280,
+              "method": false,
+              "shorthand": false,
+              "computed": false,
+              "key": {
+                "type": "Identifier",
+                "start": 267,
+                "end": 271,
+                "name": "read"
+              },
+              "value": {
+                "type": "Literal",
+                "start": 274,
+                "end": 280,
+                "value": "read",
+                "raw": "\"read\""
+              },
+              "kind": "init"
+            }
+          ]
+        }
+      }
+    ],
+    "kind": "const"
+  },
+  {
+    "type": "FunctionDeclaration",
+    "start": 285,
+    "end": 483,
+    "id": {
+      "type": "Identifier",
+      "start": 300,
+      "end": 310,
+      "name": "dbLoadData"
+    },
+    "expression": false,
+    "generator": false,
+    "async": true,
+    "params": [
+      {
+        "type": "Identifier",
+        "start": 311,
+        "end": 317,
+        "name": "dbName"
+      },
+      {
+        "type": "Identifier",
+        "start": 319,
+        "end": 327,
+        "name": "collName"
+      },
+      {
+        "type": "Identifier",
+        "start": 329,
+        "end": 333,
+        "name": "data"
+      }
+    ],
+    "body": {
+      "type": "BlockStatement",
+      "start": 334,
+      "end": 483,
+      "body": [
+        {
+          "type": "ReturnStatement",
+          "start": 382,
+          "end": 481,
+          "argument": {
+            "type": "AwaitExpression",
+            "start": 389,
+            "end": 480,
+            "argument": {
+              "type": "CallExpression",
+              "start": 395,
+              "end": 480,
+              "callee": {
+                "type": "MemberExpression",
+                "start": 395,
+                "end": 478,
+                "object": {
+                  "type": "CallExpression",
+                  "start": 395,
+                  "end": 470,
+                  "callee": {
+                    "type": "MemberExpression",
+                    "start": 395,
+                    "end": 401,
+                    "object": {
+                      "type": "Identifier",
+                      "start": 395,
+                      "end": 396,
+                      "name": "$"
+                    },
+                    "property": {
+                      "type": "Identifier",
+                      "start": 397,
+                      "end": 401,
+                      "name": "post"
+                    },
+                    "computed": false,
+                    "optional": false
+                  },
+                  "arguments": [
+                    {
+                      "type": "Literal",
+                      "start": 402,
+                      "end": 414,
+                      "value": "/load_data",
+                      "raw": "\"/load_data\""
+                    },
+                    {
+                      "type": "NewExpression",
+                      "start": 416,
+                      "end": 469,
+                      "callee": {
+                        "type": "Identifier",
+                        "start": 420,
+                        "end": 430,
+                        "name": "BufferData"
+                      },
+                      "arguments": [
+                        {
+                          "type": "Identifier",
+                          "start": 431,
+                          "end": 437,
+                          "name": "dbName"
+                        },
+                        {
+                          "type": "Identifier",
+                          "start": 439,
+                          "end": 447,
+                          "name": "collName"
+                        },
+                        {
+                          "type": "Identifier",
+                          "start": 449,
+                          "end": 453,
+                          "name": "data"
+                        },
+                        {
+                          "type": "MemberExpression",
+                          "start": 455,
+                          "end": 468,
+                          "object": {
+                            "type": "Identifier",
+                            "start": 455,
+                            "end": 463,
+                            "name": "DataType"
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "start": 464,
+                            "end": 468,
+                            "name": "read"
+                          },
+                          "computed": false,
+                          "optional": false
+                        }
+                      ]
+                    }
+                  ],
+                  "optional": false
+                },
+                "property": {
+                  "type": "Identifier",
+                  "start": 471,
+                  "end": 478,
+                  "name": "promise"
+                },
+                "computed": false,
+                "optional": false
+              },
+              "arguments": [],
+              "optional": false
+            }
+          }
+        }
+      ]
+    }
+  }
+]
