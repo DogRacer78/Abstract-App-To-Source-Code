@@ -29,8 +29,16 @@ function handleFakeForm(html){
             }
         }
     }
+
+    // add the socket.io import
+    root.insertAdjacentHTML("beforeend", '<script src="https://cdn.socket.io/4.6.0/socket.io.min.js"' + 
+    'integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+"' +
+    'crossorigin="anonymous"></script>')
+
     // add the index.js script tag to the end
-    root.insertAdjacentHTML("beforeend", "<script src='./index.js'></script>");
+    root.insertAdjacentHTML("beforeend", "<script src='/static/index.js'></script>");
+
+
     return root.toString();
 }
 

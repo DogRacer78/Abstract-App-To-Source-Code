@@ -2,7 +2,7 @@
 
 import fs from "fs";
 import {toJs} from 'estree-util-to-js';
-import exec from "child_process";
+import { exec, spawn } from "child_process";
 import * as acorn from "acorn";
 import { PythonShell } from "python-shell";
 import {addCommentsToEnd, createComment} from "./src/Comments.js";
@@ -17,6 +17,7 @@ import path from "path";
 import { fileURLToPath } from 'url';
 import { parseElectronDBTree, parseWebDBTree } from "./src/ParseDatabase.js";
 import { copyServerJS } from "./src/DatabaseServer.js";
+import { stderr, stdout } from "process";
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -103,20 +104,37 @@ function createWebApp(name, htmlAddress, app_path){
             fs.mkdirSync(`./${name}`);
         }
 
+        // create the public dir if not exists
+        if (!fs.existsSync(`./${name}/public`)){
+            fs.mkdirSync(`./${name}/public`);
+        }
+
         // load the web helper methods from JSON
         let webHelperMethods = JSON.parse(fs.readFileSync(path.join(__dirname, "/templates/web_helper.json")));
 
         // process the dbCode
         parseWebDBTree(appData.indexJS, webHelperMethods);
 
-
         process.chdir(`./${name}`);
 
         let indexJSCode = toJs(appData.indexJS);
         
-        fs.writeFileSync("./index.js", indexJSCode.value);
-        fs.writeFileSync("./index.html", appData.indexHTML);
+        fs.writeFileSync("./public/index.js", indexJSCode.value);
+        fs.writeFileSync("./public/index.html", appData.indexHTML);
 
+        // move the app.js into the dir
+        fs.copyFileSync(path.join(__dirname, "/templates/app.js"), "./app.js");
+
+        // need to npm install the packages
+        const packageInstall = exec("npm install express && npm install socket.io-client && npm install socket.io");
+
+        packageInstall.stdout.on("data", (data) => {
+            console.log(data);
+        });
+
+        packageInstall.stderr.on("data", (data) => {
+            console.log(data);
+        }); 
     });
 }
 
@@ -151,7 +169,7 @@ function createElectronApp(name, htmlAddress, app_path){
         console.log(process.cwd());
         
         console.log("Getting electron");
-        exec.exec("npm init -y && npm install electron --save-dev && npm install mongodb && npm install socket.io-client", (error, stdout, stderr) => {
+        exec("npm init -y && npm install electron --save-dev && npm install mongodb && npm install socket.io-client", (error, stdout, stderr) => {
             if (error) {
                 console.log(`error: ${error.message}`);
                 return;

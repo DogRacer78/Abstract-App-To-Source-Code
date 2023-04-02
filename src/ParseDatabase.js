@@ -168,20 +168,49 @@ function parseWebDBTree(frontendJS, webHelper){
         }
     });
 
-    // now look for the dbLoadData
-    // handle load data nodes
-    /*
-    visit(frontendJS, (node, parent, key) => {
-        let loadDataNode = checkLoadDataNode(node);
-        if (loadDataNode !== null){
-            console.log("Found a load data node");
-            // create ipc code needed
-            manipulateWebLoadData(node, loadDataNode);
+    console.log("Looking for change events");
+
+    let updateChangeFound = false;
+    let insertChangeFound = false;
+    let deleteChangeFound = false;
+    // loop through top level and look for
+    for (let i = 0; i < frontendJS.body.length; i++){
+        if (checkOnUpdateNode(frontendJS.body[i])){
+            if (!updateChangeFound){
+                console.log("Found a update node");
+                updateChangeFound = true;
+                // make the changes
+                manipulateUpdateChangeWeb(frontendJS);
+            }
+            else{
+                throw new Error("Can only contain one updateChange Method");
+            }
+            
         }
-    });
-
-    */
-
+        // checks for insert change events
+        else if (checkOnInsertChange(frontendJS.body[i])){
+            if (!insertChangeFound){
+                // manipulate the insert change node
+                console.log("Found an insert change event");
+                insertChangeFound = true;
+                manipulateInsertChangeWeb(frontendJS);
+            }
+            else{
+                throw new Error("Can only contain one insertChange Method");
+            }
+        }
+        // checks for delete change events
+        else if (checkOnDeleteChange(frontendJS.body[i])){
+            if (!deleteChangeFound){
+                console.log("Found a delete change event");
+                deleteChangeFound = true;
+                manipulateDeleteChangeWeb(frontendJS);
+            }
+            else{
+                throw new Error("Can only contain one deleteChange method");
+            }
+        }
+    }
 }
 
 function checkCall(node, parent){
@@ -215,6 +244,36 @@ function manipulateAwaits(node){
         "arguments" : args,
         "optional" : option
     };
+}
+
+function manipulateUpdateChangeWeb(frontEndJS){
+    const code = `localSocketConn.on("update_change", (data) => {
+        updateChange();
+    });`
+
+    const AST = codeToAST(code);
+
+    addNodeToEnd(frontEndJS, AST[0]);
+}
+
+function manipulateDeleteChangeWeb(frontEndJS){
+    const code = `localSocketConn.on("delete_change", (data) => {
+        deleteChange();
+    });`
+
+    const AST = codeToAST(code);
+
+    addNodeToEnd(frontEndJS, AST[0]);
+}
+
+function manipulateInsertChangeWeb(frontEndJS){
+    const code = `localSocketConn.on("insert_change", (data) => {
+        insertChange();
+    });`
+
+    const AST = codeToAST(code);
+
+    addNodeToEnd(frontEndJS, AST[0]);
 }
 
 function addMongoDBImport(backEnd){

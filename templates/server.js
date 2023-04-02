@@ -93,30 +93,34 @@ async function main(){
             // get the data from the 
             console.log("Recived data on insert");
             // load the data into database
-            await conn.db(data.databaseName).collection(data.collectionName).insertOne(data.data);
-            ack(200);
+            const info = await conn.db(data.databaseName).collection(data.collectionName).insertOne(data.data);
+            ack(info);
 
             // notifies that a change was made
-            socket.emit("insert_change", data);
+            io.emit("insert_change", data);
         });
 
-        socket.on("update", async (data) => {
+        socket.on("update", async (data, ack) => {
             // updates the database
-            await conn.db(data.databaseName).collection(data.collectionName).updateOne(
+            const info = await conn.db(data.databaseName).collection(data.collectionName).updateOne(
                 data.data.filter, 
                 { $set : data.data.updateData}, 
                 { upsert : false }
             );
 
+            ack(info);
+
             // notify of a change in update
             io.emit("update_change", data);
         });
 
-        socket.on("delete", async (data) => {
-            await conn.db(data.databaseName).collection(data.collectionName).deleteOne(data.data);
+        socket.on("delete", async (data, ack) => {
+            const info = await conn.db(data.databaseName).collection(data.collectionName).deleteOne(data.data);
+
+            ack(info);
 
             // notify of delete change
-            socket.emit("delete_change", data);
+            io.emit("delete_change", data);
         });
 
         socket.on("read", async (data, ack) => {
