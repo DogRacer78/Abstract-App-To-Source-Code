@@ -1,0 +1,74 @@
+{
+  "type": "Program",
+  "start": 0,
+  "end": 66,
+  "body": [
+    {
+      "type": "FunctionDeclaration",
+      "start": 0,
+      "end": 22,
+      "id": {
+        "type": "Identifier",
+        "start": 9,
+        "end": 17,
+        "name": "start_up"
+      },
+      "expression": false,
+      "generator": false,
+      "async": false,
+      "params": [],
+      "body": {
+        "type": "BlockStatement",
+        "start": 19,
+        "end": 22,
+        "body": []
+      }
+    },
+    {
+      "type": "ExpressionStatement",
+      "start": 24,
+      "end": 66,
+      "expression": {
+        "type": "CallExpression",
+        "start": 24,
+        "end": 65,
+        "callee": {
+          "type": "MemberExpression",
+          "start": 24,
+          "end": 47,
+          "object": {
+            "type": "Identifier",
+            "start": 24,
+            "end": 30,
+            "name": "window"
+          },
+          "property": {
+            "type": "Identifier",
+            "start": 31,
+            "end": 47,
+            "name": "addEventListener"
+          },
+          "computed": false,
+          "optional": false
+        },
+        "arguments": [
+          {
+            "type": "Literal",
+            "start": 48,
+            "end": 54,
+            "value": "load",
+            "raw": "'load'"
+          },
+          {
+            "type": "Identifier",
+            "start": 56,
+            "end": 64,
+            "name": "start_up"
+          }
+        ],
+        "optional": false
+      }
+    }
+  ],
+  "sourceType": "module"
+}

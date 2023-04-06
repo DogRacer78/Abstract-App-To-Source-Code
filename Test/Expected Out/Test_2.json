@@ -1,0 +1,142 @@
+{
+    "type": "Program",
+    "start": 0,
+    "end": 148,
+    "body": [
+      {
+        "type": "FunctionDeclaration",
+        "start": 0,
+        "end": 65,
+        "id": {
+          "type": "Identifier",
+          "start": 9,
+          "end": 30,
+          "name": "methodName_click_myID"
+        },
+        "expression": false,
+        "generator": false,
+        "async": false,
+        "params": [],
+        "body": {
+          "type": "BlockStatement",
+          "start": 32,
+          "end": 65,
+          "body": [
+            {
+              "type": "ExpressionStatement",
+              "start": 36,
+              "end": 63,
+              "expression": {
+                "type": "CallExpression",
+                "start": 36,
+                "end": 62,
+                "callee": {
+                  "type": "MemberExpression",
+                  "start": 36,
+                  "end": 47,
+                  "object": {
+                    "type": "Identifier",
+                    "start": 36,
+                    "end": 43,
+                    "name": "console"
+                  },
+                  "property": {
+                    "type": "Identifier",
+                    "start": 44,
+                    "end": 47,
+                    "name": "log"
+                  },
+                  "computed": false,
+                  "optional": false
+                },
+                "arguments": [
+                  {
+                    "type": "Literal",
+                    "start": 48,
+                    "end": 61,
+                    "value": "Hello world",
+                    "raw": "\"Hello world\""
+                  }
+                ],
+                "optional": false
+              }
+            }
+          ]
+        }
+      },
+      {
+        "type": "ExpressionStatement",
+        "start": 67,
+        "end": 148,
+        "expression": {
+          "type": "CallExpression",
+          "start": 67,
+          "end": 147,
+          "callee": {
+            "type": "MemberExpression",
+            "start": 67,
+            "end": 115,
+            "object": {
+              "type": "CallExpression",
+              "start": 67,
+              "end": 98,
+              "callee": {
+                "type": "MemberExpression",
+                "start": 67,
+                "end": 90,
+                "object": {
+                  "type": "Identifier",
+                  "start": 67,
+                  "end": 75,
+                  "name": "document"
+                },
+                "property": {
+                  "type": "Identifier",
+                  "start": 76,
+                  "end": 90,
+                  "name": "getElementById"
+                },
+                "computed": false,
+                "optional": false
+              },
+              "arguments": [
+                {
+                  "type": "Literal",
+                  "start": 91,
+                  "end": 97,
+                  "value": "myID",
+                  "raw": "'myID'"
+                }
+              ],
+              "optional": false
+            },
+            "property": {
+              "type": "Identifier",
+              "start": 99,
+              "end": 115,
+              "name": "addEventListener"
+            },
+            "computed": false,
+            "optional": false
+          },
+          "arguments": [
+            {
+              "type": "Literal",
+              "start": 116,
+              "end": 123,
+              "value": "click",
+              "raw": "'click'"
+            },
+            {
+              "type": "Identifier",
+              "start": 125,
+              "end": 146,
+              "name": "methodName_click_myID"
+            }
+          ],
+          "optional": false
+        }
+      }
+    ],
+    "sourceType": "module"
+  }

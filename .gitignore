@@ -111,3 +111,6 @@ dist
 
 # App.py for testing
 Testing Apps/
+
+# Test output does not need to be kept
+/Test/Test Output/

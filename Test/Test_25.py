@@ -1,0 +1,1 @@
+__COMMENT__(testVar)

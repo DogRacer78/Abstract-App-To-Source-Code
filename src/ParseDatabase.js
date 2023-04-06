@@ -514,12 +514,12 @@ function addipcLoadData(backendJS, loadDataObj, node){
     let backendIPC = `ipcMain.on('${eventID}', async function(event, dbName, collName, searchData){
     let res = await readData(new BufferData(dbName, collName, searchData, DataType.read));
     if (res === false)
-        event.returnValue = null;
+        event.returnValue = "CONN_ERR";
     else
-        event.returnValue = JSON.stringify(res);
+        event.returnValue = res;
 });`;
 
-    let frontEndCode = `JSON.parse(ipc.sendSync('${eventID}', '${loadDataObj.dbName}', '${loadDataObj.collectionName}', ${loadDataObj.searchDict}))`;
+    let frontEndCode = `ipc.sendSync('${eventID}', '${loadDataObj.dbName}', '${loadDataObj.collectionName}', ${loadDataObj.searchDict})`;
     let frontEndAST = codeToAST(frontEndCode);
 
     delete node.callee;
@@ -540,12 +540,12 @@ function addipcLoadData(backendJS, loadDataObj, node){
 function addIpcInsertData(backendJS, insertDataObj, node){
     // backend ipc data
     let backendIPC = `ipcMain.on('${eventID}', async function(event, dbName, collName, dataForInsert){
-        let res = insertData(new BufferData(dbName, collName, dataForInsert, DataType.insert));
-        if (res){
-            event.returnValue = null;
+        let res = await insertData(new BufferData(dbName, collName, dataForInsert, DataType.insert));
+        if (!res){
+            event.returnValue = "CONN_ERR";
         }
         else{
-            event.returnValue = true;
+            event.returnValue = res;
         }
     });`;
 
@@ -569,12 +569,12 @@ function addIpcInsertData(backendJS, insertDataObj, node){
 
 function addIpcUpdateData(backendJS, updateData, node){
     let backEndCode = `ipcMain.on('${eventID}', async function(event, dbName, collName, filter, dataForUpdate){
-        let res = updateData(new BufferData(dbName, collName, {'filter' : filter, 'updateData' : dataForUpdate}, DataType.update));
-        if (res){
-            event.returnValue = null;
+        let res = await updateData(new BufferData(dbName, collName, {'filter' : filter, 'updateData' : dataForUpdate}, DataType.update));
+        if (!res){
+            event.returnValue = "CONN_ERR";
         }
         else{
-            event.returnValue = true;
+            event.returnValue = res;
         }
     });`;
 
@@ -604,12 +604,12 @@ function addIpcUpdateData(backendJS, updateData, node){
 // adds the relvant ipc code for the delete node
 function addIpcDeleteData(backendJS, deleteNode, node){
     let backEndCode = `ipcMain.on('${eventID}', async function(event, dbName, collName, filter){
-        let res = deleteData(new BufferData(dbName, collName, filter, DataType.delete));
-        if (res){
-            event.returnValue = null;
+        let res = await deleteData(new BufferData(dbName, collName, filter, DataType.delete));
+        if (!res){
+            event.returnValue = "CONN_ERR";
         }
         else{
-            event.returnValue = true;
+            event.returnValue = res;
         }
     });`;
 

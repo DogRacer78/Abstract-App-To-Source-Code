@@ -1,0 +1,102 @@
+{
+  "type": "Program",
+  "start": 0,
+  "end": 121,
+  "body": [
+    {
+      "type": "FunctionDeclaration",
+      "start": 0,
+      "end": 38,
+      "id": {
+        "type": "Identifier",
+        "start": 9,
+        "end": 30,
+        "name": "methodName_click_myID"
+      },
+      "expression": false,
+      "generator": false,
+      "async": false,
+      "params": [],
+      "body": {
+        "type": "BlockStatement",
+        "start": 32,
+        "end": 38,
+        "body": []
+      }
+    },
+    {
+      "type": "ExpressionStatement",
+      "start": 40,
+      "end": 121,
+      "expression": {
+        "type": "CallExpression",
+        "start": 40,
+        "end": 120,
+        "callee": {
+          "type": "MemberExpression",
+          "start": 40,
+          "end": 88,
+          "object": {
+            "type": "CallExpression",
+            "start": 40,
+            "end": 71,
+            "callee": {
+              "type": "MemberExpression",
+              "start": 40,
+              "end": 63,
+              "object": {
+                "type": "Identifier",
+                "start": 40,
+                "end": 48,
+                "name": "document"
+              },
+              "property": {
+                "type": "Identifier",
+                "start": 49,
+                "end": 63,
+                "name": "getElementById"
+              },
+              "computed": false,
+              "optional": false
+            },
+            "arguments": [
+              {
+                "type": "Literal",
+                "start": 64,
+                "end": 70,
+                "value": "myID",
+                "raw": "'myID'"
+              }
+            ],
+            "optional": false
+          },
+          "property": {
+            "type": "Identifier",
+            "start": 72,
+            "end": 88,
+            "name": "addEventListener"
+          },
+          "computed": false,
+          "optional": false
+        },
+        "arguments": [
+          {
+            "type": "Literal",
+            "start": 89,
+            "end": 96,
+            "value": "click",
+            "raw": "'click'"
+          },
+          {
+            "type": "Identifier",
+            "start": 98,
+            "end": 119,
+            "name": "methodName_click_myID"
+          }
+        ],
+        "optional": false
+      }
+    }
+  ],
+  "sourceType": "module"
+}

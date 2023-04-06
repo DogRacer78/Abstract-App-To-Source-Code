@@ -9,7 +9,7 @@ import {addCommentsToEnd, createComment} from "./src/Comments.js";
 import { visit, addNodeToEnd, addMultipleNodesToEnd, codeToAST } from "./src/NodeUtils.js";
 import { generateDateTime } from "./src/Util.js";
 import { parsePythonTree } from "./src/ParsePythonTree.js";
-import { handleFakeForm } from "./src/HTMLParser.js";
+import { addElectronIndex, addWebIndex, handleFakeForm } from "./src/HTMLParser.js";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 import util from "util";
@@ -118,9 +118,12 @@ function createWebApp(name, htmlAddress, app_path){
         process.chdir(`./${name}`);
 
         let indexJSCode = toJs(appData.indexJS);
+
+        // add the indexjs reference to the HTML
+        let indexHTML = addWebIndex(appData.indexHTML);
         
         fs.writeFileSync("./public/index.js", indexJSCode.value);
-        fs.writeFileSync("./public/index.html", appData.indexHTML);
+        fs.writeFileSync("./public/index.html", indexHTML);
 
         // move the app.js into the dir
         fs.copyFileSync(path.join(__dirname, "/templates/app.js"), "./app.js");
@@ -169,7 +172,7 @@ function createElectronApp(name, htmlAddress, app_path){
         console.log(process.cwd());
         
         console.log("Getting electron");
-        exec("npm init -y && npm install electron --save-dev && npm install mongodb && npm install socket.io-client", (error, stdout, stderr) => {
+        exec("npm init -y && npm install electron --save-dev && npm install socket.io-client", (error, stdout, stderr) => {
             if (error) {
                 console.log(`error: ${error.message}`);
                 return;
@@ -187,10 +190,13 @@ function createElectronApp(name, htmlAddress, app_path){
             packageJSON.main = "main.js";
 
             let indexJSCode = toJs(appData.indexJS);
+
+            // add the index.js refernce to the HTML
+            let indexHTML = addElectronIndex(appData.indexHTML);
     
             // write the files
             fs.writeFileSync("./index.js", indexJSCode.value);
-            fs.writeFileSync("./index.html", appData.indexHTML);
+            fs.writeFileSync("./index.html", indexHTML);
             fs.writeFileSync("./main.js", mainJSCode.value);
             fs.writeFileSync("./package.json", JSON.stringify(packageJSON, null, 4));
         });
@@ -205,7 +211,7 @@ function createElectronApp(name, htmlAddress, app_path){
  * @param {String} htmlAddress URL of webflow site
  * @returns {{indexJS : String, indexHTML : String}} Object with strings for the indexJS and indexHTML
  */
-async function createApp(projectName, htmlAddress, appDir){
+async function createApp(projectName, htmlAddress, appDir, TEST = false){
     let data = {};
 
     const runPythonFilePromise = util.promisify(PythonShell.run);
@@ -239,7 +245,8 @@ If you have pip installed simply run : pip install javascripthon
 An App.py file created in your project directory
 *******************************************************\n`);
             console.log(e);
-            process.exit(-1);
+            if (!TEST)
+                process.exit(-1);
     }
 
     try{
@@ -253,17 +260,22 @@ An App.py file created in your project directory
         // add the other code to the index.js file
 
         // add the date time
-        addCommentsToEnd(indexJSTree, generateDateTime());
+        if (!TEST){
+            addCommentsToEnd(indexJSTree, generateDateTime());
+        }
         
-        addCommentsToEnd(indexJSTree, "Function Definitions")
+        if (!TEST)
+            addCommentsToEnd(indexJSTree, "Function Definitions")
         addMultipleNodesToEnd(indexJSTree, pythonCodeParsed.nonKeyCode);
         //addCommentsToEnd(indexJSTree, "\n\n");
 
-        addCommentsToEnd(indexJSTree, "Event listeners");
+        if (!TEST)
+            addCommentsToEnd(indexJSTree, "Event listeners");
         addMultipleNodesToEnd(indexJSTree, pythonCodeParsed.events);
         //addCommentsToEnd(indexJSTree, "\n\n");
 
-        addCommentsToEnd(indexJSTree, "On load event listener");
+        if (!TEST)
+            addCommentsToEnd(indexJSTree, "On load event listener");
         addMultipleNodesToEnd(indexJSTree, pythonCodeParsed.start_up);
         //console.log(JSON.stringify(indexJSTree, null, 3));
 
@@ -310,9 +322,15 @@ An App.py file created in your project directory
     catch (e){
         console.error(e.message);
         //console.error(e.name);
-        process.exit(-1);
+        if (!TEST)
+            process.exit(-1);
+
+        if (TEST)
+            throw e;
     }
     
 }
 
 main()
+
+export {createApp};

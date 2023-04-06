@@ -1,0 +1,96 @@
+{
+    "type": "Program",
+    "start": 0,
+    "end": 63,
+    "body": [
+      {
+        "type": "ExpressionStatement",
+        "start": 0,
+        "end": 63,
+        "expression": {
+          "type": "AssignmentExpression",
+          "start": 0,
+          "end": 62,
+          "operator": "=",
+          "left": {
+            "type": "MemberExpression",
+            "start": 0,
+            "end": 41,
+            "object": {
+              "type": "CallExpression",
+              "start": 0,
+              "end": 31,
+              "callee": {
+                "type": "MemberExpression",
+                "start": 0,
+                "end": 23,
+                "object": {
+                  "type": "Identifier",
+                  "start": 0,
+                  "end": 8,
+                  "name": "document"
+                },
+                "property": {
+                  "type": "Identifier",
+                  "start": 9,
+                  "end": 23,
+                  "name": "getElementById"
+                },
+                "computed": false,
+                "optional": false
+              },
+              "arguments": [
+                {
+                  "type": "Literal",
+                  "start": 24,
+                  "end": 30,
+                  "value": "myID",
+                  "raw": "'myID'"
+                }
+              ],
+              "optional": false
+            },
+            "property": {
+              "type": "Identifier",
+              "start": 32,
+              "end": 41,
+              "name": "innerText"
+            },
+            "computed": false,
+            "optional": false
+          },
+          "right": {
+            "type": "ObjectExpression",
+            "start": 44,
+            "end": 62,
+            "properties": [
+              {
+                "type": "Property",
+                "start": 46,
+                "end": 60,
+                "method": false,
+                "shorthand": false,
+                "computed": false,
+                "key": {
+                  "type": "Literal",
+                  "start": 46,
+                  "end": 52,
+                  "value": "Name",
+                  "raw": "\"Name\""
+                },
+                "value": {
+                  "type": "Literal",
+                  "start": 55,
+                  "end": 60,
+                  "value": "Bob",
+                  "raw": "\"Bob\""
+                },
+                "kind": "init"
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "sourceType": "module"
+  }

@@ -113,7 +113,7 @@ function manipulateComments(tree){
                         }
                         else{
                             if (args[0].type !== "Literal"){
-                                throw new Error("invalid Syntax for a comment block\nMust contain a single string with no string concatanations");
+                                throw new Error("Invalid Syntax for a comment block\nMust contain a single string with no string concatanations");
                             }
                             let comment = createComment(args[0].value);
                             node.expression = comment.expression;
@@ -218,7 +218,7 @@ function checkSetOutput(node){
                     let args = node.expression.arguments;
                     console.log(args[0]);
                     if (args.length === 0)
-                        return outPutData;
+                        throw new Error("setOutput_id must contain one argument of data");
     
                     // now create the node
                     outPutData = 

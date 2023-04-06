@@ -1,0 +1,3 @@
+{
+    "msg" : "Invalid Syntax for a comment block\nMust contain a single string with no string concatanations"
+}
