@@ -12,9 +12,10 @@ let eventID = 1;
 /**
  * Parses the tree and looks for database calls 
  */
-function parseElectronDBTree(frontendJS, backendJS){
+function parseElectronDBTree(frontendJS, backendJS, TEST = false){
     // add the mongodb import
     //addMongoDBImport(backendJS);
+    eventID = 1;
 
     // add the fron end electron and ipc imports
     addElectronImport(frontendJS);
@@ -38,8 +39,11 @@ function parseElectronDBTree(frontendJS, backendJS){
     */
 
     // comments for ipc Communication
-    addCommentsToEnd(backendJS, "\n\n\nIPC for communicating with front end\n\n");
-    addCommentsToEnd(backendJS, "\n\nUpdate Nodes\n\n");
+    if (!TEST){
+        addCommentsToEnd(backendJS, "\n\n\nIPC for communicating with front end\n\n");
+        addCommentsToEnd(backendJS, "\n\nUpdate Nodes\n\n");
+    }
+    
 
     // handle load data nodes
     visit(frontendJS, (node, parent, key) => {
@@ -51,7 +55,8 @@ function parseElectronDBTree(frontendJS, backendJS){
         }
     });
 
-    addCommentsToEnd(backendJS, "\n\nInsert Nodes\n\n");
+    if (!TEST)
+        addCommentsToEnd(backendJS, "\n\nInsert Nodes\n\n");
 
     // handle insert data nodes
     visit(frontendJS, (node, parent, key) =>{
@@ -371,7 +376,7 @@ function checkLoadDataNode(node){
                 let args = node.arguments;
                 if (args.length !== 3 || args[0].type !== "Literal" || typeof args[0].value !== "string" ||
                     args[1].type !== "Literal" || typeof args[1].value !== "string"){
-                    throw new Error(`DBLoadData must follow pattern dbLoadData("DB Name", "collection name", dict)`);
+                    throw new Error(`dbLoadData must follow pattern dbLoadData("DB Name", "collection name", dict)`);
                 }
                 // split the data as needed
                 return { 

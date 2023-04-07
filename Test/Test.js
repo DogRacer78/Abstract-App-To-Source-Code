@@ -4,6 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { createApp } from "../Convert.js";
 import { ASTToCode, codeToAST, visit } from "../src/NodeUtils.js";
+import { parseElectronDBTree } from "../src/ParseDatabase.js";
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -347,6 +348,69 @@ async () => {
     return out.indexHTML;
 });
 
+const test29FrontEnd = new TestCase(29, "Valid electron dbLoadData (Frontend)", 
+removeLocData(JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_29FrontEnd.json")))),
+async () => {
+    // create the app
+    const out = await createApp("TEST_29", "Test/TEST_PAGE.html", "Test/Test_29.py", true);
+    let mainJSTree = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/mainJS.json"), "utf-8"));
+    parseElectronDBTree(out.indexJS, mainJSTree, true);
+    return out.indexJS;
+});
+
+const test29BackEnd = new TestCase(29, "Valid electron dbLoadData (Backend)", 
+removeLocData(JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_29BackEnd.json")))),
+async () => {
+    // create the app
+    const out = await createApp("TEST_29", "Test/TEST_PAGE.html", "Test/Test_29.py", true);
+    let mainJSTreeBack = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/mainJS.json"), "utf-8"));
+    parseElectronDBTree(out.indexJS, mainJSTreeBack, true);
+    return mainJSTreeBack;
+});
+
+const test30 = new TestCase(30, "Electron dbLoadData with no dbName specified", 
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_30.json"))).msg,
+async () => {
+    // create the app
+    // create the app
+    const out = await createApp("TEST_29", "Test/TEST_PAGE.html", "Test/Test_30.py", true);
+    let mainJSTree = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/mainJS.json"), "utf-8"));
+    parseElectronDBTree(out.indexJS, mainJSTree, true);
+    return out.indexJS;
+});
+
+const test31 = new TestCase(31, "Electron dbLoadData with no dbName specified", 
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_31.json"))).msg,
+async () => {
+    // create the app
+    // create the app
+    const out = await createApp("TEST_29", "Test/TEST_PAGE.html", "Test/Test_31.py", true);
+    let mainJSTree = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/mainJS.json"), "utf-8"));
+    parseElectronDBTree(out.indexJS, mainJSTree, true);
+    return out.indexJS;
+});
+
+const test32 = new TestCase(32, "Electron dbLoadData when no searchDict is provided", 
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_32.json"))).msg,
+async () => {
+    // create the app
+    // create the app
+    const out = await createApp("TEST_32", "Test/TEST_PAGE.html", "Test/Test_32.py", true);
+    let mainJSTree = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/mainJS.json"), "utf-8"));
+    parseElectronDBTree(out.indexJS, mainJSTree, true);
+    return out.indexJS;
+});
+
+const test33 = new TestCase(33, "Electron dbLoadData when no searchDict is provided", 
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_33.json"))).msg,
+async () => {
+    // create the app
+    const out = await createApp("TEST_33", "Test/TEST_PAGE.html", "Test/Test_33.py", true);
+    let mainJSTree = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/mainJS.json"), "utf-8"));
+    parseElectronDBTree(out.indexJS, mainJSTree, true);
+    return out.indexJS;
+});
+
 // run test 1
 await testOne.runTest();
 writeOutput("\n");
@@ -441,6 +505,26 @@ await test27.runTest();
 writeOutput("\n");
 // run test 28
 await test28.testError();
+writeOutput("\n");
+// run test 29
+await test29FrontEnd.runTest();
+writeOutput("\n");
+// run test 29 back end
+await test29BackEnd.runTest();
+//writeOutput(test29BackEnd.showExpectedCodeOut());
+//writeOutput(test29BackEnd.showResCodeOut());
+writeOutput("\n");
+// run test 30
+await test30.testError();
+writeOutput("\n");
+// run test 31
+await test31.testError();
+writeOutput("\n");
+// run test 32
+await test32.testError();
+writeOutput("\n");
+// run test 33
+await test33.testError();
 writeOutput("\n");
 
 

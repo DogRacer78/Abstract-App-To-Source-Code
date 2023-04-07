@@ -1,0 +1,3 @@
+{
+    "msg" : "dbLoadData must follow pattern dbLoadData(\"DB Name\", \"collection name\", dict)"
+}
