@@ -1,0 +1,199 @@
+{
+  "type": "Program",
+  "start": 0,
+  "end": 171,
+  "body": [
+    {
+      "type": "VariableDeclaration",
+      "start": 0,
+      "end": 37,
+      "declarations": [
+        {
+          "type": "VariableDeclarator",
+          "start": 6,
+          "end": 36,
+          "id": {
+            "type": "Identifier",
+            "start": 6,
+            "end": 14,
+            "name": "electron"
+          },
+          "init": {
+            "type": "CallExpression",
+            "start": 17,
+            "end": 36,
+            "callee": {
+              "type": "Identifier",
+              "start": 17,
+              "end": 24,
+              "name": "require"
+            },
+            "arguments": [
+              {
+                "type": "Literal",
+                "start": 25,
+                "end": 35,
+                "value": "electron",
+                "raw": "\"electron\""
+              }
+            ],
+            "optional": false
+          }
+        }
+      ],
+      "kind": "const"
+    },
+    {
+      "type": "VariableDeclaration",
+      "start": 38,
+      "end": 71,
+      "declarations": [
+        {
+          "type": "VariableDeclarator",
+          "start": 44,
+          "end": 70,
+          "id": {
+            "type": "Identifier",
+            "start": 44,
+            "end": 47,
+            "name": "ipc"
+          },
+          "init": {
+            "type": "MemberExpression",
+            "start": 50,
+            "end": 70,
+            "object": {
+              "type": "Identifier",
+              "start": 50,
+              "end": 58,
+              "name": "electron"
+            },
+            "property": {
+              "type": "Identifier",
+              "start": 59,
+              "end": 70,
+              "name": "ipcRenderer"
+            },
+            "computed": false,
+            "optional": false
+          }
+        }
+      ],
+      "kind": "const"
+    },
+    {
+      "type": "ExpressionStatement",
+      "start": 72,
+      "end": 171,
+      "expression": {
+        "type": "CallExpression",
+        "start": 72,
+        "end": 170,
+        "callee": {
+          "type": "MemberExpression",
+          "start": 72,
+          "end": 84,
+          "object": {
+            "type": "Identifier",
+            "start": 72,
+            "end": 75,
+            "name": "ipc"
+          },
+          "property": {
+            "type": "Identifier",
+            "start": 76,
+            "end": 84,
+            "name": "sendSync"
+          },
+          "computed": false,
+          "optional": false
+        },
+        "arguments": [
+          {
+            "type": "Literal",
+            "start": 85,
+            "end": 88,
+            "value": "1",
+            "raw": "'1'"
+          },
+          {
+            "type": "Literal",
+            "start": 90,
+            "end": 97,
+            "value": "Songs",
+            "raw": "'Songs'"
+          },
+          {
+            "type": "Literal",
+            "start": 99,
+            "end": 106,
+            "value": "songs",
+            "raw": "'songs'"
+          },
+          {
+            "type": "ObjectExpression",
+            "start": 108,
+            "end": 132,
+            "properties": [
+              {
+                "type": "Property",
+                "start": 112,
+                "end": 130,
+                "method": false,
+                "shorthand": false,
+                "computed": false,
+                "key": {
+                  "type": "Literal",
+                  "start": 112,
+                  "end": 118,
+                  "value": "name",
+                  "raw": "\"name\""
+                },
+                "value": {
+                  "type": "Literal",
+                  "start": 120,
+                  "end": 130,
+                  "value": "Pressure",
+                  "raw": "\"Pressure\""
+                },
+                "kind": "init"
+              }
+            ]
+          },
+          {
+            "type": "ObjectExpression",
+            "start": 134,
+            "end": 169,
+            "properties": [
+              {
+                "type": "Property",
+                "start": 138,
+                "end": 167,
+                "method": false,
+                "shorthand": false,
+                "computed": false,
+                "key": {
+                  "type": "Literal",
+                  "start": 138,
+                  "end": 146,
+                  "value": "artist",
+                  "raw": "\"artist\""
+                },
+                "value": {
+                  "type": "Literal",
+                  "start": 148,
+                  "end": 167,
+                  "value": "Bruce Springsteen",
+                  "raw": "\"Bruce Springsteen\""
+                },
+                "kind": "init"
+              }
+            ]
+          }
+        ],
+        "optional": false
+      }
+    }
+  ],
+  "sourceType": "module"
+}

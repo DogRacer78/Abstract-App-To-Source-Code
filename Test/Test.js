@@ -411,6 +411,296 @@ async () => {
     return out.indexJS;
 });
 
+const test34FrontEnd = new TestCase(34, "Valid electron dbInsertData (Front End)", 
+removeLocData(JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_34FrontEnd.json")))),
+async () => {
+    // create the app
+    const out = await createApp("TEST_34", "Test/TEST_PAGE.html", "Test/Test_34.py", true);
+    let mainJSTree = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/mainJS.json"), "utf-8"));
+    parseElectronDBTree(out.indexJS, mainJSTree, true);
+    return out.indexJS;
+});
+
+const test34BackEnd = new TestCase(34, "Valid electron dbInsertData (Back End)", 
+removeLocData(JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_34BackEnd.json")))),
+async () => {
+    // create the app
+    const out = await createApp("TEST_34", "Test/TEST_PAGE.html", "Test/Test_34.py", true);
+    let mainJSTreeBack = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/mainJS.json"), "utf-8"));
+    parseElectronDBTree(out.indexJS, mainJSTreeBack, true);
+    return mainJSTreeBack;
+});
+
+const test35 = new TestCase(35, "Electron dbInsertData with no dbName specified", 
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_35.json"))).msg,
+async () => {
+    // create the app
+    const out = await createApp("TEST_35", "Test/TEST_PAGE.html", "Test/Test_35.py", true);
+    let mainJSTree = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/mainJS.json"), "utf-8"));
+    parseElectronDBTree(out.indexJS, mainJSTree, true);
+    return out.indexJS;
+});
+
+const test36 = new TestCase(36, "Electron dbInsertData with no collection specified", 
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_36.json"))).msg,
+async () => {
+    // create the app
+    const out = await createApp("TEST_36", "Test/TEST_PAGE.html", "Test/Test_36.py", true);
+    let mainJSTree = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/mainJS.json"), "utf-8"));
+    parseElectronDBTree(out.indexJS, mainJSTree, true);
+    return out.indexJS;
+});
+
+const test37 = new TestCase(37, "Electron dbInsertData when no insertData is provided", 
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_37.json"))).msg,
+async () => {
+    // create the app
+    const out = await createApp("TEST_37", "Test/TEST_PAGE.html", "Test/Test_37.py", true);
+    let mainJSTree = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/mainJS.json"), "utf-8"));
+    parseElectronDBTree(out.indexJS, mainJSTree, true);
+    return out.indexJS;
+});
+
+const test38 = new TestCase(38, "Electron dbInsertData when the insertData is not an object", 
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_38.json"))).msg,
+async () => {
+    // create the app
+    const out = await createApp("TEST_38", "Test/TEST_PAGE.html", "Test/Test_38.py", true);
+    let mainJSTree = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/mainJS.json"), "utf-8"));
+    parseElectronDBTree(out.indexJS, mainJSTree, true);
+    return out.indexJS;
+});
+
+const test39FrontEnd = new TestCase(39, "Valid electron dbDeleteData (Front End)", 
+removeLocData(JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_39FrontEnd.json")))),
+async () => {
+    // create the app
+    const out = await createApp("TEST_39", "Test/TEST_PAGE.html", "Test/Test_39.py", true);
+    let mainJSTree = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/mainJS.json"), "utf-8"));
+    parseElectronDBTree(out.indexJS, mainJSTree, true);
+    return out.indexJS;
+});
+
+const test39BackEnd = new TestCase(39, "Valid electron dbDeleteData (Back End)", 
+removeLocData(JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_39BackEnd.json")))),
+async () => {
+    // create the app
+    const out = await createApp("TEST_39", "Test/TEST_PAGE.html", "Test/Test_39.py", true);
+    let mainJSTreeBack = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/mainJS.json"), "utf-8"));
+    parseElectronDBTree(out.indexJS, mainJSTreeBack, true);
+    return mainJSTreeBack;
+});
+
+const test40 = new TestCase(40, "Electron dbDeleteData with no dbName specified", 
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_40.json"))).msg,
+async () => {
+    // create the app
+    const out = await createApp("TEST_40", "Test/TEST_PAGE.html", "Test/Test_40.py", true);
+    let mainJSTree = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/mainJS.json"), "utf-8"));
+    parseElectronDBTree(out.indexJS, mainJSTree, true);
+    return out.indexJS;
+});
+
+const test41 = new TestCase(41, "Electron dbDeleteData with no collection specified", 
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_41.json"))).msg,
+async () => {
+    // create the app
+    const out = await createApp("TEST_41", "Test/TEST_PAGE.html", "Test/Test_41.py", true);
+    let mainJSTree = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/mainJS.json"), "utf-8"));
+    parseElectronDBTree(out.indexJS, mainJSTree, true);
+    return out.indexJS;
+});
+
+const test42 = new TestCase(42, "Electron dbDeleteData when no filter is provided", 
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_42.json"))).msg,
+async () => {
+    // create the app
+    const out = await createApp("TEST_42", "Test/TEST_PAGE.html", "Test/Test_42.py", true);
+    let mainJSTree = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/mainJS.json"), "utf-8"));
+    parseElectronDBTree(out.indexJS, mainJSTree, true);
+    return out.indexJS;
+});
+
+const test43 = new TestCase(43, "Electron dbDeleteData when the filter is not an object", 
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_43.json"))).msg,
+async () => {
+    // create the app
+    const out = await createApp("TEST_43", "Test/TEST_PAGE.html", "Test/Test_43.py", true);
+    let mainJSTree = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/mainJS.json"), "utf-8"));
+    parseElectronDBTree(out.indexJS, mainJSTree, true);
+    return out.indexJS;
+});
+
+const test44FrontEnd = new TestCase(44, "Valid electron dbUpdateData (Front End)", 
+removeLocData(JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_44FrontEnd.json")))),
+async () => {
+    // create the app
+    const out = await createApp("TEST_44", "Test/TEST_PAGE.html", "Test/Test_44.py", true);
+    let mainJSTree = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/mainJS.json"), "utf-8"));
+    parseElectronDBTree(out.indexJS, mainJSTree, true);
+    return out.indexJS;
+});
+
+const test44BackEnd = new TestCase(44, "Valid electron dbUpdateData (Back End)", 
+removeLocData(JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_44BackEnd.json")))),
+async () => {
+    // create the app
+    const out = await createApp("TEST_44", "Test/TEST_PAGE.html", "Test/Test_44.py", true);
+    let mainJSTreeBack = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/mainJS.json"), "utf-8"));
+    parseElectronDBTree(out.indexJS, mainJSTreeBack, true);
+    return mainJSTreeBack;
+});
+
+const test45 = new TestCase(45, "Electron dbUpdateData with no dbName specified", 
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_45.json"))).msg,
+async () => {
+    // create the app
+    const out = await createApp("TEST_45", "Test/TEST_PAGE.html", "Test/Test_45.py", true);
+    let mainJSTree = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/mainJS.json"), "utf-8"));
+    parseElectronDBTree(out.indexJS, mainJSTree, true);
+    return out.indexJS;
+});
+
+const test46 = new TestCase(46, "Electron dbUpdateData with no collection specified", 
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_46.json"))).msg,
+async () => {
+    // create the app
+    const out = await createApp("TEST_46", "Test/TEST_PAGE.html", "Test/Test_46.py", true);
+    let mainJSTree = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/mainJS.json"), "utf-8"));
+    parseElectronDBTree(out.indexJS, mainJSTree, true);
+    return out.indexJS;
+});
+
+const test47 = new TestCase(47, "Electron dbUpdateData when no filter is provided", 
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_47.json"))).msg,
+async () => {
+    // create the app
+    const out = await createApp("TEST_47", "Test/TEST_PAGE.html", "Test/Test_47.py", true);
+    let mainJSTree = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/mainJS.json"), "utf-8"));
+    parseElectronDBTree(out.indexJS, mainJSTree, true);
+    return out.indexJS;
+});
+
+const test48 = new TestCase(48, "Electron dbUpdateData when the filter is not an object", 
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_48.json"))).msg,
+async () => {
+    // create the app
+    const out = await createApp("TEST_48", "Test/TEST_PAGE.html", "Test/Test_48.py", true);
+    let mainJSTree = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/mainJS.json"), "utf-8"));
+    parseElectronDBTree(out.indexJS, mainJSTree, true);
+    return out.indexJS;
+});
+
+const test49 = new TestCase(49, "Electron dbUpdateData when no update object is provided", 
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_49.json"))).msg,
+async () => {
+    // create the app
+    const out = await createApp("TEST_49", "Test/TEST_PAGE.html", "Test/Test_49.py", true);
+    let mainJSTree = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/mainJS.json"), "utf-8"));
+    parseElectronDBTree(out.indexJS, mainJSTree, true);
+    return out.indexJS;
+});
+
+const test50 = new TestCase(50, "Electron dbUpdateData when update object is not an object", 
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_50.json"))).msg,
+async () => {
+    // create the app
+    const out = await createApp("TEST_50", "Test/TEST_PAGE.html", "Test/Test_50.py", true);
+    let mainJSTree = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/mainJS.json"), "utf-8"));
+    parseElectronDBTree(out.indexJS, mainJSTree, true);
+    return out.indexJS;
+});
+
+const test51FrontEnd = new TestCase(51, "Electron, valid insertChange (Front End)", 
+removeLocData(JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_51FrontEnd.json")))),
+async () => {
+    // create the app
+    const out = await createApp("TEST_51", "Test/TEST_PAGE.html", "Test/Test_51.py", true);
+    let mainJSTree = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/mainJS.json"), "utf-8"));
+    parseElectronDBTree(out.indexJS, mainJSTree, true);
+    return out.indexJS;
+});
+
+const test51BackEnd = new TestCase(51, "Electron, valid insertChange (Back End)", 
+removeLocData(JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_51BackEnd.json")))),
+async () => {
+    // create the app
+    const out = await createApp("TEST_51", "Test/TEST_PAGE.html", "Test/Test_51.py", true);
+    let mainJSTreeBack = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/mainJS.json"), "utf-8"));
+    parseElectronDBTree(out.indexJS, mainJSTreeBack, true);
+    return mainJSTreeBack;
+});
+
+const test52 = new TestCase(52, "Electron 1+ insertChange", 
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_52.json"))).msg,
+async () => {
+    // create the app
+    const out = await createApp("TEST_50", "Test/TEST_PAGE.html", "Test/Test_52.py", true);
+    let mainJSTree = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/mainJS.json"), "utf-8"));
+    parseElectronDBTree(out.indexJS, mainJSTree, true);
+    return out.indexJS;
+});
+
+const test53FrontEnd = new TestCase(53, "Electron, valid updateChange (Front End)", 
+removeLocData(JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_53FrontEnd.json")))),
+async () => {
+    // create the app
+    const out = await createApp("TEST_53", "Test/TEST_PAGE.html", "Test/Test_53.py", true);
+    let mainJSTree = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/mainJS.json"), "utf-8"));
+    parseElectronDBTree(out.indexJS, mainJSTree, true);
+    return out.indexJS;
+});
+
+const test53BackEnd = new TestCase(53, "Electron, valid updateChange (Back End)", 
+removeLocData(JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_53BackEnd.json")))),
+async () => {
+    // create the app
+    const out = await createApp("TEST_53", "Test/TEST_PAGE.html", "Test/Test_53.py", true);
+    let mainJSTreeBack = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/mainJS.json"), "utf-8"));
+    parseElectronDBTree(out.indexJS, mainJSTreeBack, true);
+    return mainJSTreeBack;
+});
+
+const test54 = new TestCase(54, "Electron 1+ updateChange", 
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_54.json"))).msg,
+async () => {
+    // create the app
+    const out = await createApp("TEST_54", "Test/TEST_PAGE.html", "Test/Test_54.py", true);
+    let mainJSTree = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/mainJS.json"), "utf-8"));
+    parseElectronDBTree(out.indexJS, mainJSTree, true);
+    return out.indexJS;
+});
+
+const test55FrontEnd = new TestCase(55, "Electron, valid deleteChange (Front End)", 
+removeLocData(JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_55FrontEnd.json")))),
+async () => {
+    // create the app
+    const out = await createApp("TEST_55", "Test/TEST_PAGE.html", "Test/Test_55.py", true);
+    let mainJSTree = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/mainJS.json"), "utf-8"));
+    parseElectronDBTree(out.indexJS, mainJSTree, true);
+    return out.indexJS;
+});
+
+const test55BackEnd = new TestCase(55, "Electron, valid deleteChange (Back End)", 
+removeLocData(JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_55BackEnd.json")))),
+async () => {
+    // create the app
+    const out = await createApp("TEST_55", "Test/TEST_PAGE.html", "Test/Test_55.py", true);
+    let mainJSTreeBack = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/mainJS.json"), "utf-8"));
+    parseElectronDBTree(out.indexJS, mainJSTreeBack, true);
+    return mainJSTreeBack;
+});
+
+const test56 = new TestCase(56, "Electron 1+ deleteChange", 
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_56.json"))).msg,
+async () => {
+    // create the app
+    const out = await createApp("TEST_56", "Test/TEST_PAGE.html", "Test/Test_56.py", true);
+    let mainJSTree = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/mainJS.json"), "utf-8"));
+    parseElectronDBTree(out.indexJS, mainJSTree, true);
+    return out.indexJS;
+});
+
 // run test 1
 await testOne.runTest();
 writeOutput("\n");
@@ -525,6 +815,98 @@ await test32.testError();
 writeOutput("\n");
 // run test 33
 await test33.testError();
+writeOutput("\n");
+// run test 34 back end
+await test34BackEnd.runTest();
+writeOutput("\n");
+// run test 34 front end
+await test34FrontEnd.runTest();
+//writeOutput(test34FrontEnd.showExpectedCodeOut());
+writeOutput("\n");
+// run test 35
+await test35.testError();
+writeOutput("\n");
+// run test 36
+await test36.testError();
+writeOutput("\n");
+// run test 37
+await test37.testError();
+writeOutput("\n");
+// run test 38
+await test38.testError();
+writeOutput("\n");
+// run test 39 back end
+await test39BackEnd.runTest();
+//writeOutput(test39BackEnd.showExpectedCodeOut());
+//writeOutput(test39BackEnd.showResCodeOut());
+writeOutput("\n");
+// run test 39 front end
+await test39FrontEnd.runTest();
+writeOutput("\n");
+// run test 40
+await test40.testError();
+writeOutput("\n");
+// run test 41
+await test41.testError();
+writeOutput("\n");
+// run test 42
+await test42.testError();
+writeOutput("\n");
+// run test 43
+await test43.testError();
+writeOutput("\n");
+// run test 44 front end
+await test44FrontEnd.runTest();
+writeOutput("\n");
+// run test 44 back end
+await test44BackEnd.runTest();
+writeOutput("\n");
+// run test 45
+await test45.testError();
+writeOutput("\n");
+// run test 46
+await test46.testError();
+writeOutput("\n");
+// run test 47
+await test47.testError();
+writeOutput("\n");
+// run test 48
+await test48.testError();
+writeOutput("\n");
+// run test 49
+await test49.testError();
+writeOutput("\n");
+// run test 50
+await test50.testError();
+writeOutput("\n");
+// run test 51 front end
+await test51FrontEnd.runTest();
+writeOutput("\n");
+// run test 51 back end
+await test51BackEnd.runTest();
+writeOutput("\n");
+// run test 52
+await test52.testError();
+writeOutput("\n");
+// run test 53 front end
+await test53FrontEnd.runTest();
+writeOutput("\n");
+// run test 53 back end
+await test53BackEnd.runTest();
+writeOutput("\n");
+// run test 54
+await test54.testError();
+writeOutput("\n");
+// run test 55 front end
+await test55FrontEnd.runTest();
+writeOutput("\n");
+// run test 55 back end
+await test55BackEnd.runTest();
+writeOutput("\n");
+// run test 56
+await test56.testError();
+//writeOutput(test56.expectedOut);
+//writeOutput(test56.testRes);
 writeOutput("\n");
 
 

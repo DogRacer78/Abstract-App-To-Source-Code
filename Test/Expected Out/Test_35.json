@@ -1,0 +1,3 @@
+{
+    "msg" : "InsertData must have format dbInsertData(\"DB Name\", \"collection name\", {dataname : data})"
+}

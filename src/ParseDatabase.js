@@ -430,7 +430,7 @@ function checkUpdateNode(node){
                 if (args.length !== 4 || args[0].type !== "Literal" || typeof args[0].value !== "string" ||
                     args[1].type !== "Literal" || typeof args[1].value !== "string" 
                     || args[2].type !== "ObjectExpression" || args[3].type !== "ObjectExpression"){
-                    throw new Error(`dbUpdateData must follow pattern dbUpdateData("collection name", {filter}, {data})`);
+                    throw new Error(`dbUpdateData must follow pattern dbUpdateData("DB Name", "collection name", {filter}, {data})`);
                 }
                 let filterCode = ASTToCode(args[2]);
                 let updateDataCode = ASTToCode(args[3]);
