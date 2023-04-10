@@ -1,0 +1,783 @@
+{
+  "type": "Program",
+  "body": [
+      {
+          "type": "ExpressionStatement",
+          "expression": {
+              "type": "AwaitExpression",
+              "arguments": [
+                  {
+                      "type": "Literal",
+                      "value": "Songs",
+                      "raw": "\"Songs\""
+                  },
+                  {
+                      "type": "Literal",
+                      "value": "songs",
+                      "raw": "\"songs\""
+                  },
+                  {
+                      "type": "ObjectExpression",
+                      "properties": [
+                          {
+                              "type": "Property",
+                              "method": false,
+                              "shorthand": false,
+                              "computed": false,
+                              "key": {
+                                  "type": "Literal",
+                                  "value": "Name",
+                                  "raw": "\"Name\""
+                              },
+                              "value": {
+                                  "type": "Literal",
+                                  "value": "Thunder Road",
+                                  "raw": "\"Thunder Road\""
+                              },
+                              "kind": "init"
+                          }
+                      ]
+                  }
+              ],
+              "optional": false,
+              "argument": {
+                  "type": "CallExpression",
+                  "callee": {
+                      "type": "Identifier",
+                      "name": "dbDeleteData"
+                  },
+                  "arguments": [
+                      {
+                          "type": "Literal",
+                          "value": "Songs",
+                          "raw": "\"Songs\""
+                      },
+                      {
+                          "type": "Literal",
+                          "value": "songs",
+                          "raw": "\"songs\""
+                      },
+                      {
+                          "type": "ObjectExpression",
+                          "properties": [
+                              {
+                                  "type": "Property",
+                                  "method": false,
+                                  "shorthand": false,
+                                  "computed": false,
+                                  "key": {
+                                      "type": "Literal",
+                                      "value": "Name",
+                                      "raw": "\"Name\""
+                                  },
+                                  "value": {
+                                      "type": "Literal",
+                                      "value": "Thunder Road",
+                                      "raw": "\"Thunder Road\""
+                                  },
+                                  "kind": "init"
+                              }
+                          ]
+                      }
+                  ],
+                  "optional": false
+              }
+          }
+      },
+      {
+          "type": "FunctionDeclaration",
+          "id": {
+              "type": "Identifier",
+              "name": "BufferData"
+          },
+          "expression": false,
+          "generator": false,
+          "async": false,
+          "params": [
+              {
+                  "type": "Identifier",
+                  "name": "databaseName"
+              },
+              {
+                  "type": "Identifier",
+                  "name": "collectionName"
+              },
+              {
+                  "type": "Identifier",
+                  "name": "data"
+              },
+              {
+                  "type": "Identifier",
+                  "name": "type"
+              }
+          ],
+          "body": {
+              "type": "BlockStatement",
+              "body": [
+                  {
+                      "type": "ExpressionStatement",
+                      "expression": {
+                          "type": "AssignmentExpression",
+                          "operator": "=",
+                          "left": {
+                              "type": "MemberExpression",
+                              "object": {
+                                  "type": "ThisExpression"
+                              },
+                              "property": {
+                                  "type": "Identifier",
+                                  "name": "databaseName"
+                              },
+                              "computed": false,
+                              "optional": false
+                          },
+                          "right": {
+                              "type": "Identifier",
+                              "name": "databaseName"
+                          }
+                      }
+                  },
+                  {
+                      "type": "ExpressionStatement",
+                      "expression": {
+                          "type": "AssignmentExpression",
+                          "operator": "=",
+                          "left": {
+                              "type": "MemberExpression",
+                              "object": {
+                                  "type": "ThisExpression"
+                              },
+                              "property": {
+                                  "type": "Identifier",
+                                  "name": "collectionName"
+                              },
+                              "computed": false,
+                              "optional": false
+                          },
+                          "right": {
+                              "type": "Identifier",
+                              "name": "collectionName"
+                          }
+                      }
+                  },
+                  {
+                      "type": "ExpressionStatement",
+                      "expression": {
+                          "type": "AssignmentExpression",
+                          "operator": "=",
+                          "left": {
+                              "type": "MemberExpression",
+                              "object": {
+                                  "type": "ThisExpression"
+                              },
+                              "property": {
+                                  "type": "Identifier",
+                                  "name": "data"
+                              },
+                              "computed": false,
+                              "optional": false
+                          },
+                          "right": {
+                              "type": "Identifier",
+                              "name": "data"
+                          }
+                      }
+                  },
+                  {
+                      "type": "ExpressionStatement",
+                      "expression": {
+                          "type": "AssignmentExpression",
+                          "operator": "=",
+                          "left": {
+                              "type": "MemberExpression",
+                              "object": {
+                                  "type": "ThisExpression"
+                              },
+                              "property": {
+                                  "type": "Identifier",
+                                  "name": "type"
+                              },
+                              "computed": false,
+                              "optional": false
+                          },
+                          "right": {
+                              "type": "Identifier",
+                              "name": "type"
+                          }
+                      }
+                  }
+              ]
+          }
+      },
+      {
+          "type": "VariableDeclaration",
+          "declarations": [
+              {
+                  "type": "VariableDeclarator",
+                  "id": {
+                      "type": "Identifier",
+                      "name": "DataType"
+                  },
+                  "init": {
+                      "type": "ObjectExpression",
+                      "properties": [
+                          {
+                              "type": "Property",
+                              "method": false,
+                              "shorthand": false,
+                              "computed": false,
+                              "key": {
+                                  "type": "Identifier",
+                                  "name": "insert"
+                              },
+                              "value": {
+                                  "type": "Literal",
+                                  "value": "insert",
+                                  "raw": "\"insert\""
+                              },
+                              "kind": "init"
+                          },
+                          {
+                              "type": "Property",
+                              "method": false,
+                              "shorthand": false,
+                              "computed": false,
+                              "key": {
+                                  "type": "Identifier",
+                                  "name": "update"
+                              },
+                              "value": {
+                                  "type": "Literal",
+                                  "value": "update",
+                                  "raw": "\"update\""
+                              },
+                              "kind": "init"
+                          },
+                          {
+                              "type": "Property",
+                              "method": false,
+                              "shorthand": false,
+                              "computed": false,
+                              "key": {
+                                  "type": "Identifier",
+                                  "name": "delete"
+                              },
+                              "value": {
+                                  "type": "Literal",
+                                  "value": "delete",
+                                  "raw": "\"delete\""
+                              },
+                              "kind": "init"
+                          },
+                          {
+                              "type": "Property",
+                              "method": false,
+                              "shorthand": false,
+                              "computed": false,
+                              "key": {
+                                  "type": "Identifier",
+                                  "name": "read"
+                              },
+                              "value": {
+                                  "type": "Literal",
+                                  "value": "read",
+                                  "raw": "\"read\""
+                              },
+                              "kind": "init"
+                          }
+                      ]
+                  }
+              }
+          ],
+          "kind": "const"
+      },
+      {
+          "type": "FunctionDeclaration",
+          "id": {
+              "type": "Identifier",
+              "name": "dbLoadData"
+          },
+          "expression": false,
+          "generator": false,
+          "async": true,
+          "params": [
+              {
+                  "type": "Identifier",
+                  "name": "dbName"
+              },
+              {
+                  "type": "Identifier",
+                  "name": "collName"
+              },
+              {
+                  "type": "Identifier",
+                  "name": "data"
+              }
+          ],
+          "body": {
+              "type": "BlockStatement",
+              "body": [
+                  {
+                      "type": "ReturnStatement",
+                      "argument": {
+                          "type": "AwaitExpression",
+                          "argument": {
+                              "type": "CallExpression",
+                              "callee": {
+                                  "type": "MemberExpression",
+                                  "object": {
+                                      "type": "CallExpression",
+                                      "callee": {
+                                          "type": "MemberExpression",
+                                          "object": {
+                                              "type": "Identifier",
+                                              "name": "$"
+                                          },
+                                          "property": {
+                                              "type": "Identifier",
+                                              "name": "post"
+                                          },
+                                          "computed": false,
+                                          "optional": false
+                                      },
+                                      "arguments": [
+                                          {
+                                              "type": "Literal",
+                                              "value": "/load_data",
+                                              "raw": "\"/load_data\""
+                                          },
+                                          {
+                                              "type": "NewExpression",
+                                              "callee": {
+                                                  "type": "Identifier",
+                                                  "name": "BufferData"
+                                              },
+                                              "arguments": [
+                                                  {
+                                                      "type": "Identifier",
+                                                      "name": "dbName"
+                                                  },
+                                                  {
+                                                      "type": "Identifier",
+                                                      "name": "collName"
+                                                  },
+                                                  {
+                                                      "type": "Identifier",
+                                                      "name": "data"
+                                                  },
+                                                  {
+                                                      "type": "MemberExpression",
+                                                      "object": {
+                                                          "type": "Identifier",
+                                                          "name": "DataType"
+                                                      },
+                                                      "property": {
+                                                          "type": "Identifier",
+                                                          "name": "read"
+                                                      },
+                                                      "computed": false,
+                                                      "optional": false
+                                                  }
+                                              ]
+                                          }
+                                      ],
+                                      "optional": false
+                                  },
+                                  "property": {
+                                      "type": "Identifier",
+                                      "name": "promise"
+                                  },
+                                  "computed": false,
+                                  "optional": false
+                              },
+                              "arguments": [],
+                              "optional": false
+                          }
+                      }
+                  }
+              ]
+          }
+      },
+      {
+          "type": "FunctionDeclaration",
+          "id": {
+              "type": "Identifier",
+              "name": "dbInsertData"
+          },
+          "expression": false,
+          "generator": false,
+          "async": true,
+          "params": [
+              {
+                  "type": "Identifier",
+                  "name": "dbName"
+              },
+              {
+                  "type": "Identifier",
+                  "name": "collName"
+              },
+              {
+                  "type": "Identifier",
+                  "name": "data"
+              }
+          ],
+          "body": {
+              "type": "BlockStatement",
+              "body": [
+                  {
+                      "type": "ReturnStatement",
+                      "argument": {
+                          "type": "AwaitExpression",
+                          "argument": {
+                              "type": "CallExpression",
+                              "callee": {
+                                  "type": "MemberExpression",
+                                  "object": {
+                                      "type": "CallExpression",
+                                      "callee": {
+                                          "type": "MemberExpression",
+                                          "object": {
+                                              "type": "Identifier",
+                                              "name": "$"
+                                          },
+                                          "property": {
+                                              "type": "Identifier",
+                                              "name": "post"
+                                          },
+                                          "computed": false,
+                                          "optional": false
+                                      },
+                                      "arguments": [
+                                          {
+                                              "type": "Literal",
+                                              "value": "/insert_data",
+                                              "raw": "\"/insert_data\""
+                                          },
+                                          {
+                                              "type": "NewExpression",
+                                              "callee": {
+                                                  "type": "Identifier",
+                                                  "name": "BufferData"
+                                              },
+                                              "arguments": [
+                                                  {
+                                                      "type": "Identifier",
+                                                      "name": "dbName"
+                                                  },
+                                                  {
+                                                      "type": "Identifier",
+                                                      "name": "collName"
+                                                  },
+                                                  {
+                                                      "type": "Identifier",
+                                                      "name": "data"
+                                                  },
+                                                  {
+                                                      "type": "MemberExpression",
+                                                      "object": {
+                                                          "type": "Identifier",
+                                                          "name": "DataType"
+                                                      },
+                                                      "property": {
+                                                          "type": "Identifier",
+                                                          "name": "insert"
+                                                      },
+                                                      "computed": false,
+                                                      "optional": false
+                                                  }
+                                              ]
+                                          }
+                                      ],
+                                      "optional": false
+                                  },
+                                  "property": {
+                                      "type": "Identifier",
+                                      "name": "promise"
+                                  },
+                                  "computed": false,
+                                  "optional": false
+                              },
+                              "arguments": [],
+                              "optional": false
+                          }
+                      }
+                  }
+              ]
+          }
+      },
+      {
+          "type": "FunctionDeclaration",
+          "id": {
+              "type": "Identifier",
+              "name": "dbUpdateData"
+          },
+          "expression": false,
+          "generator": false,
+          "async": true,
+          "params": [
+              {
+                  "type": "Identifier",
+                  "name": "dbName"
+              },
+              {
+                  "type": "Identifier",
+                  "name": "collName"
+              },
+              {
+                  "type": "Identifier",
+                  "name": "filter"
+              },
+              {
+                  "type": "Identifier",
+                  "name": "updateData"
+              }
+          ],
+          "body": {
+              "type": "BlockStatement",
+              "body": [
+                  {
+                      "type": "ReturnStatement",
+                      "argument": {
+                          "type": "AwaitExpression",
+                          "argument": {
+                              "type": "CallExpression",
+                              "callee": {
+                                  "type": "MemberExpression",
+                                  "object": {
+                                      "type": "CallExpression",
+                                      "callee": {
+                                          "type": "MemberExpression",
+                                          "object": {
+                                              "type": "Identifier",
+                                              "name": "$"
+                                          },
+                                          "property": {
+                                              "type": "Identifier",
+                                              "name": "post"
+                                          },
+                                          "computed": false,
+                                          "optional": false
+                                      },
+                                      "arguments": [
+                                          {
+                                              "type": "Literal",
+                                              "value": "/update_data",
+                                              "raw": "\"/update_data\""
+                                          },
+                                          {
+                                              "type": "NewExpression",
+                                              "callee": {
+                                                  "type": "Identifier",
+                                                  "name": "BufferData"
+                                              },
+                                              "arguments": [
+                                                  {
+                                                      "type": "Identifier",
+                                                      "name": "dbName"
+                                                  },
+                                                  {
+                                                      "type": "Identifier",
+                                                      "name": "collName"
+                                                  },
+                                                  {
+                                                      "type": "ObjectExpression",
+                                                      "properties": [
+                                                          {
+                                                              "type": "Property",
+                                                              "method": false,
+                                                              "shorthand": false,
+                                                              "computed": false,
+                                                              "key": {
+                                                                  "type": "Literal",
+                                                                  "value": "filter",
+                                                                  "raw": "\"filter\""
+                                                              },
+                                                              "value": {
+                                                                  "type": "Identifier",
+                                                                  "name": "filter"
+                                                              },
+                                                              "kind": "init"
+                                                          },
+                                                          {
+                                                              "type": "Property",
+                                                              "method": false,
+                                                              "shorthand": false,
+                                                              "computed": false,
+                                                              "key": {
+                                                                  "type": "Literal",
+                                                                  "value": "updateData",
+                                                                  "raw": "\"updateData\""
+                                                              },
+                                                              "value": {
+                                                                  "type": "Identifier",
+                                                                  "name": "updateData"
+                                                              },
+                                                              "kind": "init"
+                                                          }
+                                                      ]
+                                                  },
+                                                  {
+                                                      "type": "MemberExpression",
+                                                      "object": {
+                                                          "type": "Identifier",
+                                                          "name": "DataType"
+                                                      },
+                                                      "property": {
+                                                          "type": "Identifier",
+                                                          "name": "update"
+                                                      },
+                                                      "computed": false,
+                                                      "optional": false
+                                                  }
+                                              ]
+                                          }
+                                      ],
+                                      "optional": false
+                                  },
+                                  "property": {
+                                      "type": "Identifier",
+                                      "name": "promise"
+                                  },
+                                  "computed": false,
+                                  "optional": false
+                              },
+                              "arguments": [],
+                              "optional": false
+                          }
+                      }
+                  }
+              ]
+          }
+      },
+      {
+          "type": "FunctionDeclaration",
+          "id": {
+              "type": "Identifier",
+              "name": "dbDeleteData"
+          },
+          "expression": false,
+          "generator": false,
+          "async": true,
+          "params": [
+              {
+                  "type": "Identifier",
+                  "name": "dbName"
+              },
+              {
+                  "type": "Identifier",
+                  "name": "collName"
+              },
+              {
+                  "type": "Identifier",
+                  "name": "filter"
+              }
+          ],
+          "body": {
+              "type": "BlockStatement",
+              "body": [
+                  {
+                      "type": "ReturnStatement",
+                      "argument": {
+                          "type": "AwaitExpression",
+                          "argument": {
+                              "type": "CallExpression",
+                              "callee": {
+                                  "type": "MemberExpression",
+                                  "object": {
+                                      "type": "CallExpression",
+                                      "callee": {
+                                          "type": "MemberExpression",
+                                          "object": {
+                                              "type": "Identifier",
+                                              "name": "$"
+                                          },
+                                          "property": {
+                                              "type": "Identifier",
+                                              "name": "post"
+                                          },
+                                          "computed": false,
+                                          "optional": false
+                                      },
+                                      "arguments": [
+                                          {
+                                              "type": "Literal",
+                                              "value": "/delete_data",
+                                              "raw": "\"/delete_data\""
+                                          },
+                                          {
+                                              "type": "NewExpression",
+                                              "callee": {
+                                                  "type": "Identifier",
+                                                  "name": "BufferData"
+                                              },
+                                              "arguments": [
+                                                  {
+                                                      "type": "Identifier",
+                                                      "name": "dbName"
+                                                  },
+                                                  {
+                                                      "type": "Identifier",
+                                                      "name": "collName"
+                                                  },
+                                                  {
+                                                      "type": "Identifier",
+                                                      "name": "filter"
+                                                  },
+                                                  {
+                                                      "type": "MemberExpression",
+                                                      "object": {
+                                                          "type": "Identifier",
+                                                          "name": "DataType"
+                                                      },
+                                                      "property": {
+                                                          "type": "Identifier",
+                                                          "name": "delete"
+                                                      },
+                                                      "computed": false,
+                                                      "optional": false
+                                                  }
+                                              ]
+                                          }
+                                      ],
+                                      "optional": false
+                                  },
+                                  "property": {
+                                      "type": "Identifier",
+                                      "name": "promise"
+                                  },
+                                  "computed": false,
+                                  "optional": false
+                              },
+                              "arguments": [],
+                              "optional": false
+                          }
+                      }
+                  }
+              ]
+          }
+      },
+      {
+          "type": "VariableDeclaration",
+          "declarations": [
+              {
+                  "type": "VariableDeclarator",
+                  "id": {
+                      "type": "Identifier",
+                      "name": "localSocketConn"
+                  },
+                  "init": {
+                      "type": "CallExpression",
+                      "callee": {
+                          "type": "Identifier",
+                          "name": "io"
+                      },
+                      "arguments": [],
+                      "optional": false
+                  }
+              }
+          ],
+          "kind": "const"
+      }
+  ],
+  "sourceType": "module"
+}

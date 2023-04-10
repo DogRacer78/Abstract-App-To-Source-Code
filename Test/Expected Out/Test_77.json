@@ -1,0 +1,3 @@
+{
+    "msg" : "dbUpdateData must follow pattern dbUpdateData(\"DB Name\", \"collection name\", {filter}, {data})"
+}

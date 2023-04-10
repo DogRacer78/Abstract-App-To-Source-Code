@@ -188,41 +188,41 @@
   },
   {
     "type": "VariableDeclaration",
-    "start": 183,
-    "end": 283,
+    "start": 182,
+    "end": 278,
     "declarations": [
       {
         "type": "VariableDeclarator",
-        "start": 189,
-        "end": 282,
+        "start": 188,
+        "end": 277,
         "id": {
           "type": "Identifier",
-          "start": 189,
-          "end": 197,
+          "start": 188,
+          "end": 196,
           "name": "DataType"
         },
         "init": {
           "type": "ObjectExpression",
-          "start": 200,
-          "end": 282,
+          "start": 199,
+          "end": 277,
           "properties": [
             {
               "type": "Property",
-              "start": 204,
-              "end": 221,
+              "start": 203,
+              "end": 219,
               "method": false,
               "shorthand": false,
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 204,
-                "end": 210,
+                "start": 203,
+                "end": 209,
                 "name": "insert"
               },
               "value": {
                 "type": "Literal",
-                "start": 213,
-                "end": 221,
+                "start": 211,
+                "end": 219,
                 "value": "insert",
                 "raw": "\"insert\""
               },
@@ -230,21 +230,21 @@
             },
             {
               "type": "Property",
-              "start": 225,
-              "end": 242,
+              "start": 223,
+              "end": 239,
               "method": false,
               "shorthand": false,
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 225,
-                "end": 231,
+                "start": 223,
+                "end": 229,
                 "name": "update"
               },
               "value": {
                 "type": "Literal",
-                "start": 234,
-                "end": 242,
+                "start": 231,
+                "end": 239,
                 "value": "update",
                 "raw": "\"update\""
               },
@@ -252,21 +252,21 @@
             },
             {
               "type": "Property",
-              "start": 246,
-              "end": 263,
+              "start": 243,
+              "end": 259,
               "method": false,
               "shorthand": false,
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 246,
-                "end": 252,
+                "start": 243,
+                "end": 249,
                 "name": "delete"
               },
               "value": {
                 "type": "Literal",
-                "start": 255,
-                "end": 263,
+                "start": 251,
+                "end": 259,
                 "value": "delete",
                 "raw": "\"delete\""
               },
@@ -274,21 +274,21 @@
             },
             {
               "type": "Property",
-              "start": 267,
-              "end": 280,
+              "start": 263,
+              "end": 275,
               "method": false,
               "shorthand": false,
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 267,
-                "end": 271,
+                "start": 263,
+                "end": 267,
                 "name": "read"
               },
               "value": {
                 "type": "Literal",
-                "start": 274,
-                "end": 280,
+                "start": 269,
+                "end": 275,
                 "value": "read",
                 "raw": "\"read\""
               },
@@ -302,12 +302,12 @@
   },
   {
     "type": "FunctionDeclaration",
-    "start": 285,
-    "end": 483,
+    "start": 279,
+    "end": 434,
     "id": {
       "type": "Identifier",
-      "start": 300,
-      "end": 310,
+      "start": 294,
+      "end": 304,
       "name": "dbLoadData"
     },
     "expression": false,
@@ -316,62 +316,62 @@
     "params": [
       {
         "type": "Identifier",
-        "start": 311,
-        "end": 317,
+        "start": 305,
+        "end": 311,
         "name": "dbName"
       },
       {
         "type": "Identifier",
-        "start": 319,
-        "end": 327,
+        "start": 313,
+        "end": 321,
         "name": "collName"
       },
       {
         "type": "Identifier",
-        "start": 329,
-        "end": 333,
+        "start": 323,
+        "end": 327,
         "name": "data"
       }
     ],
     "body": {
       "type": "BlockStatement",
-      "start": 334,
-      "end": 483,
+      "start": 329,
+      "end": 434,
       "body": [
         {
           "type": "ReturnStatement",
-          "start": 382,
-          "end": 481,
+          "start": 333,
+          "end": 432,
           "argument": {
             "type": "AwaitExpression",
-            "start": 389,
-            "end": 480,
+            "start": 340,
+            "end": 431,
             "argument": {
               "type": "CallExpression",
-              "start": 395,
-              "end": 480,
+              "start": 346,
+              "end": 431,
               "callee": {
                 "type": "MemberExpression",
-                "start": 395,
-                "end": 478,
+                "start": 346,
+                "end": 429,
                 "object": {
                   "type": "CallExpression",
-                  "start": 395,
-                  "end": 470,
+                  "start": 346,
+                  "end": 421,
                   "callee": {
                     "type": "MemberExpression",
-                    "start": 395,
-                    "end": 401,
+                    "start": 346,
+                    "end": 352,
                     "object": {
                       "type": "Identifier",
-                      "start": 395,
-                      "end": 396,
+                      "start": 346,
+                      "end": 347,
                       "name": "$"
                     },
                     "property": {
                       "type": "Identifier",
-                      "start": 397,
-                      "end": 401,
+                      "start": 348,
+                      "end": 352,
                       "name": "post"
                     },
                     "computed": false,
@@ -380,54 +380,54 @@
                   "arguments": [
                     {
                       "type": "Literal",
-                      "start": 402,
-                      "end": 414,
+                      "start": 353,
+                      "end": 365,
                       "value": "/load_data",
                       "raw": "\"/load_data\""
                     },
                     {
                       "type": "NewExpression",
-                      "start": 416,
-                      "end": 469,
+                      "start": 367,
+                      "end": 420,
                       "callee": {
                         "type": "Identifier",
-                        "start": 420,
-                        "end": 430,
+                        "start": 371,
+                        "end": 381,
                         "name": "BufferData"
                       },
                       "arguments": [
                         {
                           "type": "Identifier",
-                          "start": 431,
-                          "end": 437,
+                          "start": 382,
+                          "end": 388,
                           "name": "dbName"
                         },
                         {
                           "type": "Identifier",
-                          "start": 439,
-                          "end": 447,
+                          "start": 390,
+                          "end": 398,
                           "name": "collName"
                         },
                         {
                           "type": "Identifier",
-                          "start": 449,
-                          "end": 453,
+                          "start": 400,
+                          "end": 404,
                           "name": "data"
                         },
                         {
                           "type": "MemberExpression",
-                          "start": 455,
-                          "end": 468,
+                          "start": 406,
+                          "end": 419,
                           "object": {
                             "type": "Identifier",
-                            "start": 455,
-                            "end": 463,
+                            "start": 406,
+                            "end": 414,
                             "name": "DataType"
                           },
                           "property": {
                             "type": "Identifier",
-                            "start": 464,
-                            "end": 468,
+                            "start": 415,
+                            "end": 419,
                             "name": "read"
                           },
                           "computed": false,
@@ -440,8 +440,8 @@
                 },
                 "property": {
                   "type": "Identifier",
-                  "start": 471,
-                  "end": 478,
+                  "start": 422,
+                  "end": 429,
                   "name": "promise"
                 },
                 "computed": false,
@@ -457,12 +457,12 @@
   },
   {
     "type": "FunctionDeclaration",
-    "start": 0,
-    "end": 195,
+    "start": 435,
+    "end": 596,
     "id": {
       "type": "Identifier",
-      "start": 15,
-      "end": 27,
+      "start": 450,
+      "end": 462,
       "name": "dbInsertData"
     },
     "expression": false,
@@ -471,62 +471,62 @@
     "params": [
       {
         "type": "Identifier",
-        "start": 28,
-        "end": 34,
+        "start": 463,
+        "end": 469,
         "name": "dbName"
       },
       {
         "type": "Identifier",
-        "start": 36,
-        "end": 44,
+        "start": 471,
+        "end": 479,
         "name": "collName"
       },
       {
         "type": "Identifier",
-        "start": 46,
-        "end": 50,
+        "start": 481,
+        "end": 485,
         "name": "data"
       }
     ],
     "body": {
       "type": "BlockStatement",
-      "start": 51,
-      "end": 195,
+      "start": 487,
+      "end": 596,
       "body": [
         {
           "type": "ReturnStatement",
-          "start": 90,
-          "end": 193,
+          "start": 491,
+          "end": 594,
           "argument": {
             "type": "AwaitExpression",
-            "start": 97,
-            "end": 192,
+            "start": 498,
+            "end": 593,
             "argument": {
               "type": "CallExpression",
-              "start": 103,
-              "end": 192,
+              "start": 504,
+              "end": 593,
               "callee": {
                 "type": "MemberExpression",
-                "start": 103,
-                "end": 190,
+                "start": 504,
+                "end": 591,
                 "object": {
                   "type": "CallExpression",
-                  "start": 103,
-                  "end": 182,
+                  "start": 504,
+                  "end": 583,
                   "callee": {
                     "type": "MemberExpression",
-                    "start": 103,
-                    "end": 109,
+                    "start": 504,
+                    "end": 510,
                     "object": {
                       "type": "Identifier",
-                      "start": 103,
-                      "end": 104,
+                      "start": 504,
+                      "end": 505,
                       "name": "$"
                     },
                     "property": {
                       "type": "Identifier",
-                      "start": 105,
-                      "end": 109,
+                      "start": 506,
+                      "end": 510,
                       "name": "post"
                     },
                     "computed": false,
@@ -535,54 +535,54 @@
                   "arguments": [
                     {
                       "type": "Literal",
-                      "start": 110,
-                      "end": 124,
+                      "start": 511,
+                      "end": 525,
                       "value": "/insert_data",
                       "raw": "\"/insert_data\""
                     },
                     {
                       "type": "NewExpression",
-                      "start": 126,
-                      "end": 181,
+                      "start": 527,
+                      "end": 582,
                       "callee": {
                         "type": "Identifier",
-                        "start": 130,
-                        "end": 140,
+                        "start": 531,
+                        "end": 541,
                         "name": "BufferData"
                       },
                       "arguments": [
                         {
                           "type": "Identifier",
-                          "start": 141,
-                          "end": 147,
+                          "start": 542,
+                          "end": 548,
                           "name": "dbName"
                         },
                         {
                           "type": "Identifier",
-                          "start": 149,
-                          "end": 157,
+                          "start": 550,
+                          "end": 558,
                           "name": "collName"
                         },
                         {
                           "type": "Identifier",
-                          "start": 159,
-                          "end": 163,
+                          "start": 560,
+                          "end": 564,
                           "name": "data"
                         },
                         {
                           "type": "MemberExpression",
-                          "start": 165,
-                          "end": 180,
+                          "start": 566,
+                          "end": 581,
                           "object": {
                             "type": "Identifier",
-                            "start": 165,
-                            "end": 173,
+                            "start": 566,
+                            "end": 574,
                             "name": "DataType"
                           },
                           "property": {
                             "type": "Identifier",
-                            "start": 174,
-                            "end": 180,
+                            "start": 575,
+                            "end": 581,
                             "name": "insert"
                           },
                           "computed": false,
@@ -595,8 +595,8 @@
                 },
                 "property": {
                   "type": "Identifier",
-                  "start": 183,
-                  "end": 190,
+                  "start": 584,
+                  "end": 591,
                   "name": "promise"
                 },
                 "computed": false,
@@ -612,12 +612,12 @@
   },
   {
     "type": "FunctionDeclaration",
-    "start": 0,
-    "end": 258,
+    "start": 597,
+    "end": 824,
     "id": {
       "type": "Identifier",
-      "start": 15,
-      "end": 27,
+      "start": 612,
+      "end": 624,
       "name": "dbUpdateData"
     },
     "expression": false,
@@ -626,169 +626,189 @@
     "params": [
       {
         "type": "Identifier",
-        "start": 28,
-        "end": 34,
+        "start": 625,
+        "end": 631,
         "name": "dbName"
       },
       {
         "type": "Identifier",
-        "start": 36,
-        "end": 44,
+        "start": 633,
+        "end": 641,
         "name": "collName"
       },
       {
         "type": "Identifier",
-        "start": 46,
-        "end": 52,
+        "start": 643,
+        "end": 649,
         "name": "filter"
       },
       {
         "type": "Identifier",
-        "start": 54,
-        "end": 64,
+        "start": 651,
+        "end": 661,
         "name": "updateData"
       }
     ],
     "body": {
       "type": "BlockStatement",
-      "start": 65,
-      "end": 258,
+      "start": 663,
+      "end": 824,
       "body": [
         {
           "type": "ReturnStatement",
-          "start": 119,
-          "end": 256,
+          "start": 667,
+          "end": 822,
           "argument": {
             "type": "AwaitExpression",
-            "start": 126,
-            "end": 255,
+            "start": 674,
+            "end": 821,
             "argument": {
               "type": "CallExpression",
-              "start": 132,
-              "end": 255,
+              "start": 680,
+              "end": 821,
               "callee": {
                 "type": "MemberExpression",
-                "start": 132,
-                "end": 138,
+                "start": 680,
+                "end": 819,
                 "object": {
-                  "type": "Identifier",
-                  "start": 132,
-                  "end": 133,
-                  "name": "$"
+                  "type": "CallExpression",
+                  "start": 680,
+                  "end": 811,
+                  "callee": {
+                    "type": "MemberExpression",
+                    "start": 680,
+                    "end": 686,
+                    "object": {
+                      "type": "Identifier",
+                      "start": 680,
+                      "end": 681,
+                      "name": "$"
+                    },
+                    "property": {
+                      "type": "Identifier",
+                      "start": 682,
+                      "end": 686,
+                      "name": "post"
+                    },
+                    "computed": false,
+                    "optional": false
+                  },
+                  "arguments": [
+                    {
+                      "type": "Literal",
+                      "start": 687,
+                      "end": 701,
+                      "value": "/update_data",
+                      "raw": "\"/update_data\""
+                    },
+                    {
+                      "type": "NewExpression",
+                      "start": 703,
+                      "end": 810,
+                      "callee": {
+                        "type": "Identifier",
+                        "start": 707,
+                        "end": 717,
+                        "name": "BufferData"
+                      },
+                      "arguments": [
+                        {
+                          "type": "Identifier",
+                          "start": 718,
+                          "end": 724,
+                          "name": "dbName"
+                        },
+                        {
+                          "type": "Identifier",
+                          "start": 726,
+                          "end": 734,
+                          "name": "collName"
+                        },
+                        {
+                          "type": "ObjectExpression",
+                          "start": 736,
+                          "end": 792,
+                          "properties": [
+                            {
+                              "type": "Property",
+                              "start": 742,
+                              "end": 758,
+                              "method": false,
+                              "shorthand": false,
+                              "computed": false,
+                              "key": {
+                                "type": "Literal",
+                                "start": 742,
+                                "end": 750,
+                                "value": "filter",
+                                "raw": "\"filter\""
+                              },
+                              "value": {
+                                "type": "Identifier",
+                                "start": 752,
+                                "end": 758,
+                                "name": "filter"
+                              },
+                              "kind": "init"
+                            },
+                            {
+                              "type": "Property",
+                              "start": 764,
+                              "end": 788,
+                              "method": false,
+                              "shorthand": false,
+                              "computed": false,
+                              "key": {
+                                "type": "Literal",
+                                "start": 764,
+                                "end": 776,
+                                "value": "updateData",
+                                "raw": "\"updateData\""
+                              },
+                              "value": {
+                                "type": "Identifier",
+                                "start": 778,
+                                "end": 788,
+                                "name": "updateData"
+                              },
+                              "kind": "init"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "MemberExpression",
+                          "start": 794,
+                          "end": 809,
+                          "object": {
+                            "type": "Identifier",
+                            "start": 794,
+                            "end": 802,
+                            "name": "DataType"
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "start": 803,
+                            "end": 809,
+                            "name": "update"
+                          },
+                          "computed": false,
+                          "optional": false
+                        }
+                      ]
+                    }
+                  ],
+                  "optional": false
                 },
                 "property": {
                   "type": "Identifier",
-                  "start": 134,
-                  "end": 138,
-                  "name": "post"
+                  "start": 812,
+                  "end": 819,
+                  "name": "promise"
                 },
                 "computed": false,
                 "optional": false
               },
-              "arguments": [
-                {
-                  "type": "Literal",
-                  "start": 139,
-                  "end": 153,
-                  "value": "/update_data",
-                  "raw": "\"/update_data\""
-                },
-                {
-                  "type": "NewExpression",
-                  "start": 155,
-                  "end": 254,
-                  "callee": {
-                    "type": "Identifier",
-                    "start": 159,
-                    "end": 169,
-                    "name": "BufferData"
-                  },
-                  "arguments": [
-                    {
-                      "type": "Identifier",
-                      "start": 170,
-                      "end": 176,
-                      "name": "dbName"
-                    },
-                    {
-                      "type": "Identifier",
-                      "start": 178,
-                      "end": 186,
-                      "name": "collName"
-                    },
-                    {
-                      "type": "ObjectExpression",
-                      "start": 188,
-                      "end": 236,
-                      "properties": [
-                        {
-                          "type": "Property",
-                          "start": 190,
-                          "end": 207,
-                          "method": false,
-                          "shorthand": false,
-                          "computed": false,
-                          "key": {
-                            "type": "Literal",
-                            "start": 190,
-                            "end": 198,
-                            "value": "filter",
-                            "raw": "\"filter\""
-                          },
-                          "value": {
-                            "type": "Identifier",
-                            "start": 201,
-                            "end": 207,
-                            "name": "filter"
-                          },
-                          "kind": "init"
-                        },
-                        {
-                          "type": "Property",
-                          "start": 209,
-                          "end": 234,
-                          "method": false,
-                          "shorthand": false,
-                          "computed": false,
-                          "key": {
-                            "type": "Literal",
-                            "start": 209,
-                            "end": 221,
-                            "value": "updateData",
-                            "raw": "\"updateData\""
-                          },
-                          "value": {
-                            "type": "Identifier",
-                            "start": 224,
-                            "end": 234,
-                            "name": "updateData"
-                          },
-                          "kind": "init"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "MemberExpression",
-                      "start": 238,
-                      "end": 253,
-                      "object": {
-                        "type": "Identifier",
-                        "start": 238,
-                        "end": 246,
-                        "name": "DataType"
-                      },
-                      "property": {
-                        "type": "Identifier",
-                        "start": 247,
-                        "end": 253,
-                        "name": "update"
-                      },
-                      "computed": false,
-                      "optional": false
-                    }
-                  ]
-                }
-              ],
+              "arguments": [],
               "optional": false
             }
           }
@@ -798,12 +818,12 @@
   },
   {
     "type": "FunctionDeclaration",
-    "start": 0,
-    "end": 199,
+    "start": 825,
+    "end": 990,
     "id": {
       "type": "Identifier",
-      "start": 15,
-      "end": 26,
+      "start": 840,
+      "end": 852,
       "name": "dbDeleteData"
     },
     "expression": false,
@@ -812,118 +832,138 @@
     "params": [
       {
         "type": "Identifier",
-        "start": 27,
-        "end": 33,
+        "start": 853,
+        "end": 859,
         "name": "dbName"
       },
       {
         "type": "Identifier",
-        "start": 35,
-        "end": 43,
+        "start": 861,
+        "end": 869,
         "name": "collName"
       },
       {
         "type": "Identifier",
-        "start": 45,
-        "end": 51,
+        "start": 871,
+        "end": 877,
         "name": "filter"
       }
     ],
     "body": {
       "type": "BlockStatement",
-      "start": 52,
-      "end": 199,
+      "start": 879,
+      "end": 990,
       "body": [
         {
           "type": "ReturnStatement",
-          "start": 102,
-          "end": 197,
+          "start": 883,
+          "end": 988,
           "argument": {
             "type": "AwaitExpression",
-            "start": 109,
-            "end": 196,
+            "start": 890,
+            "end": 987,
             "argument": {
               "type": "CallExpression",
-              "start": 115,
-              "end": 196,
+              "start": 896,
+              "end": 987,
               "callee": {
                 "type": "MemberExpression",
-                "start": 115,
-                "end": 121,
+                "start": 896,
+                "end": 985,
                 "object": {
-                  "type": "Identifier",
-                  "start": 115,
-                  "end": 116,
-                  "name": "$"
+                  "type": "CallExpression",
+                  "start": 896,
+                  "end": 977,
+                  "callee": {
+                    "type": "MemberExpression",
+                    "start": 896,
+                    "end": 902,
+                    "object": {
+                      "type": "Identifier",
+                      "start": 896,
+                      "end": 897,
+                      "name": "$"
+                    },
+                    "property": {
+                      "type": "Identifier",
+                      "start": 898,
+                      "end": 902,
+                      "name": "post"
+                    },
+                    "computed": false,
+                    "optional": false
+                  },
+                  "arguments": [
+                    {
+                      "type": "Literal",
+                      "start": 903,
+                      "end": 917,
+                      "value": "/delete_data",
+                      "raw": "\"/delete_data\""
+                    },
+                    {
+                      "type": "NewExpression",
+                      "start": 919,
+                      "end": 976,
+                      "callee": {
+                        "type": "Identifier",
+                        "start": 923,
+                        "end": 933,
+                        "name": "BufferData"
+                      },
+                      "arguments": [
+                        {
+                          "type": "Identifier",
+                          "start": 934,
+                          "end": 940,
+                          "name": "dbName"
+                        },
+                        {
+                          "type": "Identifier",
+                          "start": 942,
+                          "end": 950,
+                          "name": "collName"
+                        },
+                        {
+                          "type": "Identifier",
+                          "start": 952,
+                          "end": 958,
+                          "name": "filter"
+                        },
+                        {
+                          "type": "MemberExpression",
+                          "start": 960,
+                          "end": 975,
+                          "object": {
+                            "type": "Identifier",
+                            "start": 960,
+                            "end": 968,
+                            "name": "DataType"
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "start": 969,
+                            "end": 975,
+                            "name": "delete"
+                          },
+                          "computed": false,
+                          "optional": false
+                        }
+                      ]
+                    }
+                  ],
+                  "optional": false
                 },
                 "property": {
                   "type": "Identifier",
-                  "start": 117,
-                  "end": 121,
-                  "name": "post"
+                  "start": 978,
+                  "end": 985,
+                  "name": "promise"
                 },
                 "computed": false,
                 "optional": false
               },
-              "arguments": [
-                {
-                  "type": "Literal",
-                  "start": 122,
-                  "end": 136,
-                  "value": "/delete_data",
-                  "raw": "\"/delete_data\""
-                },
-                {
-                  "type": "NewExpression",
-                  "start": 138,
-                  "end": 195,
-                  "callee": {
-                    "type": "Identifier",
-                    "start": 142,
-                    "end": 152,
-                    "name": "BufferData"
-                  },
-                  "arguments": [
-                    {
-                      "type": "Identifier",
-                      "start": 153,
-                      "end": 159,
-                      "name": "dbName"
-                    },
-                    {
-                      "type": "Identifier",
-                      "start": 161,
-                      "end": 169,
-                      "name": "collName"
-                    },
-                    {
-                      "type": "Identifier",
-                      "start": 171,
-                      "end": 177,
-                      "name": "filter"
-                    },
-                    {
-                      "type": "MemberExpression",
-                      "start": 179,
-                      "end": 194,
-                      "object": {
-                        "type": "Identifier",
-                        "start": 179,
-                        "end": 187,
-                        "name": "DataType"
-                      },
-                      "property": {
-                        "type": "Identifier",
-                        "start": 188,
-                        "end": 194,
-                        "name": "delete"
-                      },
-                      "computed": false,
-                      "optional": false
-                    }
-                  ]
-                }
-              ],
+              "arguments": [],
               "optional": false
             }
           }
@@ -933,27 +973,27 @@
   },
   {
     "type": "VariableDeclaration",
-    "start": 0,
-    "end": 29,
+    "start": 991,
+    "end": 1020,
     "declarations": [
       {
         "type": "VariableDeclarator",
-        "start": 6,
-        "end": 28,
+        "start": 997,
+        "end": 1019,
         "id": {
           "type": "Identifier",
-          "start": 6,
-          "end": 21,
+          "start": 997,
+          "end": 1012,
           "name": "localSocketConn"
         },
         "init": {
           "type": "CallExpression",
-          "start": 24,
-          "end": 28,
+          "start": 1015,
+          "end": 1019,
           "callee": {
             "type": "Identifier",
-            "start": 24,
-            "end": 26,
+            "start": 1015,
+            "end": 1017,
             "name": "io"
           },
           "arguments": [],

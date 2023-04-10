@@ -1,0 +1,1 @@
+dbDeleteData("Songs", "songs", "Search dict")

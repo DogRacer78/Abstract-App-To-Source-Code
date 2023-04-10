@@ -4,7 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { createApp } from "../Convert.js";
 import { ASTToCode, codeToAST, visit } from "../src/NodeUtils.js";
-import { parseElectronDBTree } from "../src/ParseDatabase.js";
+import { parseElectronDBTree, parseWebDBTree } from "../src/ParseDatabase.js";
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -401,7 +401,7 @@ async () => {
     return out.indexJS;
 });
 
-const test33 = new TestCase(33, "Electron dbLoadData when no searchDict is provided", 
+const test33 = new TestCase(33, "Electron dbLoadData when the searchDict is not an object", 
 JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_33.json"))).msg,
 async () => {
     // create the app
@@ -701,6 +701,226 @@ async () => {
     return out.indexJS;
 });
 
+const test57 = new TestCase(57, "Valid web dbLoadData", 
+removeLocData(JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_57.json")))),
+async () => {
+    // create the app
+    const out = await createApp("TEST_57", "Test/TEST_PAGE.html", "Test/Test_57.py", true);
+    let web_helper = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/web_helper.json"), "utf-8"));
+    parseWebDBTree(out.indexJS, web_helper, true);
+    return out.indexJS;
+});
+
+const test58 = new TestCase(58, "Web dbLoadData with no dbName specified", 
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_58.json"))).msg,
+async () => {
+    // create the app
+    const out = await createApp("TEST_58", "Test/TEST_PAGE.html", "Test/Test_58.py", true);
+    let web_helper = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/web_helper.json"), "utf-8"));
+    parseWebDBTree(out.indexJS, web_helper, true);
+    return out.indexJS;
+});
+
+const test59 = new TestCase(59, "Web dbLoadData with no collection specified",
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_59.json"))).msg,
+async () => {
+    // create the app
+    const out = await createApp("TEST_59", "Test/TEST_PAGE.html", "Test/Test_59.py", true);
+    let web_helper = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/web_helper.json"), "utf-8"));
+    parseWebDBTree(out.indexJS, web_helper, true);
+    return out.indexJS;
+});
+
+const test60 = new TestCase(60, "Web dbLoadData when no searchDict is provided",
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_60.json"))).msg,
+async () => {
+    // create the app
+    const out = await createApp("TEST_60", "Test/TEST_PAGE.html", "Test/Test_60.py", true);
+    let web_helper = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/web_helper.json"), "utf-8"));
+    parseWebDBTree(out.indexJS, web_helper, true);
+    return out.indexJS;
+});
+
+const test61 = new TestCase(61, "Web dbLoadData when the searchDict is not an object",
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_61.json"))).msg,
+async () => {
+    // create the app
+    const out = await createApp("TEST_61", "Test/TEST_PAGE.html", "Test/Test_61.py", true);
+    let web_helper = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/web_helper.json"), "utf-8"));
+    parseWebDBTree(out.indexJS, web_helper, true);
+    return out.indexJS;
+});
+
+const test62 = new TestCase(62, "Valid web dbInsertData", 
+removeLocData(JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_62.json")))),
+async () => {
+    // create the app
+    const out = await createApp("TEST_62", "Test/TEST_PAGE.html", "Test/Test_62.py", true);
+    let web_helper = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/web_helper.json"), "utf-8"));
+    parseWebDBTree(out.indexJS, web_helper, true);
+    return out.indexJS;
+});
+
+const test63 = new TestCase(63, "Web dbInsertData with no dbName specified",
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_63.json"))).msg,
+async () => {
+    // create the app
+    const out = await createApp("TEST_63", "Test/TEST_PAGE.html", "Test/Test_63.py", true);
+    let web_helper = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/web_helper.json"), "utf-8"));
+    parseWebDBTree(out.indexJS, web_helper, true);
+    return out.indexJS;
+});
+
+const test64 = new TestCase(64, "Web dbInsertData with no collection specified",
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_64.json"))).msg,
+async () => {
+    // create the app
+    const out = await createApp("TEST_64", "Test/TEST_PAGE.html", "Test/Test_64.py", true);
+    let web_helper = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/web_helper.json"), "utf-8"));
+    parseWebDBTree(out.indexJS, web_helper, true);
+    return out.indexJS;
+});
+
+const test65 = new TestCase(65, "Web dbInsertData when no insertData is provided",
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_65.json"))).msg,
+async () => {
+    // create the app
+    const out = await createApp("TEST_65", "Test/TEST_PAGE.html", "Test/Test_65.py", true);
+    let web_helper = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/web_helper.json"), "utf-8"));
+    parseWebDBTree(out.indexJS, web_helper, true);
+    return out.indexJS;
+});
+
+const test66 = new TestCase(66, "Web dbInsertData when the insertData is not an object",
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_66.json"))).msg,
+async () => {
+    // create the app
+    const out = await createApp("TEST_66", "Test/TEST_PAGE.html", "Test/Test_66.py", true);
+    let web_helper = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/web_helper.json"), "utf-8"));
+    parseWebDBTree(out.indexJS, web_helper, true);
+    return out.indexJS;
+});
+
+const test67 = new TestCase(67, "Valid web dbDeleteData",
+removeLocData(JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_67.json")))),
+async () => {
+    // create the app
+    const out = await createApp("TEST_67", "Test/TEST_PAGE.html", "Test/Test_67.py", true);
+    let web_helper = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/web_helper.json"), "utf-8"));
+    parseWebDBTree(out.indexJS, web_helper, true);
+    return out.indexJS;
+});
+
+const test68 = new TestCase(68, "Web dbDeleteData with no dbName specified",
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_68.json"))).msg,
+async () => {
+    // create the app
+    const out = await createApp("TEST_68", "Test/TEST_PAGE.html", "Test/Test_68.py", true);
+    let web_helper = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/web_helper.json"), "utf-8"));
+    parseWebDBTree(out.indexJS, web_helper, true);
+    return out.indexJS;
+});
+
+const test69 = new TestCase(69, "Web dbDeleteData with no collection specified",
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_69.json"))).msg,
+async () => {
+    // create the app
+    const out = await createApp("TEST_69", "Test/TEST_PAGE.html", "Test/Test_69.py", true);
+    let web_helper = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/web_helper.json"), "utf-8"));
+    parseWebDBTree(out.indexJS, web_helper, true);
+    return out.indexJS;
+});
+
+const test70 = new TestCase(70, "Web dbDeleteData when no filter is provided",
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_70.json"))).msg,
+async () => {
+    // create the app
+    const out = await createApp("TEST_70", "Test/TEST_PAGE.html", "Test/Test_70.py", true);
+    let web_helper = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/web_helper.json"), "utf-8"));
+    parseWebDBTree(out.indexJS, web_helper, true);
+    return out.indexJS;
+});
+
+const test71 = new TestCase(71, "Web dbDeleteData when the filter is not an object",
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_71.json"))).msg,
+async () => {
+    // create the app
+    const out = await createApp("TEST_71", "Test/TEST_PAGE.html", "Test/Test_71.py", true);
+    let web_helper = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/web_helper.json"), "utf-8"));
+    parseWebDBTree(out.indexJS, web_helper, true);
+    return out.indexJS;
+});
+
+const test72 = new TestCase(72, "Valid web dbDeleteData",
+removeLocData(JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_72.json")))),
+async () => {
+    // create the app
+    const out = await createApp("TEST_72", "Test/TEST_PAGE.html", "Test/Test_72.py", true);
+    let web_helper = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/web_helper.json"), "utf-8"));
+    parseWebDBTree(out.indexJS, web_helper, true);
+    return out.indexJS;
+});
+
+const test73 = new TestCase(73, "Web dbUpdateData with no dbName specified", 
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_73.json"))).msg, 
+    async () => {
+        // create the app
+        const out = await createApp("TEST_73", "Test/TEST_PAGE.html", "Test/Test_73.py", true);
+        let web_helper = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/web_helper.json"), "utf-8"));
+        parseWebDBTree(out.indexJS, web_helper, true);
+        return out.indexJS;
+});
+
+const test74 = new TestCase(74, "Web dbUpdateData with no collection specified", 
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_74.json"))).msg, 
+    async () => {
+        // create the app
+        const out = await createApp("TEST_74", "Test/TEST_PAGE.html", "Test/Test_74.py", true);
+        let web_helper = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/web_helper.json"), "utf-8"));
+        parseWebDBTree(out.indexJS, web_helper, true);
+        return out.indexJS;
+});
+
+const test75 = new TestCase(75, "Web dbUpdateData when no filter is provided", 
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_75.json"))).msg, 
+    async () => {
+        // create the app
+        const out = await createApp("TEST_75", "Test/TEST_PAGE.html", "Test/Test_75.py", true);
+        let web_helper = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/web_helper.json"), "utf-8"));
+        parseWebDBTree(out.indexJS, web_helper, true);
+        return out.indexJS;
+});
+
+const test76 = new TestCase(76, "Web dbUpdateData when the filter is not an object", 
+    JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_76.json"))).msg, 
+    async () => {
+        // create the app
+        const out = await createApp("TEST_76", "Test/TEST_PAGE.html", "Test/Test_76.py", true);
+        let web_helper = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/web_helper.json"), "utf-8"));
+        parseWebDBTree(out.indexJS, web_helper, true);
+        return out.indexJS;
+});
+
+const test77 = new TestCase(77, "Web dbUpdateData when no update object is provided", 
+    JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_77.json"))).msg, 
+    async () => {
+        // create the app
+        const out = await createApp("TEST_77", "Test/TEST_PAGE.html", "Test/Test_77.py", true);
+        let web_helper = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/web_helper.json"), "utf-8"));
+        parseWebDBTree(out.indexJS, web_helper, true);
+        return out.indexJS;
+});
+
+const test78 = new TestCase(78, "Web dbUpdateData when update object is not an object",
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_78.json"))).msg,
+async () => {
+    // create the app
+    const out = await createApp("TEST_78", "Test/TEST_PAGE.html", "Test/Test_78.py", true);
+    let web_helper = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/web_helper.json"), "utf-8"));
+    parseWebDBTree(out.indexJS, web_helper, true);
+    return out.indexJS;
+});
+
 // run test 1
 await testOne.runTest();
 writeOutput("\n");
@@ -908,6 +1128,77 @@ await test56.testError();
 //writeOutput(test56.expectedOut);
 //writeOutput(test56.testRes);
 writeOutput("\n");
+// run test 57
+await test57.runTest();
+//writeOutput(test57.showExpectedCodeOut());
+//writeOutput(test57.showResCodeOut());
+writeOutput("\n");
+// run test 58
+await test58.testError();
+writeOutput("\n");
+// run test 59
+await test59.testError();
+writeOutput("\n");
+// run test 60
+await test60.testError();
+writeOutput("\n");
+// run test 61
+await test61.testError();
+writeOutput("\n");
+// run test 62
+await test62.runTest();
+//writeOutput(test62.showExpectedCodeOut());
+//writeOutput(test62.showResCodeOut());
+writeOutput("\n");
+// run test 63
+await test63.testError();
+writeOutput("\n");
+// run test 64
+await test64.testError();
+writeOutput("\n");
+// run test 65
+await test65.testError();
+writeOutput("\n");
+// run test 66
+await test66.testError();
+writeOutput("\n");
+// run test 67
+await test67.runTest();
+writeOutput("\n");
+// run test 68
+await test68.testError();
+writeOutput("\n");
+// run test 69
+await test69.testError();
+writeOutput("\n");
+// run test 70
+await test70.testError();
+writeOutput("\n");
+// run test 71
+await test71.testError();
+writeOutput("\n");
+// run test 72
+await test72.runTest();
+writeOutput("\n");
+// run test 73
+await test73.testError();
+writeOutput("\n");
+// run test 74
+await test74.testError();
+writeOutput("\n");
+// run test 75
+await test75.testError();
+writeOutput("\n");
+// run test 76
+await test76.testError();
+writeOutput("\n");
+// run test 77
+await test77.testError();
+writeOutput("\n");
+// run test 78
+await test78.testError();
+writeOutput("\n");
+
 
 
 // end of tests

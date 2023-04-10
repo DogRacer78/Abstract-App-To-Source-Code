@@ -136,7 +136,7 @@ function parseElectronDBTree(frontendJS, backendJS, TEST = false){
  * @param {Object} frontendJS Object
  * @param {Obj} backendJS Object
  */
-function parseWebDBTree(frontendJS, webHelper){
+function parseWebDBTree(frontendJS, webHelper, TEST = false){
     // parses the tree and looks for the correct nodes
     console.log("************** PARSING WEB DB TREE ******************");
 
@@ -171,6 +171,14 @@ function parseWebDBTree(frontendJS, webHelper){
                 manipulateAwaits(node);
             }
         }
+    });
+
+    // iterate again to check the format of the db methods
+    visit(frontendJS.body, (node, parent, key) => {
+        checkLoadDataNode(node);
+        checkInsertDataNode(node);
+        checkUpdateNode(node);
+        checkDeleteNode(node);
     });
 
     console.log("Looking for change events");
@@ -249,6 +257,8 @@ function manipulateAwaits(node){
         "arguments" : args,
         "optional" : option
     };
+
+    delete node.callee;
 }
 
 function manipulateUpdateChangeWeb(frontEndJS){
@@ -375,7 +385,7 @@ function checkLoadDataNode(node){
                 // get the args, should be 2
                 let args = node.arguments;
                 if (args.length !== 3 || args[0].type !== "Literal" || typeof args[0].value !== "string" ||
-                    args[1].type !== "Literal" || typeof args[1].value !== "string"){
+                    args[1].type !== "Literal" || typeof args[1].value !== "string" || args[2].type !== "ObjectExpression"){
                     throw new Error(`dbLoadData must follow pattern dbLoadData("DB Name", "collection name", dict)`);
                 }
                 // split the data as needed

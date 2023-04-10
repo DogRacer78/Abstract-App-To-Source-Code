@@ -1,0 +1,1 @@
+dbUpdateData("Songs", "songs", "Filter", { "artist" : "Bruce Springsteen" })
