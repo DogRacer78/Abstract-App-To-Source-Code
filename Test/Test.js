@@ -88,10 +88,10 @@ class TestCase{
 let logStream;
 
 function setup(){
-    if (fs.existsSync("Test/Test_Out.log")){
-        fs.unlinkSync("Test/Test_Out.log");
+    if (fs.existsSync("./Test_Out.log")){
+        fs.unlinkSync("./Test_Out.log");
     }
-    logStream = fs.createWriteStream("Test/Test_Out.log", {flags : "a"});
+    logStream = fs.createWriteStream("./Test_Out.log", {flags : "a"});
 }
 
 // helper methods
@@ -128,7 +128,7 @@ async () => {
 
 // test case 2
 const testTwo = new TestCase(2, "Adding event with code in the method body", 
-removeLocData(JSON.parse(fs.readFileSync("Test/Expected Out/Test_2.json"))),
+removeLocData(JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_2.json")))),
 async () => {
     // create the app
     const out = await createApp("TEST_2", "Test/TEST_PAGE.html", "Test/Test_2.py", true);
@@ -137,7 +137,7 @@ async () => {
 
 //test case 3
 const testThree = new TestCase(3, "Adding event with id missing, (3 underscores)", 
-removeLocData(JSON.parse(fs.readFileSync("Test/Expected Out/Test_3.json"))),
+removeLocData(JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_3.json")))),
 async () => {
     // create the app
     const out = await createApp("TEST_3", "Test/TEST_PAGE.html", "Test/Test_3.py", true);
@@ -146,7 +146,7 @@ async () => {
 
 // test case 4
 const testFour = new TestCase(4, "Adding event with id missing (2 underscores)",
-removeLocData(JSON.parse(fs.readFileSync("Test/Expected Out/Test_4.json"))),
+removeLocData(JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_4.json")))),
 async () => {
     // create the app
     const out = await createApp("TEST_4", "Test/TEST_PAGE.html", "Test/Test_4.py", true);
@@ -154,7 +154,7 @@ async () => {
 });
 
 const testFive = new TestCase(5, "Adding event with no event specified", 
-removeLocData(JSON.parse(fs.readFileSync("Test/Expected Out/Test_5.json"))),
+removeLocData(JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_5.json")))),
 async () => {
     // create the app
     const out = await createApp("TEST_5", "Test/TEST_PAGE.html", "Test/Test_5.py", true);
@@ -162,7 +162,7 @@ async () => {
 });
 
 const testSix = new TestCase(6, "Adding event with no method name specified", 
-removeLocData(JSON.parse(fs.readFileSync("Test/Expected Out/Test_6.json"))),
+removeLocData(JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_6.json")))),
 async () => {
     // create the app
     const out = await createApp("TEST_6", "Test/TEST_PAGE.html", "Test/Test_6.py", true);
@@ -172,7 +172,7 @@ async () => {
 // *********************** start_up tests *******************
 
 const testSeven = new TestCase(7, "Adding a valid start_up", 
-removeLocData(JSON.parse(fs.readFileSync("Test/Expected Out/Test_7.json"))),
+removeLocData(JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_7.json")))),
 async () => {
     // create the app
     const out = await createApp("TEST_7", "Test/TEST_PAGE.html", "Test/Test_7.py", true);
@@ -180,7 +180,7 @@ async () => {
 });
 
 const testEight = new TestCase(8, "More than one start_up", 
-JSON.parse(fs.readFileSync("Test/Expected Out/Test_8.json")).msg,
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_8.json"))).msg,
 async () =>{
     // create the app
     const out = await createApp("TEST_8", "Test/TEST_PAGE.html", "Test/Test_8.py", true);
@@ -921,6 +921,66 @@ async () => {
     return out.indexJS;
 });
 
+const test79 = new TestCase(79, "Web, valid insertChange",
+removeLocData(JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_79.json")))),
+async () => {
+    // create the app
+    const out = await createApp("TEST_79", "Test/TEST_PAGE.html", "Test/Test_79.py", true);
+    let web_helper = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/web_helper.json"), "utf-8"));
+    parseWebDBTree(out.indexJS, web_helper, true);
+    return out.indexJS;
+});
+
+const test80 = new TestCase(80, "Web 1+ insertChange",
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_80.json"))).msg,
+async () => {
+    // create the app
+    const out = await createApp("TEST_80", "Test/TEST_PAGE.html", "Test/Test_80.py", true);
+    let web_helper = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/web_helper.json"), "utf-8"));
+    parseWebDBTree(out.indexJS, web_helper, true);
+    return out.indexJS;
+});
+
+const test81 = new TestCase(81, "Web, valid updateChange",
+removeLocData(JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_81.json")))),
+async () => {
+    // create the app
+    const out = await createApp("TEST_81", "Test/TEST_PAGE.html", "Test/Test_81.py", true);
+    let web_helper = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/web_helper.json"), "utf-8"));
+    parseWebDBTree(out.indexJS, web_helper, true);
+    return out.indexJS;
+});
+
+const test82 = new TestCase(82, "Web 1+ updateChange",
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_82.json"))).msg,
+async () => {
+    // create the app
+    const out = await createApp("TEST_82", "Test/TEST_PAGE.html", "Test/Test_82.py", true);
+    let web_helper = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/web_helper.json"), "utf-8"));
+    parseWebDBTree(out.indexJS, web_helper, true);
+    return out.indexJS;
+});
+
+const test83 = new TestCase(83, "Web, valid deleteChange",
+removeLocData(JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_83.json")))),
+async () => {
+    // create the app
+    const out = await createApp("TEST_83", "Test/TEST_PAGE.html", "Test/Test_83.py", true);
+    let web_helper = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/web_helper.json"), "utf-8"));
+    parseWebDBTree(out.indexJS, web_helper, true);
+    return out.indexJS;
+});
+
+const test84 = new TestCase(84, "Web 1+ deleteChange",
+JSON.parse(fs.readFileSync(path.join(__dirname, "/Expected Out/Test_84.json"))).msg,
+async () => {
+    // create the app
+    const out = await createApp("TEST_84", "Test/TEST_PAGE.html", "Test/Test_84.py", true);
+    let web_helper = JSON.parse(fs.readFileSync(path.join(__dirname, "../templates/web_helper.json"), "utf-8"));
+    parseWebDBTree(out.indexJS, web_helper, true);
+    return out.indexJS;
+});
+
 // run test 1
 await testOne.runTest();
 writeOutput("\n");
@@ -1197,6 +1257,26 @@ await test77.testError();
 writeOutput("\n");
 // run test 78
 await test78.testError();
+writeOutput("\n");
+// run test 79
+await test79.runTest();
+//writeOutput(test79.showExpectedCodeOut());
+//writeOutput(test79.showResCodeOut());
+writeOutput("\n");
+// run test 80
+await test80.testError();
+writeOutput("\n");
+// run test 81
+await test81.runTest();
+writeOutput("\n");
+// run test 82
+await test82.testError();
+writeOutput("\n");
+// run test 83
+await test83.runTest();
+writeOutput("\n");
+// run test 84
+await test84.testError();
 writeOutput("\n");
 
 

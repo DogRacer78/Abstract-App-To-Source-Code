@@ -18,12 +18,14 @@
   },
   "homepage": "https://github.com/DogRacer78/Abstract-App-To-Source-Code",
   "scripts": {
-    "start": "Convert.js"
+    "start": "Convert.js",
+    "test": "node ./Test/Test.js"
   },
   "devDependencies": {
     "@babel/core": "^7.20.12"
   },
   "bin": {
-    "abstract-app": "./Convert.js"
+    "abstract-app": "./Convert.js",
+    "abstract-app-test" : "/Test/Test.js"
   }
 }
