@@ -31,13 +31,16 @@ import request from "request";
  * @param {String} __dirname Local dir of the tool
  */
 function copyServerJS(dirToCopyTo, __dirname){
+    // server dir to copy to normalised
+    const serverDir = path.join("./", dirToCopyTo);
+
     // if any dir exists here delete
     // ask the user if this is ok
-    if (fs.existsSync(dirToCopyTo)){
+    if (fs.existsSync(serverDir)){
         let answer = "";
         const prompt = promptSync();
         do {
-            answer = prompt(`A folder has been found at ${dirToCopyTo}, to proceed it must be deleted, do you wish to proceed (y/n) >> `);
+            answer = prompt(`A folder has been found at ${serverDir}, to proceed it must be deleted, do you wish to proceed (y/n) >> `);
             answer = answer.toLowerCase();
         } while (answer !== "y" && answer !== "n");
         
@@ -52,27 +55,27 @@ function copyServerJS(dirToCopyTo, __dirname){
     }
 
     // create the dir
-    fs.mkdirSync(dirToCopyTo);
-    console.log(`Created ${dirToCopyTo}`);
+    fs.mkdirSync(serverDir);
+    console.log(`Created ${serverDir}`);
     // create the database dir
-    fs.mkdirSync(path.join(dirToCopyTo, "/database"));
-    console.log(`Created ${path.join(dirToCopyTo, "/database")}`);
+    fs.mkdirSync(path.join(serverDir, "/database"));
+    console.log(`Created ${path.join(serverDir, "/database")}`);
 
-    fs.mkdirSync(path.join(dirToCopyTo, "/bin"));
+    fs.mkdirSync(path.join(serverDir, "/bin"));
     console.log(`Created /bin`);
 
     // https://fastdl.mongodb.org/windows/mongodb-windows-x86_64-6.0.5.zip
-    fs.copyFileSync(path.join(__dirname, "./templates/mongod/mongod.exe"), path.join(dirToCopyTo, "/bin/mongod.exe"));
-    console.log(`Copied mongod.exe to ${path.join(dirToCopyTo, "/bin/mongod.exe")}`);
+    fs.copyFileSync(path.join(__dirname, "./templates/mongod/mongod.exe"), path.join(serverDir, "/bin/mongod.exe"));
+    console.log(`Copied mongod.exe to ${path.join(serverDir, "/bin/mongod.exe")}`);
 
     // load the server.js file
-    fs.copyFileSync(path.join(__dirname, "/templates/server.js"), path.join(dirToCopyTo, "server.js"));
+    fs.copyFileSync(path.join(__dirname, "/templates/server.js"), path.join(serverDir, "server.js"));
     console.log("Created server.js");
     
     // create the shell scripts
-    createShell(dirToCopyTo);
-    console.log("Created shell command");
-    createBAT(dirToCopyTo);
+    //createShell(serverDir);
+    //console.log("Created shell command");
+    createBAT(serverDir);
     console.log("Created BAT command");
 
     // tried to download it but could not get it working
@@ -119,7 +122,7 @@ function copyServerJS(dirToCopyTo, __dirname){
 
     console.log("Installing required packages...");
 
-    chdir(path.join(dirToCopyTo, "/"));
+    chdir(path.join(serverDir, "/"));
     const packageTask = exec("npm install mongodb && npm install socket.io", (err, stdout, stderr) =>{
         console.log("Finished downloading packages");
     });

@@ -100,13 +100,17 @@ function main(){
  */
 function createWebApp(name, htmlAddress, app_path){
     createApp(name, htmlAddress, app_path).then((appData) =>{
-        if (!fs.existsSync(`./${name}`)) {
-            fs.mkdirSync(`./${name}`);
+        const appDir = path.join("./", name);
+        const appDirPublic = path.join(appDir, "/public");
+
+
+        if (!fs.existsSync(appDir)) {
+            fs.mkdirSync(appDir, { recursive : true });
         }
 
         // create the public dir if not exists
-        if (!fs.existsSync(`./${name}/public`)){
-            fs.mkdirSync(`./${name}/public`);
+        if (!fs.existsSync(appDirPublic)){
+            fs.mkdirSync(appDirPublic, { recursive : true });
         }
 
         // load the web helper methods from JSON
@@ -115,15 +119,15 @@ function createWebApp(name, htmlAddress, app_path){
         // process the dbCode
         parseWebDBTree(appData.indexJS, webHelperMethods);
 
-        process.chdir(`./${name}`);
+        process.chdir(appDir);
 
         let indexJSCode = toJs(appData.indexJS);
 
         // add the indexjs reference to the HTML
         let indexHTML = addWebIndex(appData.indexHTML);
         
-        fs.writeFileSync("./public/index.js", indexJSCode.value);
-        fs.writeFileSync("./public/index.html", indexHTML);
+        fs.writeFileSync("./public/index.js", indexJSCode.value, { flag : "w" });
+        fs.writeFileSync("./public/index.html", indexHTML, { flag : "w" });
 
         // move the app.js into the dir
         fs.copyFileSync(path.join(__dirname, "/templates/app.js"), "./app.js");
@@ -152,7 +156,8 @@ function createElectronApp(name, htmlAddress, app_path){
 
     // get the web app
     createApp(name, htmlAddress, app_path).then((appData) => {
-        // deal with database code
+        // get the path to the app
+        const appDir = path.join("./", name);
 
         // load the main.js template
         let mainJSTree = JSON.parse(fs.readFileSync(path.join(__dirname, "/templates/mainJS.json"), "utf-8"));
@@ -161,18 +166,18 @@ function createElectronApp(name, htmlAddress, app_path){
         let mainJSCode = toJs(mainJSTree);
 
         console.log(appData.indexJS[0]);
-        if (!fs.existsSync(`./${name}`)) {
-            fs.mkdirSync(`./${name}`);
+        if (!fs.existsSync(appDir)) {
+            fs.mkdirSync(appDir, { recursive : true });
         }
 
         
     
-        process.chdir(`./${name}`);
+        process.chdir(appDir);
 
         console.log(process.cwd());
         
         console.log("Getting electron");
-        exec("npm init -y && npm install electron --save-dev && npm install socket.io-client", (error, stdout, stderr) => {
+        exec("npm init -y && npm install electron --save-dev && npm install socket.io-client && npm install mongodb", (error, stdout, stderr) => {
             if (error) {
                 console.log(`error: ${error.message}`);
                 return;
@@ -242,9 +247,8 @@ Please ensure you have the following:
 Python (www.python.org)
 JavaScripthon (https://pypi.org/project/javascripthon/)
 If you have pip installed simply run : pip install javascripthon
-An App.py file created in your project directory
 *******************************************************\n`);
-            console.log(e);
+            //console.log(e);
             if (!TEST)
                 process.exit(-1);
     }
