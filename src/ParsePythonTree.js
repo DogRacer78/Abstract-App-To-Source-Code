@@ -148,7 +148,7 @@ function getEvent(node){
  * @returns true if is an event, false otherwise
  */
 function checkEvent(node){
-    let eventFormat = /^[^_]*_[^_]*_[^_]*$/;
+    let eventFormat = /^[^_]{1,}_[^_]{1,}_[^_]{1,}$/;
 
     if (node.type === "FunctionDeclaration"){
         if (node.id.type === "Identifier"){

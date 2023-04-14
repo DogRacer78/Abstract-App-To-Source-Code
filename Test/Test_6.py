@@ -1,2 +1,2 @@
-def _event_myID():
+def _click_myID():
     pass
