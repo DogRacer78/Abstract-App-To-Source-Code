@@ -26,6 +26,6 @@
   },
   "bin": {
     "abstract-app": "./Convert.js",
-    "abstract-app-test" : "/Test/Test.js"
+    "abstract-app-test": "/Test/Test.js"
   }
 }

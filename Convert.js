@@ -124,7 +124,7 @@ function createWebApp(name, htmlAddress, app_path){
         let indexJSCode = toJs(appData.indexJS);
 
         // add the indexjs reference to the HTML
-        let indexHTML = addWebIndex(appData.indexHTML);
+        let indexHTML = addWebIndex(appData.indexHTML, appData.localHTML);
         
         fs.writeFileSync("./public/index.js", indexJSCode.value, { flag : "w" });
         fs.writeFileSync("./public/index.html", indexHTML, { flag : "w" });
@@ -287,6 +287,9 @@ If you have pip installed simply run : pip install javascripthon
         //newIndexJS = toJs(indexJSTree);
         // write back out to the index.js file
 
+        // bool to check if the HTML is from a URL or a file
+        let localHTML = false;
+
         // tries to get the html
         let res;
         try{
@@ -301,6 +304,7 @@ If you have pip installed simply run : pip install javascripthon
             // if it is not a valid address try and open the file
             try{
                 indexHTML = fs.readFileSync(htmlAddress, "utf-8");
+                localHTML = true;
             }
             catch(fileErr){
                 throw new Error(`Couldn't load HTML from ${htmlAddress}, please check the address supplied is a valid URL or a valid file`);
@@ -314,6 +318,7 @@ If you have pip installed simply run : pip install javascripthon
 
         data.indexJS = indexJSTree;
         data.indexHTML = indexHTML;
+        data.localHTML = localHTML;
         
         return data;
 
