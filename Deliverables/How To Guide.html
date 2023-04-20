@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <title>How to manipulate JavaScript Abstract Syntax Trees</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/javascript.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/json.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/tokyo-night-dark.min.css" integrity="sha512-dSQLLtgaq2iGigmy9xowRshaMzUHeiIUTvJW/SkUpb1J+ImXOPNGAI7ZC8V5/PiN/XN83B8uIk4qET7AMhdC5Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+        <style>
+            .long-words{
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+            }
+            .inline-code{
+                background-color: rgba(207, 207, 207, 0.625);
+            }
+        </style>
+
+    </head>
+    <body class="">
+        <h1 class="text-center pt-3 ">How To Manipulate JavaScript Abstract Syntax Trees</h1>
+        <div class="container-fluid fs-5">
+            <div class="row pt-5 pb-5">
+                <div class="col-sm-2">
+                </div>
+                <div class="col-lg-8 long-words"">
+                    <h2>Contents</h2>
+                    <ul>
+                        <li><a href="#Intro">Introduction</a></li>
+                        <li><a href="#What_Is_An_AST">What Is An Abstract Syntax Tree?</a></li>
+                        <li><a href="#Creating_Your_Own_AST">Creating Your Own Abstract Syntax Trees</a></li>
+                        <li><a href="#Manipulating_The_Tree">Manipulating The Tree</a></li>
+                        <li><a href="#AST_Back_To_Source_Code">Abstract Syntax Tree Back To Code</a></li>
+                        <li><a href="#Final_Product">Final Product</a></li>
+                        <li><a href="#Comments">Comments</a></li>
+                        <li><a href="#Final_Thoughts">Final Thoughts</a></li>
+                    </ul>
+
+
+                    <h2 class="pb-2" id="Intro">Introduction</h2>
+                    <p>
+                        This tutorial intends to teach you how to create, 
+                        manipulate and generate source code all using <b>Abstract Syntax Trees</b>.
+                        </p>
+
+                        <p>In this tutorial we will be covering the following:
+                            <ul>
+                                <li>The basics of what an Abstract Syntax Tree is</li>
+                                <li>How to create one using the <a href="https://github.com/acornjs/acorn" target="_blank" rel="noopener">Acorn parser</a></li>
+                                <li>How to write a simple traversal algorithm to manipulate certain parts of the tree</li>
+                                <li>Show you how to turn your modified tree back into JavaScript source code</li>
+                            </ul>
+                        </p>
+
+                        <p>Throughout this tutorial I am going to be using JavaScript with Node.js. I will be assuming the reader has a
+                            basic knowledge of these tools and understands basic programming principles, if not there is a
+                             great tutorial <a href="https://www.w3schools.com/js/default.asp" target="_blank" rel="noopener">here</a> to learn the basics before starting.</p>
+
+                    <h2 class="pb-2" id="What_Is_An_AST">What is an Abstract Syntax Tree?</h2>
+                    <p class="pb-3">
+                        An Abstract Syntax Tree is a representation of 
+                        source code that keeps the structure of the code 
+                        free from the strict syntax of programming languages.
+                        Some of the uses of ASTs can be seen below:
+                    </p>
+
+                    <ul>
+                        <li>Transpilers - a tool to translate code between programming languages</li>
+                        <li>In compilers to represent the structure of the code</li>
+                        <li>Clone detection within source code</li>
+                    </ul>
+
+                    <figure class="text-center">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Abstract_syntax_tree_for_Euclidean_algorithm.svg/1200px-Abstract_syntax_tree_for_Euclidean_algorithm.svg.png"
+                     alt="Image of an AST" class="figure-img img-fluid w-50">
+                     <figcaption class="figure-caption pt-2">Example of an AST From - <a href="https://en.wikipedia.org/wiki/Abstract_syntax_tree" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Abstract_syntax_tree</a></figcaption>
+                    </figure>
+
+                    <p>Abstract Syntax Trees contain nodes, these nodes represent various 
+                        constructs that appear within source code, such as variables, 
+                        functions, and conditional statements. In an AST a node contains at 
+                        least its type, some nodes contain additional properties such as a list of arguments or a body definition.
+                        Generally ASTs will be stored in JSON for readability.</p>
+
+                        <div class="row">
+                            <div class="col-sm-2"></div>
+                            <div class="col-lg-8">
+                                <pre>
+                                    <code class="language-javascript style-tokyo-night-dark">let number = 100;</code>
+                                </pre>
+                            </div>
+                            <div class="col-sm-2"></div>
+                        </div>
+
+                    <p>The above JavaScript code represented as an Abstract Syntax Tree in JSON is seen below.</p>
+
+
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-lg-8">
+
+                            <pre>
+                                <code class="language-json style-tokyo-night-dark">{
+"type": "Program",
+"start": 0,
+"end": 17,
+"body": [
+  {
+    "type": "VariableDeclaration",
+    "start": 0,
+    "end": 17,
+    "declarations": [
+      {
+        "type": "VariableDeclarator",
+        "start": 4,
+        "end": 16,
+        "id": {
+          "type": "Identifier",
+          "start": 4,
+          "end": 10,
+          "name": "number"
+        },
+        "init": {
+          "type": "Literal",
+          "start": 13,
+          "end": 16,
+          "value": 100,
+          "raw": "100"
+        }
+      }
+    ],
+    "kind": "let"
+  }
+],
+"sourceType": "module"
+}</code>
+                            </pre>
+
+                        </div>
+                        <div class="col-sm-2"></div>
+                    </div>
+
+                    <p>As we can see the first node within the tree is of type <code class="language-JSON inline-code">"Program"</code>
+                    this just indicates that this is the start of a new source code file. If we look at the array <code class="language-JSON inline-code">"body"</code>, this contains all nodes
+                    within source code. Each node is represented as an object within JSON. As you can see our <code class="language-JSON inline-code">"body"</code> only contains one node
+                    and it is of type <code class="language-JSON inline-code">"VariableDeclaration"</code>. As the name implies this node represents the declaration of a new variable.
+                    The array <code class="language-JSON inline-code">"declarations"</code> can contain multiple <code class="language-JSON inline-code">"VariableDeclarator"</code> nodes. These nodes specify the variable name or <code class="language-JSON inline-code">"id"</code>
+                    and the initialization <code class="language-JSON inline-code">"value"</code> if one is given. In our example we can see the <code class="language-JSON inline-code">"id"</code> is an object of type <code class="language-JSON inline-code">"Identifier"</code>,
+                    this means it represents a name to be referenced throughout the code, in our case it is given the <code class="language-JSON inline-code">"name"</code> <code class="language-JSON inline-code">"number"</code>. If we
+                    look back to our original source code we can see this is the name we gave our variable. The <code class="language-JSON inline-code">"VariableDeclarator"</code> also has a type
+                    <code class="language-JSON inline-code">"init"</code> showing what the variable <code class="language-JSON inline-code">"number"</code> is to be initialized to. Here our <code class="language-JSON inline-code">"init"</code> object is of type <code class="language-JSON inline-code">"Literal"</code>, meaning it
+                    represents an actual value, here we have a <code class="language-JSON inline-code">"value"</code> of <code class="language-JSON inline-code">100</code>.
+                    </p>
+
+                    <p>If you are wondering how we know what each node means, it is because we are following the <a href="https://github.com/estree/estree/blob/master/es5.md" target="_blank" rel="noopener">ESTree specification</a>.
+                        This is a specification that describes how JavaScript code should be represented within an Abstract Syntax Tree. Unfortunately there is no
+                        universal AST format, most languages have their own specification as to how code should be represented. We will be sticking with
+                        ESTree for this tutorial, as it is well documented.
+                    </p>
+
+                    <h2 class="pb-2" id="Creating_Your_Own_AST">Creating Your Own Abstract Syntax Trees</h2>
+                    <p>We are now going to explore how you can produce your own 
+                        Abstract Syntax Tree from source code. This process involves using a 
+                        parser, you may be asking what is a parser, simply put a parser 
+                        analyses a string of text that conforms to a certain set of grammar rules.
+                        The parser will then produce an Abstract Syntax 
+                        Tree based on the symbols it finds within the string of text entered.</p> 
+
+                    <p>We are not going to be writing our own parser but rather using one that already exists. 
+                        As mentioned earlier we will be using the <a href="https://github.com/acornjs/acorn" target="_blank" rel="noopener">acorn parser</a>. This is a great open source parser for 
+                        converting JavaScript code into the ESTree format.</p>
+
+                    <p>If you are just looking to play about with Abstract Syntax Trees, then <a href="https://astexplorer.net/" target="_blank" rel="noopener">AST explorer</a> is a great site to experiment
+                        with. It allows you to input source code and see the output AST next to it in a variety of different languages.
+                    </p>
+
+                    <!--Image of AST Explorer-->
+                    <figure class="pt-4 pb-4 text-center">
+                        <img src="Images/AstExplorer.png" alt="Ast Explorer" class="figure-img img-fluid" style="width: 90%;">
+                         <figcaption class="figure-caption pt-2">AST Explorer</figcaption>
+                    </figure>
+
+                    <p>To get started with acorn you will need Node.JS installed, if you don't have it installed you can get it <a href="https://nodejs.org/en/download/" target="_blank" rel="noopener">here</a>.
+                        If you don't want to download Node.JS I have created a simple code pen which can be found <a href="https://codepen.io/DogRacer/pen/KKxmKLj" target="_blank">here</a>.
+                        Alternatively there is an an embedded version which can be found at the bottom of the <a href="#Final_Product">Final Product</a> section.
+                    </p>
+                    <p>Open a new terminal on your respective system and run <kbd>npm install acorn</kbd> in your project directory. This will download and install the acorn
+                        package.  
+                    </p>
+                    
+                    <p>Also download and install <a href="https://github.com/syntax-tree/estree-util-to-js" target="_blank" rel="noopener">estree-util-to-js</a> using <kbd>npm install estree-util-to-js</kbd>. 
+                    This package is used to turn our Abstract Syntax Trees back into JavaScript source code, but we will not need this till later.</p>
+
+                    <p>As the estree-util-to-js is ESM only, then we will need to set our script type using <code class="language-javascript inline-code">"type" : "module"</code> within our package.json file. 
+                    </p>
+                    
+                    <p>Your package.json should look similar to the following:</p>
+
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-lg-8">
+<pre class="justify-content-center">
+<code class="language-json style-tokyo-night-dark">{
+  "dependencies": {
+    "acorn": "^8.8.2",
+    "estree-util-to-js": "^1.1.1"
+  },
+  "type" : "module"
+}  
+</code>
+</pre>
+                        </div>
+                        <div class="col-sm-2"></div>
+                    </div>
+
+                    <p>Now create a new file called AST_Example.js within your project directory.</p>
+                    <p>We first want to import the acorn module:</p>
+
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-lg-8">
+<pre>
+<code class="language-javascript style-tokyo-night-dark">import * as acorn from "acorn";
+</code>
+</pre>
+                        </div>
+                        <div class="col-sm-2"></div>
+                    </div>
+
+                    <p>Next we want to define some code to parse into an Abstract Syntax Tree. Do this just define a string with the code you want to parse.</p>
+
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-lg-8">
+<pre>
+<code class="language-javascript style-tokyo-night-dark">let sourceCode = "console.log('Hello World')";
+</code>
+</pre>
+                        </div>
+                        <div class="col-sm-2"></div>
+                    </div>
+
+                    <p>Now to actually parse the code call the acorn parser. The parser method takes two parameters, the first being a string of source code 
+                        and the second being an object containing parsing options. We must provide at least one option specifying the ECMAScript version, for now 
+                        just use 2022 as the version. A full list of options can be found on the <a href="https://github.com/acornjs/acorn/tree/master/acorn/#interface" target="_blank" rel="noopener">acorn github</a> page.
+                        The parse method will return an Abstract Syntax Tree in the form of an object we can assign to a variable.
+                    </p>
+
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-lg-8">
+<pre>
+<code class="language-javascript style-tokyo-night-dark">// assign the AST object to the variable tree
+let tree = acorn.parse(sourceCode, {ecmaVersion : 2022});
+</code>
+</pre>
+                        </div>
+                        <div class="col-sm-2"></div>
+                    </div>
+
+                    <p>We can now convert our Abstract Syntax Tree into JSON to view it more clearly.</p>
+                    
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-lg-8">
+<pre>
+<code class="language-javascript style-tokyo-night-dark">// convert the tree object into JSON using JSON.stringify
+let jsonTree = JSON.stringify(tree, null, 3);
+</code>
+</pre>
+                        </div>
+                        <div class="col-sm-2"></div>
+                    </div>
+
+                    <p>Finally we can print out the Abstract Syntax Tree in its JSON format.</p>
+
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-lg-8">
+<pre>
+<code class="language-javascript style-tokyo-night-dark">// print the JSON format of the AST
+console.log(jsonTree);
+</code>
+</pre>
+                        </div>
+                        <div class="col-sm-2"></div>
+                    </div>
+
+                    <p>The complete code can be seen below:</p>
+
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-lg-8">
+<pre>
+<code class="language-javascript style-tokyo-night-dark">import * as acorn from "acorn";
+
+let sourceCode = "console.log('Hello World')";
+
+// assign the AST object to the variable tree
+let tree = acorn.parse(sourceCode, {ecmaVersion : 2022});
+
+// convert the tree object into JSON using JSON.stringify
+let jsonTree = JSON.stringify(tree, null, 3);
+
+// print the JSON format of the AST
+console.log(jsonTree);
+</code>
+</pre>
+                        </div>
+                        <div class="col-sm-2"></div>
+                    </div>
+
+                    <p>To run this example open a terminal and navigate to your project directory then run <kbd>node AST_Example.js</kbd>.
+                        You should see your Abstract Syntax Tree output as JSON below.
+                    </p>
+
+                    <figure class="pt-4 pb-4 text-center">
+                        <img src="Images/OutputAST_Example.png" alt="JSON output of the parsing code" class="figure-img img-fluid">
+                         <figcaption class="figure-caption pt-2">Expected Output</figcaption>
+                    </figure>
+
+                    <p>Congratulations you have just created your first Abstract Syntax Tree using JavaScript, try to change the input code and see how the output tree changes. Next we will be
+                        exploring how to traverse your tree and do some very basic manipulation.
+                    </p>
+
+                    <h2 class="pb-2" id="Manipulating_The_Tree">Manipulating The Tree</h2>
+
+                    <p>To manipulate our Abstract Syntax Tree we first must understand how to traverse it. Traversal simply means visiting every node possible.
+                    </p> 
+
+                    <p>To do this we will use a depth first search algorithm. This algorithm works by starting at the root node (top node if represented as a tree) and
+                        travels as far down a branch as possible before backtracking and doing the same for the next branch.
+                    </p>
+
+                    <p>A good animation of how a depth first search works is shown below.</p>
+
+                    <figure class="pt-4 pb-4 text-center">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Depth-First-Search.gif/330px-Depth-First-Search.gif" alt="GIF of a depth first search" class="figure-img img-fluid w-50">
+                         <figcaption class="figure-caption pt-2">Example of a depth first search
+                            From - <a href="https://en.wikipedia.org/wiki/Depth-first_search#/media/File:Depth-First-Search.gif" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Depth-first_search#/media/File:Depth-First-Search.gif</a></figcaption>
+                    </figure>
+
+                    <p>To start to implement a depth first search for our Abstract Syntax Tree we need to define a function we can use with one parameter node.
+                        This will be the current node we are on in the tree.
+                    </p>
+
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-lg-8">
+<pre>
+<code class="language-javascript style-tokyo-night-dark">function traverse(node){
+
+}
+</code>
+</pre>
+                        </div>
+                        <div class="col-sm-2"></div>
+                    </div>
+
+                    <p>After that we want to get an array with all the keys of the current node</p>
+
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-lg-8">
+<pre>
+<code class="language-javascript style-tokyo-night-dark">function traverse(node){
+    // keys is an array containing our object keys as strings
+    // an example of a key in one of our nodes is "type" 
+    const keys = Object.keys(node);
+}
+</code>
+</pre>
+                        </div>
+                        <div class="col-sm-2"></div>
+                    </div>
+
+                    <p>Now if we think each node can have more one key, such as <code class="language-json inline-code">"type"</code>
+                       or <code class="language-json inline-code">"name"</code>. These keys contain a single value, but some nodes such as
+                       a <code class="language-json inline-code">"VariableDeclarator"</code> from our example above contain keys that hold another node.
+                       A node that is contained within another node is called a child of that node. 
+                    </p>
+
+                    <p>So what we will do is loop through all the keys from a node and check if any of them contain another node.
+                        At this stage you may also be thinking some keys hold an array such as a <code class="language-json inline-code">"declarations"</code>
+                        key. If this is the case then we just need to loop through all the nodes within the array.
+                    </p>
+
+                    <p>Our traverse function now looks this:</p>
+
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-lg-8">
+<pre>
+<code class="language-javascript style-tokyo-night-dark">function traverse(node){
+    const child = node[keys[i]];
+
+    for (let i = 0; i < keys.length; i++){
+        const child = node[keys[i]];
+
+        if (Array.isArray(child)){
+            for (let j = 0; j < child.length; j++){
+                // we are visiting each node in the array here
+            }
+        }
+        // this isNode function is explained below
+        else if (isNode(child)){
+        }
+    }
+}
+</code>
+</pre>
+                        </div>
+                        <div class="col-sm-2"></div>
+                    </div>
+
+                    <p>Looking at the code above there is a function called <code class="language-javascript inline-code">isNode(node)</code>.
+                       This function simply just checks if a child property of a node relates to another node.
+                    </p> 
+
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-lg-8">
+<pre>
+<code class="language-javascript style-tokyo-night-dark">function isNode(node){
+    if (typeof node === "object" && node !== null)
+        return true;
+    else
+        return false;
+}
+</code>
+</pre>
+                        </div>
+                        <div class="col-sm-2"></div>
+                    </div>
+
+                    <p>As can be seen it simply just checks if the node is of type "object" as all nodes are just objects.</p>
+
+                    <p>This is good, now we have a function that can determine if a key is a node or an array, and act accordingly. But we have a
+                        problem that only the root node of the tree will be visited. To fix this we must use recursion. When we obtain a valid node we will call
+                        the traverse function from within itself, this allows to visit every node in the tree.
+                    </p>
+
+                    <p>To do this add the following calls to the traverse function below.</p>
+
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-lg-8">
+<pre>
+<code class="language-javascript style-tokyo-night-dark">function traverse(node){
+    const keys = Object.keys(node);
+
+    for (let i = 0; i < keys.length; i++){
+        const child = node[keys[i]];
+
+        if (Array.isArray(child)){
+            for (let j = 0; j < child.length; j++){
+                // we add a call here to visit every node in the array
+                traverse(child[j]);
+            }
+        }
+        else if (isNode(child)){
+            // if a key relates to a node then we will visit the child
+            traverse(child)
+        }
+    }
+}
+</code>
+</pre>
+                        </div>
+                        <div class="col-sm-2"></div>
+                    </div>
+
+                    <p>As you can see the traverse function is called with a child node, this means every single
+                        node in the tree will be visited once hence achieving our goal of a depth first search.</p>
+
+                    <p>To actually manipulate our tree we could just add some logic at the start of our traverse function like below.</p>
+
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-lg-8">
+<pre>
+<code class="language-javascript style-tokyo-night-dark">function traverse(node){
+    // do some manipulation here
+    // add some logic for selecting nodes
+
+    const keys = Object.keys(node);
+
+    for (let i = 0; i < keys.length; i++){
+        const child = node[keys[i]];
+
+        if (Array.isArray(child)){
+            for (let j = 0; j < child.length; j++){
+                traverse(child[j]);
+            }
+        }
+        else if (isNode(child)){
+            traverse(child)
+        }
+    }
+}
+</code>
+</pre>
+                        </div>
+                        <div class="col-sm-2"></div>
+                    </div>
+
+                    <p>Adding logic directly into our traverse could get very messy quickly, it also limits our function from being
+                        reused with different logic without rewriting it. Instead we will use a callback method to carry out our manipulation.
+                        This will be passed into the traverse function when first called and will be run at the start of the function.
+                    </p>
+
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-lg-8">
+<pre>
+<code class="language-javascript style-tokyo-night-dark">function traverse(node, parent, callback){
+    // we add our callback function here
+    callback(node, parent);
+
+    const keys = Object.keys(node);
+
+    for (let i = 0; i < keys.length; i++){
+        const child = node[keys[i]];
+
+        if (Array.isArray(child)){
+            for (let j = 0; j < child.length; j++){
+                // we are also adding the callback to the traverse call here
+                traverse(child[j], node, callback);
+            }
+        }
+        else if (isNode(child)){
+            // we have added the callback function to this
+            // traverse call as well
+            traverse(child, node, callback)
+        }
+    }
+}
+</code>
+</pre>
+                        </div>
+                        <div class="col-sm-2"></div>
+                    </div>
+
+                    <p>A lot is going on above so I will break it down. First, in the function definition for traverse we have added
+                        <code class="inline-code">parent</code> and <code class="inline-code">callback</code>, <code class="inline-code">parent</code> is the node above the one we are currently visiting, 
+                        <code class="inline-code">callback</code> is a definition for the function to
+                        be run when <code class="inline-code">callback</code> is called in our traverse function.
+                        Next in the call to <code class="inline-code">traverse</code> with the children we have added <code class="inline-code">node</code> and <code class="inline-code">callback</code>
+                        . <code class="inline-code">node</code> is being passed as the parent, as when we call <code class="inline-code">traverse</code> with the children
+                        the current node becomes the parent. <code class="inline-code">callback</code> is just the function definition passed to the next call so it can be run again.
+                    </p>
+
+                    <p>So now we have a way to manipulate the tree, I will show you an example of how this can be used. Imagine we have a
+                        simple program as below:
+                    </p> 
+
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-lg-8">
+<pre>
+<code class="language-javascript style-tokyo-night-dark">function add(){
+    let y = 10;
+    let sum = x + x;
+}
+</code>
+</pre>
+                        </div>
+                        <div class="col-sm-2"></div>
+                    </div>
+
+                    <p>Say we wanted to change all the <code class="inline-code">x</code> variables to <code class="inline-code">y</code>,
+                        to do this we need to locate all the <code class="inline-code">"Identifier"</code> nodes that have a <code class="inline-code">"name"</code>
+                        of <code class="inline-code">x</code>, we can then change these to <code class="inline-code">y</code>.
+                    </p>
+
+                    <p>An example of such a callback function can be seen below.</p>
+                    
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-lg-8">
+<pre>
+<code class="language-javascript style-tokyo-night-dark">function manipulateTree(node, parent){
+    if (node.type === "Identifier"){
+        if (node.name === "x"){
+            node.name = "y";
+        }
+    }
+}
+</code>
+</pre>
+                        </div>
+                        <div class="col-sm-2"></div>
+                    </div>
+
+                    <p>Finally we need to call the traverse function with this new callback function defined.</p>
+
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-lg-8">
+<pre>
+<code class="language-javascript style-tokyo-night-dark">traverse(tree, null, manipulateTree);
+</code>
+</pre>
+                        </div>
+                        <div class="col-sm-2"></div>
+                    </div>
+
+                    <p><code class="inline-code">null</code> in this call is for the parent, since we are calling the traverse function with the root node
+                    then it will have no parent.</p>
+
+                    <p>The full code for this section can be seen below.</p>
+
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-lg-8">
+<pre>
+<code class="language-javascript style-tokyo-night-dark">function traverse(node, parent, callBack){
+    callBack(node, parent);
+
+    const keys = Object.keys(node);
+
+    for (let i = 0; i < keys.length; i++){
+        const child = node[keys[i]];
+
+        if (Array.isArray(child)){
+            for (let j = 0; j < child.length; j++){
+                traverse(child[j], node, callBack);
+            }
+        }
+        else if (isNode(child)){
+            traverse(child, node, callBack)
+        }
+    }
+}
+
+function isNode(node){
+    if (typeof node === "object" && node !== null)
+        return true;
+    else
+        return false;
+}
+
+function manipulateTree(node, parent){
+    if (node.type === "Identifier"){
+        if (node.name === "x"){
+            node.name = "y";
+        }
+    }
+}
+
+traverse(tree, null, manipulateTree);
+</code>
+</pre>
+                        </div>
+                        <div class="col-sm-2"></div>
+                    </div>
+
+                    <h2 class="pb-2" id="AST_Back_To_Source_Code">Abstract Syntax Tree Back To Code</h2>
+
+                    <p>Now that we have our modified Abstract Syntax Tree we will convert it back into JavaScript. To do this we will
+                        be using a tool called <a href="https://github.com/syntax-tree/estree-util-to-js" target="_blank" rel="noopener">estree-util-to-js</a>.
+                        I mentioned this tool above and indicated how to install it and set up our project correctly.
+                    </p>
+
+                    <p>To start we first need to import the library, this can be done like below.</p>
+
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-lg-8">
+<pre>
+<code class="language-javascript style-tokyo-night-dark">import {toJs} from "estree-util-to-js";
+</code>
+</pre>
+                        </div>
+                        <div class="col-sm-2"></div>
+                    </div>
+
+                    <p>To use this library we simply need to call one function, <code class="inline-code">toJs</code> with one parameter,
+                        which will be our Abstract Syntax Tree. This will return an object, to access the source code as a string we simply
+                        get the value property.
+                    </p>
+
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-lg-8">
+<pre>
+<code class="language-javascript style-tokyo-night-dark">let modifiedCode = toJs(tree);
+console.log(modifiedCode.value);
+</code>
+</pre>
+                        </div>
+                        <div class="col-sm-2"></div>
+                    </div>
+
+                    <h2 class="pb-2" id="Final_Product">Final Product</h2>
+
+                    <p>Now that we have covered all the aspects of manipulating an Abstract Syntax Tree using JavaScript, we can stick all the
+                        parts together to have a functioning program.
+                    </p>
+
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-lg-8">
+<pre>
+<code class="language-javascript style-tokyo-night-dark">import * as acorn from "acorn";
+import {toJs} from "estree-util-to-js";
+
+function traverse(node, parent, callBack){
+    callBack(node, parent);
+
+    const keys = Object.keys(node);
+
+    for (let i = 0; i < keys.length; i++){
+        const child = node[keys[i]];
+
+        if (Array.isArray(child)){
+            for (let j = 0; j < child.length; j++){
+                traverse(child[j], node, callBack);
+            }
+        }
+        else if (isNode(child)){
+            traverse(child, node, callBack)
+        }
+    }
+}
+
+function isNode(node){
+    if (typeof node === "object" && node !== null)
+        return true;
+    else
+        return false;
+}
+
+function manipulateTree(node, parent){
+    if (node.type === "Identifier"){
+        if (node.name === "x"){
+            node.name = "y";
+        }
+    }
+}
+
+let sourceCode = `function add(){
+    let y = 10;
+    let sum = x + x;
+}`;
+
+console.log("Code before manipulation:");
+console.log(sourceCode);
+console.log();
+
+let tree = acorn.parse(sourceCode, {ecmaVersion : 2022});
+
+let jsonTree = JSON.stringify(tree, null, 3);
+
+traverse(tree, null, manipulateTree);
+
+let modifiedCode = toJs(tree);
+
+console.log("After manipulation:");
+console.log(modifiedCode.value);
+</code>
+</pre>
+                        </div>
+                        <div class="col-sm-2"></div>
+                    </div>
+
+                    <p>
+                        If we run this program it will show us how the code looks before manipulation and after. Looking at the output below you
+                        can see we have achieved our goal of converting the x Identifiers into a y.
+                    </p>
+
+                    <figure class="pt-4 pb-4 text-center">
+                        <img src="Images/Result.png" alt="Result of final product" class="figure-img img-fluid">
+                        <figcaption class="figure-caption pt-2">Result of above code</figcaption>
+                    </figure>
+
+                    <p>If you are unable to run this code don't worry you can use the provided code pen below that shows the example working:</p>
+
+                    <p class="codepen" data-height="300" data-default-tab="js,result" data-slug-hash="KKxmKLj" data-editable="true" data-user="DogRacer" style="height: 300px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border: 2px solid; margin: 1em 0; padding: 1em;">
+                        <span>See the Pen <a href="https://codepen.io/DogRacer/pen/KKxmKLj">
+                        AST Example</a> by Jack (<a href="https://codepen.io/DogRacer">@DogRacer</a>)
+                        on <a href="https://codepen.io">CodePen</a>.</span>
+                      </p>
+
+
+
+
+                    <h2 class="pt-2" id="Comments">Comments</h2>
+
+                    <p>
+                        If you spent some time reading the estree documentation you may have noticed that there is no support for comments.
+                        This is because comments are not part of the program so when the acorn parser parses the code it ignores them.
+                        This can be annoying if we want to perform some sort of manipulation on our code and we want to keep the comments.
+                        Luckily it is not too difficult to add support for comments. Keep reading below to find out how.
+                    </p>
+
+                    <p>
+                        To add support for comments we first need to examine how to get the acorn parser to recognize them. To do this we use an
+                        alias for comments. I have decided to go with the syntax <code class="inline-code">__COMMENT__("Comment")</code>. This a simple syntax to understand,
+                        and is easy to locate in our AST. When we parse the code this new comment block will be recognized as a function call, we can then manipulate it
+                        to produce the appropriate comments.
+                    </p>
+
+                    <p>
+                        To do this we will borrow our <code class="inline-code">traverse</code> and <code class="inline-code">isNode</code> functions from above. We will use this to traverse the AST and look for our
+                        new comment alias. If you are creating a new project you will need to follow the process to convert it to a module. We can reuse the above code but
+                        with a few changes. The first change is to define a new source code string.
+                    </p>
+
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-lg-8">
+<pre>
+<code class="language-javascript style-tokyo-night-dark">let sourceCode = `__COMMENT__("Print Hello world to the user")
+console.log("Hello world");`;
+</code>
+</pre>
+                        </div>
+                        <div class="col-sm-2"></div>
+                    </div>
+
+                    <p>
+                        As you can see have added a comment to our code but are using the alias we defined earlier. Next we need to modify the callback method we supply to the
+                        <code class="inline-code">traverse</code> function.
+                    </p>
+
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-lg-8">
+<pre>
+<code class="language-javascript style-tokyo-night-dark">function manipulateComment(node, parent){
+    
+}
+</code>
+</pre>
+                        </div>
+                        <div class="col-sm-2"></div>
+                    </div>
+
+                    <p>
+                        We have defined a new function that will deal with the manipulation logic for our comments. Don't forget to add this to the <code class="inline-code">traverse</code> call.
+                    </p>
+
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-lg-8">
+<pre>
+<code class="language-javascript style-tokyo-night-dark">traverse(tree, null, manipulateComment);
+</code>
+</pre>
+                        </div>
+                        <div class="col-sm-2"></div>
+                    </div>
+
+                    <p>
+                        Now we need to add some logic to our new function. We will start by checking if the node is a function call. If it is we will check if the name of the function is
+                        <code class="inline-code">__COMMENT__</code>.
+                    </p>
+
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-lg-8">
+<pre>
+<code class="language-javascript style-tokyo-night-dark">function manipulateComment(node, parent){
+    if(isComment(node)){
+        // Manipulate comment
+    }
+}
+</code>
+</pre>
+                        </div>
+                        <div class="col-sm-2"></div>
+                    </div>
+
+                    <p>
+                        The new function <code class="inline-code">isComment</code> is a simple function that checks if the node is a function call and if 
+                        the name of the function is <code class="inline-code">__COMMENT__</code>. It also needs to check if our comment alias contains only
+                        one argument and that the argument is only of type literal. Remember a literal represents an actual value rather than a variable name.
+                    </p>
+
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-lg-8">
+<pre>
+<code class="language-javascript style-tokyo-night-dark">function isComment(node){
+    if (node.type === "CallExpression"){
+        if (node.callee.name === "__COMMENT__"){
+            // check there is only one argument
+            if (node.arguments.length !== 1)
+                return false;
+
+            // check the argument is a string
+            if (node.arguments[0].type !== "Literal")
+                return false;
+
+            return true;
+        }
+    }
+    return false;
+}
+</code>
+</pre>
+                        </div>
+                        <div class="col-sm-2"></div>
+                    </div>
+
+                    <p>
+                        Now that we have established if the node is a comment alias we can begin to manipulate it. The manipulation required for this is a bit more
+                        complex than the previous examples.
+                    </p>
+
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-lg-8">
+<pre>
+<code class="language-javascript style-tokyo-night-dark">function manipulateComment(node, parent){
+    if(isComment(node)){
+        let commentNode = createComment(node);
+    }
+}
+</code>
+</pre>
+                        </div>
+                        <div class="col-sm-2"></div>
+                    </div>
+
+                    <p>
+                        The new function <code class="inline-code">createComment</code> will be responsible for creating the comment node. We first need to
+                        obtain the text from the node, this will be the first argument of the function call. We can then create a new comment node. To do that
+                        we will create an identifier node. The name of the identifier will contain a comment string.
+                        We have to use an identifier because if were to just use a literal node the comment would be removed. When using an identifier the compiler 
+                        library believes this is a variable and will then not remove it.
+                    </p>
+
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-lg-8">
+<pre>
+<code class="language-javascript style-tokyo-night-dark">function createComment(node){
+    // get the comment text
+    let commentText = node.arguments[0].value;
+    // create the comment string
+    let comment = `/*${commentText}*/`;
+
+    let commentNode = 
+    {
+        type : "Identifier",
+        name : comment
+    }
+
+    return commentNode;
+}
+</code>
+</pre>
+                        </div>
+                        <div class="col-sm-2"></div>
+                    </div>
+
+                    <p>
+                        Now that we have our new comment node we need to replace the comment alias with the new comment node. We can do this by replacing the call expression
+                        that is already there with the comment node. To do this we can simply change the type of our node to an identifier and set the name to the comment string.
+                        We also need to delete the arguments property and the callee property.
+                    </p>
+
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-lg-8">
+<pre>
+<code class="language-javascript style-tokyo-night-dark">function manipulateComment(node, parent){
+    if(isComment(node)){
+        let commentNode = createComment(node);
+
+        // delete the call expression node
+        delete node.callee;
+        delete node.arguments;
+
+        // replace the call expression node with the comment node
+        node.name = commentNode.name;
+        node.type = commentNode.type;
+    }
+}
+</code>
+</pre>
+                        </div>
+                        <div class="col-sm-2">
+                    </div>
+
+                    <p>
+                        That is all the code required to include comments within our code. The full code used can be seen below:
+                    </p>
+
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-lg-8">
+<pre>
+<code class="language-javascript style-tokyo-night-dark">import * as acorn from "acorn";
+import {toJs} from "estree-util-to-js";
+
+function traverse(node, parent, callBack){
+    callBack(node, parent);
+
+    const keys = Object.keys(node);
+
+    for (let i = 0; i < keys.length; i++){
+        const child = node[keys[i]];
+
+        if (Array.isArray(child)){
+            for (let j = 0; j < child.length; j++){
+                traverse(child[j], node, callBack);
+            }
+        }
+        else if (isNode(child)){
+            traverse(child, node, callBack)
+        }
+    }
+}
+
+function isNode(node){
+    if (typeof node === "object" && node !== null)
+        return true;
+    else
+        return false;
+}
+
+function manipulateComment(node, parent){
+    if(isComment(node)){
+        let commentNode = createComment(node);
+
+        // delete the call expression node
+        delete node.callee;
+        delete node.arguments;
+
+        // replace the call expression node with the comment node
+        node.name = commentNode.name;
+        node.type = commentNode.type;
+    }
+}
+
+function isComment(node){
+    if (node.type === "CallExpression"){
+        if (node.callee.name === "__COMMENT__"){
+            // check there is only one argument
+            if (node.arguments.length !== 1)
+                return false;
+
+            // check the argument is a string
+            if (node.arguments[0].type !== "Literal")
+                return false;
+
+            return true;
+        }
+    }
+    return false;
+}
+
+function createComment(node){
+    // get the comment text
+    let commentText = node.arguments[0].value;
+    // create the comment string
+    let comment = `/*${commentText}*/`;
+
+    let commentNode = 
+    {
+        type : "Identifier",
+        name : comment
+    }
+
+    return commentNode;
+}
+
+let sourceCode = `__COMMENT__("Print Hello world to the user")
+console.log("Hello world");`;
+
+console.log("Code before manipulation:");
+console.log(sourceCode);
+console.log();
+
+let tree = acorn.parse(sourceCode, {ecmaVersion : 2022});
+
+let jsonTree = JSON.stringify(tree, null, 3);
+
+traverse(tree, null, manipulateComment);
+
+let modifiedCode = toJs(tree);
+
+console.log("After manipulation:");
+console.log(modifiedCode.value);
+</code>
+</pre>
+                        </div>
+                        <div class="col-sm-2">
+                    </div>
+
+                    <p>
+                        When we run this code we can see the comment has been added to the code after manipulation. This is a very useful feature to use,
+                        especially if you are performing some sort of manipulation on the code, and sharing it with others.
+                    </p>
+
+                    <figure class="pt-4 pb-4 text-center">
+                        <img src="Images/Comment_Out.png" alt="Example output" class="figure-img img-fluid">
+                        <figcaption class="figure-caption pt-2">Result of Code</figcaption>
+                    </figure>
+
+                    <p>
+                        Similar to the previous example I have also provided a CodePen to allow those who don't have access to Node.JS to try out the code.
+                    </p>
+
+                    <p class="codepen" data-height="300" data-default-tab="js,result" data-slug-hash="JjmRQyz" data-editable="true" data-user="DogRacer" style="height: 300px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border: 2px solid; margin: 1em 0; padding: 1em;">
+                        <span>See the Pen <a href="https://codepen.io/DogRacer/pen/JjmRQyz">
+                        Comments Code</a> by Jack (<a href="https://codepen.io/DogRacer">@DogRacer</a>)
+                        on <a href="https://codepen.io">CodePen</a>.</span>
+                      </p>
+                    
+
+                    <h2 class="pb-2 pt-3" id="Final_Thoughts">Final Thoughts</h2>
+
+                    <p>As you reach the end of this guide you should now be able to create, manipulate and compile Abstract
+                        Syntax Trees. This is of course a very simple and brief look at the use for such a powerful concept.
+                        A next step could be to do some more advanced manipulation using the parent node. You could even try your hand,
+                        at writing a transpiler which uses Abstract Syntax Trees to convert from one programming language to another.
+                        There is a good article about this <a href="https://medium.com/trymito/minimum-effort-transpiler-writing-a-passable-programming-language-in-half-a-day-ae8da585b252" target="_blank" rel="noopener">here</a>,
+                        it is not a tutorial about how to write a transpiler, but rather an idea of how the problem could be approached.
+                    </p>
+                </div>
+                <div class="col-sm-2"></div>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+        <script async src="https://cpwebassets.codepen.io/assets/embed/ei.js"></script>
+        <script>hljs.highlightAll();</script>
+
+    </body>
+</html>
