@@ -1,5 +1,5 @@
 # Abstract Commands
-A simple guide to show the command that have been tested at current
+A simple guide to show the commands that have been implemented at current.
 
 ## General Notes
 All commands follow a similar syntax of *method-name_extra-info_id-of-element*
@@ -7,9 +7,9 @@ All commands follow a similar syntax of *method-name_extra-info_id-of-element*
 Within this command the _ are the limiting factor, they are used to split the data within a command.
 
 ## Installation
-As the tool is written in JavaScript is requires node.js to be installed on your machine. To install node.js go to <a href="https://nodejs.org/en/">nodejs.org</a> and download the latest version for your machine.
+As the tool is written in JavaScript is requires node.js to be installed on your machine. To install node.js go to <a href="https://nodejs.org/en/" target="_blank">nodejs.org</a> and download the latest version for your machine.
 
-To install the tool download the package from <a href="https://www.npmjs.com/package/abstract-app-to-source">npm</a> by running the following command:
+To install the tool download the package from <a href="https://www.npmjs.com/package/abstract-app-to-source" target="_blank">npm</a> by running the following command:
 ```bash
 npm i abstract-app-to-source
 ```
@@ -18,7 +18,7 @@ I recommend installing the package globally so you can use the tool from anywher
 npm i abstract-app-to-source -g
 ```
 
-The package requires that you have python installed on your machine. If you do not have python installed you can download it from <a href="https://www.python.org/downloads/">here</a>.
+The package requires that you have python installed on your machine. If you do not have python installed you can download it from <a href="https://www.python.org/downloads/" target="_blank">here</a>.
 
 Once you have python installed you will need to install the <a href="https://github.com/metapensiero/metapensiero.pj" target="_blank">JavaScripthon</a> package. To do this run the following command:
 ```bash
@@ -26,10 +26,10 @@ pip install javascripthon
 ```
 
 ## App File 
-The framework uses python with some differences as its main language. When creating an app it must be a python file with the .py extension. The app must follow the syntax set out in the <a href="https://github.com/metapensiero/metapensiero.pj">JavaScripthon</a> documentation. This is because this library is used to convert from python to JavaScript and the syntax of some common python functions are slightly different. An example is lists.
+The framework uses python with some differences as its main language. When creating an app it must be a python file with the .py extension. The app must follow the syntax set out in the <a href="https://github.com/metapensiero/metapensiero.pj" target="_blank">JavaScripthon</a> documentation. This is because this library is used to convert from python to JavaScript and the syntax of some common python functions are slightly different. An example is lists.
 
 ## HTML
-HTML can be created in <a href="https://www.webflow.com">Webflow</a> or locally. If you are using Webflow sign up for a free account and keep a note of the published site URL. Any changes made in webflow must be published before they can be seen in your app. If you are using a local HTML file you just need the path to the file. The HTML address or path is passed into the `html_address` parameter when generating the app.
+HTML can be created in <a href="https://www.webflow.com" target="_blank">Webflow</a> or locally. If you are using Webflow sign up for a free account and keep a note of the published site URL. Any changes made in webflow must be published before they can be seen in your app. If you are using a local HTML file you just need the path to the file. The HTML address or path is passed into the `html_address` parameter when generating the app.
 
 ### Using HTML
 When using the HTML you must specify the id of any element you want to access in your app. Webflow does not support input fields that exist outside of a form. To fix this issue just add the attribute fake-form="true" to any form block you use in webflow.
