@@ -1,7 +1,5 @@
 import { parse, valid } from "node-html-parser";
 
-// function to parse the HTML from the WebFlow site and look for the fake-form attribute
-
 /**
  * Parses the HTML provided and looks for fake-form="true" attributes,
  * then manipulates the HTML as needed to stop webflow forms from posting
@@ -21,7 +19,7 @@ function handleFakeForm(html){
 
     // loop through all the div elements and find any that have the attribute fake form
     // remove the w-form from the class section
-    // also need to add onsubmit=return fasle to stop the form from being submitted
+    // also need to add onsubmit=return false to stop the form from being submitted
     for (let i = 0; i < divElements.length; i++){
         let element = divElements[i];
         if (element.getAttribute("fake-form") === "true"){
@@ -57,6 +55,7 @@ function addElectronIndex(html){
 /**
  * Adds a reference to the index.js for a web app
  * @param {Object} html The HTML to parse
+ * @param {Boolean} isLocalHTML If the HTML is a local file or not
  * @returns {String} The modified HTML
  */
 function addWebIndex(html, isLocalHTML){

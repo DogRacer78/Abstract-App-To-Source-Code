@@ -7,7 +7,6 @@
 // get the server.js template file and copy it to the desired directory
 // using .js files instead of .json to preserve the comments put into the server.js during development
 
-import { dir } from "console";
 import fs from "fs";
 import path from "path";
 import promptSync from 'prompt-sync';
@@ -120,6 +119,7 @@ function copyServerJS(dirToCopyTo, __dirname){
     });
     */
 
+    // install the required packages
     console.log("Installing required packages...");
 
     chdir(path.join(serverDir, "/"));

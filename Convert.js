@@ -1,5 +1,10 @@
 #!/usr/bin/env node
 
+/*
+    Main file of the project
+    Controls the overall creation of the app, contains the command functions and definitions
+*/
+
 import fs from "fs";
 import {toJs} from 'estree-util-to-js';
 import { exec, spawn } from "child_process";
@@ -26,6 +31,8 @@ const __dirname = path.dirname(__filename);
 // the entry point of the program
 function main(){
     // create the yargs options
+
+    // web app command
     yargs(hideBin(process.argv)).command({
         command : "gen-web-app",
         describe : "Generates the necassary HTML and JavaScript files",
@@ -49,7 +56,7 @@ function main(){
         handler(argv){
             createWebApp(argv.name, argv.html_address, argv.app_path);
         }
-    }).command({
+    }).command({ // electron app command
         command : "gen-electron-app",
         describe : "Generates an electron app with all node dependancies",
         builder : {
@@ -72,7 +79,7 @@ function main(){
         handler(argv){
             createElectronApp(argv.name, argv.html_address, argv.app_path);
         }
-    }).command({
+    }).command({ // database server command
         command : "gen-db",
         describe : "Generates the database server needed",
         builder : {
@@ -86,24 +93,22 @@ function main(){
             copyServerJS(argv.location, __dirname);
         }
     }).parse();
-
-    //yargs(hideBin(process.argv)).command({
-        
-    //}).parse();
     
 }
 
 /**
- * Creates a webapp
+ * Creates a web app
  * @param {String} name Name of the app
- * @param {String} htmlAddress URL of the webflow site
+ * @param {String} htmlAddress URL of the webflow site or local HTML path
  */
 function createWebApp(name, htmlAddress, app_path){
+    // create the app and wait for it to finish
     createApp(name, htmlAddress, app_path).then((appData) =>{
+        // create valid paths to the app dir and public dir
         const appDir = path.join("./", name);
         const appDirPublic = path.join(appDir, "/public");
 
-
+        // check if the app dir exists, if it does not then create it
         if (!fs.existsSync(appDir)) {
             fs.mkdirSync(appDir, { recursive : true });
         }
@@ -119,6 +124,7 @@ function createWebApp(name, htmlAddress, app_path){
         // process the dbCode
         parseWebDBTree(appData.indexJS, webHelperMethods);
 
+        // change current dir to the app dir
         process.chdir(appDir);
 
         let indexJSCode = toJs(appData.indexJS);
@@ -132,7 +138,7 @@ function createWebApp(name, htmlAddress, app_path){
         // move the app.js into the dir
         fs.copyFileSync(path.join(__dirname, "/templates/app.js"), "./app.js");
 
-        // need to npm install the packages
+        // install the npm packages needed
         const packageInstall = exec("npm install express && npm install socket.io-client && npm install socket.io");
 
         packageInstall.stdout.on("data", (data) => {
@@ -149,33 +155,35 @@ function createWebApp(name, htmlAddress, app_path){
 /**
  * Creates an electron app
  * @param {String} name Name of the app
- * @param {String} htmlAddress URL of webflow site
+ * @param {String} htmlAddress URL of webflow site or local HTML path
  */
 function createElectronApp(name, htmlAddress, app_path){
     console.log("Creating electron app");
 
-    // get the web app
+    // create the app and wait for it to finish
     createApp(name, htmlAddress, app_path).then((appData) => {
         // get the path to the app
         const appDir = path.join("./", name);
 
         // load the main.js template
         let mainJSTree = JSON.parse(fs.readFileSync(path.join(__dirname, "/templates/mainJS.json"), "utf-8"));
+
+        // parse the database methods and add as needed
         parseElectronDBTree(appData.indexJS, mainJSTree);
 
         let mainJSCode = toJs(mainJSTree);
 
+        // check if the app dir exists, if it does not then create it
         console.log(appData.indexJS[0]);
         if (!fs.existsSync(appDir)) {
             fs.mkdirSync(appDir, { recursive : true });
         }
-
-        
     
         process.chdir(appDir);
 
         console.log(process.cwd());
         
+        // install the npm packages needed
         console.log("Getting electron");
         exec("npm init -y && npm install electron --save-dev && npm install socket.io-client && npm install mongodb", (error, stdout, stderr) => {
             if (error) {
@@ -188,6 +196,7 @@ function createElectronApp(name, htmlAddress, app_path){
             }
             console.log(`stdout: ${stdout}`);
 
+            // get the package.json and modify as needed
             console.log("getting PACKAGE");
             let packageJSON = JSON.parse(fs.readFileSync("./package.json", "utf-8"));
             console.log(packageJSON)
@@ -213,7 +222,8 @@ function createElectronApp(name, htmlAddress, app_path){
 /**
  * 
  * @param {String} projectName Name of the project
- * @param {String} htmlAddress URL of webflow site
+ * @param {String} htmlAddress URL of webflow site or local HTML path
+ * @param {boolean} TEST If true then the comments will not be added to the output
  * @returns {{indexJS : String, indexHTML : String}} Object with strings for the indexJS and indexHTML
  */
 async function createApp(projectName, htmlAddress, appDir, TEST = false){
@@ -233,6 +243,8 @@ async function createApp(projectName, htmlAddress, appDir, TEST = false){
     {
         args : [appDir]
     };
+
+    // run the python script to convert the app.py to a js file
     console.log(`Trying to load app from from ${appDir}`);
     try{
         console.log(path.join(__dirname, "/Tools/ConvertAppToJS.py"));
@@ -241,8 +253,9 @@ async function createApp(projectName, htmlAddress, appDir, TEST = false){
         pythonApp = pythonApp.join('');
     }
     catch(e){
+        // if an error occurs then we show the relevant error message
         console.log(`\n********************************************************
-Error transpilation of App.py, enure the syntax is correct
+Error transpilation of app, enure the syntax is correct
 Please ensure you have the following:
 Python (www.python.org)
 JavaScripthon (https://pypi.org/project/javascripthon/)
@@ -283,16 +296,13 @@ If you have pip installed simply run : pip install javascripthon
         addMultipleNodesToEnd(indexJSTree, pythonCodeParsed.start_up);
         //console.log(JSON.stringify(indexJSTree, null, 3));
 
-        // compile the modified AST back into JS
-        //newIndexJS = toJs(indexJSTree);
-        // write back out to the index.js file
-
         // bool to check if the HTML is from a URL or a file
         let localHTML = false;
 
         // tries to get the html
         let res;
         try{
+            // tries to fetch from the supplied URL
             res = await fetch(htmlAddress);
             console.log(res);
             if (res.status === 200)
@@ -316,24 +326,22 @@ If you have pip installed simply run : pip install javascripthon
         //parse the HTML
         indexHTML = handleFakeForm(indexHTML);
 
+        // set up the output data
         data.indexJS = indexJSTree;
         data.indexHTML = indexHTML;
         data.localHTML = localHTML;
         
         return data;
 
-        // now try and send to the correct HTML file
-        //fs.writeFileSync("./" + projectName + "/index.html", indexHTML);
-
-        // write the JavaScript out
-        //fs.writeFileSync("./" + projectName + "/index.js", newIndexJS.value);
     }
     catch (e){
+        // if an error occurs then we show the relevant error message
         console.error(e.message);
         //console.error(e.name);
         if (!TEST)
             process.exit(-1);
 
+        // for testing we want to throw the error
         if (TEST)
             throw e;
     }

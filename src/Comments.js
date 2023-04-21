@@ -9,19 +9,19 @@ function addCommentsToEnd(tree, comment){
 
 /**
  * Creates a comment node given a supplied string
- * @param {String} comment Text to use as a commnt
+ * @param {String} comment Text to use as a comment
  * @returns Comment node
  */
 function createComment(comment){
     // creates comment as an expression statement, will then do a replace on the comment
 
-    // add the comment declarators
+    // add the comment node
     let code = `/*${comment}*/`;
     console.log(code);
     console.log(comment);
     // create a custom expression node that contains an identifier
     // set the identifier node to contain the comment
-    // as identifers don't use strings it will just print it as is including the /* and */
+    // as identifiers don't use strings it will just print it as is including the /* and */
     let AST = {type : "ExpressionStatement", expression : {type : "Identifier", name :  code}}
     return AST;
 }

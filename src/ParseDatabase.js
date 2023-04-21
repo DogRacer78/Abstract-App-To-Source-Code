@@ -1,6 +1,5 @@
 // File to parse a tree and find any database calls to it
-// first is to connect to database
-// must be put in the start up
+
 import { addCommentsToEnd } from "./Comments.js";
 import { addMultipleNodesToEnd, ASTToCode, visit } from "./NodeUtils.js";
 import { codeToAST } from "./NodeUtils.js";
@@ -10,33 +9,16 @@ import { addNodeToEnd } from "./NodeUtils.js";
 let eventID = 1;
 
 /**
- * Parses the tree and looks for database calls 
+ * Parses the AST of an electron app and creates the relevant front and backend code modifications
+ * @param {Object} frontendJS AST of the frontend JS
+ * @param {Object} backendJS AST of the backend JS
+ * @param {boolean} TEST if true will not add comments
  */
 function parseElectronDBTree(frontendJS, backendJS, TEST = false){
-    // add the mongodb import
-    //addMongoDBImport(backendJS);
     eventID = 1;
 
-    // add the fron end electron and ipc imports
+    // add the from end electron and ipc imports
     addElectronImport(frontendJS);
-
-    // handles connection nodes
-    /*
-    visit(frontendJS, (node, parent, key) =>{
-        let connectionData = checkConnectNode(node);
-        if (connectionData !== null){
-            // found a connection node
-            console.log("Found a connection node");
-            // create a connection 
-            addClientElectron(backendJS, connectionData.connString, connectionData.dbName);
-            delete node.expression;
-            delete node.callee;
-            delete node.arguments;
-            node.type = "EmptyStatement";
-
-        }
-    });
-    */
 
     // comments for ipc Communication
     if (!TEST){
@@ -132,18 +114,18 @@ function parseElectronDBTree(frontendJS, backendJS, TEST = false){
 }
 
 /**
- * Parses the frontendJS and looks for db connections and creates the correct code
- * @param {Object} frontendJS Object
- * @param {Obj} backendJS Object
+ * Parses the AST of a web app and creates the relevant front end code modifications
+ * @param {Object} frontendJS AST of the frontend JS
+ * @param {Array} webHelper Array of AST nodes for the web helper methods
+ * @param {Boolean} TEST If true will not add comments
  */
 function parseWebDBTree(frontendJS, webHelper, TEST = false){
-    // parses the tree and looks for the correct nodes
     console.log("************** PARSING WEB DB TREE ******************");
 
     // will need to loop through each tree and add the correct post
     // dbLoadData(dbName, collName, data);
     
-    // callbacks will not work correctly, I belive
+    // callbacks will not work correctly, I believe
     // the best way to do this is to loop through all the function definitions, make them async, add to a list
     // look for any calls and add an await in front of it
 
@@ -153,6 +135,8 @@ function parseWebDBTree(frontendJS, webHelper, TEST = false){
     // all function defs
     let functionDefNames = [];
 
+    // iterate through the tree and find any function definitions
+    // make them async, if they are not a bufferData function, as that is an object in the helper
     visit(frontendJS.body, (node, parent, key) => {
         if (node.type === "FunctionDeclaration" && node.id.name !== "BufferData"){
             // if function make async
@@ -174,6 +158,7 @@ function parseWebDBTree(frontendJS, webHelper, TEST = false){
     });
 
     // iterate again to check the format of the db methods
+    // will throw an error if the format is incorrect
     visit(frontendJS.body, (node, parent, key) => {
         checkLoadDataNode(node);
         checkInsertDataNode(node);
@@ -186,7 +171,8 @@ function parseWebDBTree(frontendJS, webHelper, TEST = false){
     let updateChangeFound = false;
     let insertChangeFound = false;
     let deleteChangeFound = false;
-    // loop through top level and look for
+    // loop through top level and look for change events
+    // function definitions can only be on the top level of the program
     for (let i = 0; i < frontendJS.body.length; i++){
         if (checkOnUpdateNode(frontendJS.body[i])){
             if (!updateChangeFound){
@@ -226,6 +212,12 @@ function parseWebDBTree(frontendJS, webHelper, TEST = false){
     }
 }
 
+/**
+ * Checks if the AST node is not part of an await expression
+ * @param {Object} node AST node
+ * @param {Object} parent Parent of the AST node
+ * @returns {Boolean} true if it is a call expression and not part of an await expression, false otherwise
+ */
 function checkCall(node, parent){
     if (parent != null){
         if (parent.type === "AwaitExpression"){
@@ -241,7 +233,10 @@ function checkCall(node, parent){
     return false;
 }
 
-// manipulates a call expression to become await
+/**
+ * Manipulates the AST node to be an await expression
+ * @param {Object} node Node to be manipulated 
+ */
 function manipulateAwaits(node){
     let name = node.callee.name;
     let args = node.arguments;
@@ -261,6 +256,10 @@ function manipulateAwaits(node){
     delete node.callee;
 }
 
+/**
+ * Manipulates and adds a update change event to the front end JS for a web app
+ * @param {Object} frontEndJS AST of the front end JS
+ */
 function manipulateUpdateChangeWeb(frontEndJS){
     const code = `localSocketConn.on("update_change", (data) => {
         updateChange();
@@ -271,6 +270,10 @@ function manipulateUpdateChangeWeb(frontEndJS){
     addNodeToEnd(frontEndJS, AST[0]);
 }
 
+/**
+ * Manipulates and adds a delete change event to the front end JS for a web app
+ * @param {Object} frontEndJS AST of the front end JS
+ */
 function manipulateDeleteChangeWeb(frontEndJS){
     const code = `localSocketConn.on("delete_change", (data) => {
         deleteChange();
@@ -281,6 +284,10 @@ function manipulateDeleteChangeWeb(frontEndJS){
     addNodeToEnd(frontEndJS, AST[0]);
 }
 
+/**
+ * Manipulates and adds a insert change event to the front end JS for a web app
+ * @param {Object} frontEndJS AST of the front end JS
+ */
 function manipulateInsertChangeWeb(frontEndJS){
     const code = `localSocketConn.on("insert_change", (data) => {
         insertChange();
@@ -291,6 +298,11 @@ function manipulateInsertChangeWeb(frontEndJS){
     addNodeToEnd(frontEndJS, AST[0]);
 }
 
+/**
+ * @deprecated Since version 1.0.0. The connection is handled automatically since
+ * version 1.1.0
+ * @param {Object} backEnd AST node to add the connection to
+ */
 function addMongoDBImport(backEnd){
     // turn the import into an import
     let importCode = "const { MongoClient } = require('mongodb');";
@@ -300,6 +312,10 @@ function addMongoDBImport(backEnd){
 
 }
 
+/**
+ * Adds an electron import to the front end JS
+ * @param {Object} frontEnd AST node to add the electron import to
+ */
 function addElectronImport(frontEnd){
     // adds the electron import and the ipc reference to index.js
     let codeString = `const electron = require("electron");
@@ -309,6 +325,12 @@ const ipc = electron.ipcRenderer;`;
     insertAtIndex(frontEnd, 1, AST[1]);
 }
 
+/**
+ * @deprecated Since version 1.0.0. The connection is handled automatically since version 1.1.0
+ * @param {*} tree 
+ * @param {*} connString 
+ * @param {*} dbName 
+ */
 function addClientElectron(tree, connString, dbName){
     let connectionCode = `let database;
 (async () =>{
@@ -343,6 +365,7 @@ function addClientElectron(tree, connString, dbName){
 
 
 /**
+ * @deprecated Since version 1.0.0. The connection is handled automatically since version 1.1.0
  * Checks if a node matches the pattern for a connection
  * @param {Object} node Node to check
  */
@@ -374,6 +397,11 @@ function checkConnectNode(node){
     return null;
 }
 
+/**
+ * Checks if the node supplied matches the pattern for a load data node
+ * @param {Object} node AST node to check
+ * @returns {Object} Object containing the collection name and the data to load, or null if no node is found
+ */
 function checkLoadDataNode(node){
     // a load data node : DBLoadData("collection name", dict);
     //console.log("Looking for a load data node");
@@ -382,7 +410,7 @@ function checkLoadDataNode(node){
         if (node.callee.type === "Identifier"){
             if (node.callee.name === "dbLoadData"){
                 console.log("Found a load data node");
-                // get the args, should be 2
+                // get the args, should be 3
                 let args = node.arguments;
                 if (args.length !== 3 || args[0].type !== "Literal" || typeof args[0].value !== "string" ||
                     args[1].type !== "Literal" || typeof args[1].value !== "string" || args[2].type !== "ObjectExpression"){
@@ -401,10 +429,13 @@ function checkLoadDataNode(node){
 }
 
 
-// checks for a node that inserts data
+/**
+ * Checks if the insert data node matches the pattern for an insert data node
+ * @param {Object} node AST node to check
+ * @returns {Object} Object containing the relevant data, or null if no node is found
+ */
 function checkInsertDataNode(node){
     // used to insert into the database dbInsertData("collection name", {dataname : data})
-    console.log("Looking for a load data node");
 
     if (node.type === "CallExpression"){
         if (node.callee.type === "Identifier"){
@@ -430,7 +461,11 @@ function checkInsertDataNode(node){
     return null;
 }
 
-// checks if an update node is prsent
+/**
+ * Checks if the update data node matches the pattern for an update data node
+ * @param {Object} node AST node to check
+ * @returns Object containing the relevant data, or null if no node is found
+ */
 function checkUpdateNode(node){
     if (node.type === "CallExpression"){
         if (node.callee.type === "Identifier"){
@@ -459,7 +494,11 @@ function checkUpdateNode(node){
     return null;
 }
 
-// checks if a node is of type delete
+/**
+ * Checks if the delete data node matches the pattern for a delete data node
+ * @param {Object} node AST node to check
+ * @returns {Object} Object containing the relevant data, or null if no node is found
+ */
 function checkDeleteNode(node){
     if (node.type === "CallExpression"){
         if (node.callee.type === "Identifier"){
@@ -486,6 +525,11 @@ function checkDeleteNode(node){
     return null;
 }
 
+/**
+ * Checks if the node is a loadChange node
+ * @param {Object} node AST node to check
+ * @returns {boolean} true if the node is a loadChange node, false otherwise
+ */
 function checkOnUpdateNode(node){
     if (node.type === "FunctionDeclaration"){
         if (node.id.type === "Identifier"){
@@ -497,7 +541,11 @@ function checkOnUpdateNode(node){
     return false;
 }
 
-// checks if the node is a insertChange node
+/**
+ * Checks if the node is a loadChange node
+ * @param {Object} node AST node to check
+ * @returns {boolean} true if the node is a loadChange node, false otherwise
+ */
 function checkOnInsertChange(node){
     if (node.type === "FunctionDeclaration"){
         if (node.id.type === "Identifier"){
@@ -509,7 +557,11 @@ function checkOnInsertChange(node){
     return false;
 }
 
-// checks if the node is a deleteChange node
+/**
+ * Checks if the node is a loadChange node
+ * @param {Object} node AST node to check
+ * @returns {Boolean} true if the node is a deleteChange node, false otherwise
+ */
 function checkOnDeleteChange(node){
     if (node.type === "FunctionDeclaration"){
         if (node.id.type === "Identifier"){
@@ -521,9 +573,12 @@ function checkOnDeleteChange(node){
     return false;
 }
 
-
-
-// creates the correct code for a load data between the front and backend
+/**
+ * Modifies the front and back end code to add the ipc event listener for the load data node
+ * @param {Object} backendJS AST of the backend JS file
+ * @param {Object} loadDataObj Object containing data about the load data node
+ * @param {Object} node Front end node to be modified
+ */
 function addipcLoadData(backendJS, loadDataObj, node){
     // backend ipc event listener
     let backendIPC = `ipcMain.on('${eventID}', async function(event, dbName, collName, searchData){
@@ -534,9 +589,11 @@ function addipcLoadData(backendJS, loadDataObj, node){
         event.returnValue = res;
 });`;
 
+    // front end ipc call
     let frontEndCode = `ipc.sendSync('${eventID}', '${loadDataObj.dbName}', '${loadDataObj.collectionName}', ${loadDataObj.searchDict})`;
     let frontEndAST = codeToAST(frontEndCode);
 
+    // modify the front end node
     delete node.callee;
     delete node.arguments;
     delete node.optional;
@@ -547,11 +604,17 @@ function addipcLoadData(backendJS, loadDataObj, node){
         node[keys[i]] = frontEndAST[0].expression[keys[i]];
     }
 
+    // add the back end AST
     addNodeToEnd(backendJS, codeToAST(backendIPC)[0]);
     eventID++;
 }
 
-// creates the necessary code for ipc communication for inserting data
+/**
+ * Modifies the front and back end code to add the ipc event listener for the insert data node
+ * @param {Object} backendJS AST of the backend JS file
+ * @param {Object} insertDataObj Object containing data about the insert data node
+ * @param {Object} node Front end node to be modified
+ */
 function addIpcInsertData(backendJS, insertDataObj, node){
     // backend ipc data
     let backendIPC = `ipcMain.on('${eventID}', async function(event, dbName, collName, dataForInsert){
@@ -564,9 +627,11 @@ function addIpcInsertData(backendJS, insertDataObj, node){
         }
     });`;
 
+    // front end ipc call
     let frontEndIpc = `ipc.sendSync('${eventID}', '${insertDataObj.dbName}', '${insertDataObj.collectionName}', ${insertDataObj.insertData});`;
     let frontEndAST = codeToAST(frontEndIpc);
 
+    // modify the front end
     delete node.callee;
     delete node.arguments;
     delete node.optional;
@@ -582,6 +647,12 @@ function addIpcInsertData(backendJS, insertDataObj, node){
     eventID++;
 }
 
+/**
+ * Modifies the front and back end code to add the ipc event listener for the delete data node
+ * @param {Object} backendJS AST of the backend JS file
+ * @param {Object} updateData Object containing data about the update data node
+ * @param {Object} node Front end node to be modified
+ */
 function addIpcUpdateData(backendJS, updateData, node){
     let backEndCode = `ipcMain.on('${eventID}', async function(event, dbName, collName, filter, dataForUpdate){
         let res = await updateData(new BufferData(dbName, collName, {'filter' : filter, 'updateData' : dataForUpdate}, DataType.update));
@@ -593,6 +664,7 @@ function addIpcUpdateData(backendJS, updateData, node){
         }
     });`;
 
+    // front end ipc call
     let frontEndCode = `ipc.sendSync('${eventID}', '${updateData.dbName}', '${updateData.collectionName}', ${updateData.filterData}, ${updateData.updateData});`
 
     let backEndAST = codeToAST(backEndCode);
@@ -601,6 +673,7 @@ function addIpcUpdateData(backendJS, updateData, node){
     let frontEndAST = codeToAST(frontEndCode);
     console.log("CREATED FRONTEND");
 
+    // modify the front end
     delete node.callee;
     delete node.arguments;
     delete node.optional;
@@ -616,8 +689,14 @@ function addIpcUpdateData(backendJS, updateData, node){
     eventID++;
 }
 
-// adds the relvant ipc code for the delete node
+/**
+ * Modifies the front and back end code to add the ipc event listener for the delete data node
+ * @param {Object} backendJS AST of the backend JS file
+ * @param {Object} deleteNode Object containing data about the delete data node
+ * @param {Object} node Front end node to be modified
+ */
 function addIpcDeleteData(backendJS, deleteNode, node){
+    // backend ipc event listener
     let backEndCode = `ipcMain.on('${eventID}', async function(event, dbName, collName, filter){
         let res = await deleteData(new BufferData(dbName, collName, filter, DataType.delete));
         if (!res){
@@ -628,12 +707,14 @@ function addIpcDeleteData(backendJS, deleteNode, node){
         }
     });`;
 
+    // front end ipc call
     let frontEndCode = `ipc.sendSync('${eventID}', '${deleteNode.dbName}', '${deleteNode.collectionName}', ${deleteNode.filterData});`;
 
     // turn the code into ASTs
     let backEndAST = codeToAST(backEndCode);
     let frontEndAST = codeToAST(frontEndCode);
 
+    // modify the front end
     delete node.callee;
     delete node.arguments;
     delete node.optional;
@@ -649,7 +730,11 @@ function addIpcDeleteData(backendJS, deleteNode, node){
     eventID++;
 }
 
-// makes the changes for an updateChange method
+/**
+ * Manipulates the front and back end code to add the relevant code for an update change event in an electron app
+ * @param {Object} frontendJS AST of the frontend JS file
+ * @param {Object} backendJS AST of the backend JS file
+ */
 function manipulateUpdateChange(frontendJS, backendJS){
     let backEndCode = `socket.on("update_change", (data) => {
         console.log("Update change");
@@ -667,7 +752,11 @@ function manipulateUpdateChange(frontendJS, backendJS){
     addNodeToEnd(frontendJS, codeToAST(frontEndCode)[0]);
 }
 
-// manipulates the insertChange nodes
+/**
+ * Manipulates the front and back end code to add the relevant code for an insert change event in an electron app
+ * @param {Object} frontendJS AST of the frontend JS
+ * @param {Object} backendJS AST of the backend JS
+ */
 function manipulateInsertChange(frontendJS, backendJS){
     let backEndCode = `socket.on("insert_change", (data) => {
         console.log("Insert change");
@@ -685,7 +774,11 @@ function manipulateInsertChange(frontendJS, backendJS){
     addNodeToEnd(frontendJS, codeToAST(frontEndCode)[0]);
 }
 
-// manipulate the updateChange nodes
+/**
+ * Manipulates the front and back end code to add the relevant code for a delete change event in an electron app
+ * @param {Object} frontendJS AST of the frontend JS
+ * @param {Object} backendJS AST of the backend JS
+ */
 function manipulateDeleteChange(frontendJS, backendJS){
     let backEndCode = `socket.on("delete_change", (data) => {
         console.log("Delete Change");

@@ -6,18 +6,36 @@ All commands follow a similar syntax of *method-name_extra-info_id-of-element*
 <br>
 Within this command the _ are the limiting factor, they are used to split the data within a command.
 
+## Installation
+As the tool is written in JavaScript is requires node.js to be installed on your machine. To install node.js go to <a href="https://nodejs.org/en/">nodejs.org</a> and download the latest version for your machine.
+
+To install the tool download the package from <a href="https://www.npmjs.com/package/abstract-app-to-source">npm</a> by running the following command:
+```bash
+npm i abstract-app-to-source
+```
+I recommend installing the package globally so you can use the tool from anywhere:
+```bash
+npm i abstract-app-to-source -g
+```
+
+The package requires that you have python installed on your machine. If you do not have python installed you can download it from <a href="https://www.python.org/downloads/">here</a>.
+
+Once you have python installed you will need to install the <a href="https://github.com/metapensiero/metapensiero.pj" target="_blank">JavaScripthon</a> package. To do this run the following command:
+```bash
+pip install javascripthon
+```
+
 ## App File 
-Your abstract-app app must be called App.py for the time being, if it is not it will be ignored. If no App.py is found an error will be
-thrown
+The framework uses python with some differences as its main language. When creating an app it must be a python file with the .py extension. The app must follow the syntax set out in the <a href="https://github.com/metapensiero/metapensiero.pj">JavaScripthon</a> documentation. This is because this library is used to convert from python to JavaScript and the syntax of some common python functions are slightly different. An example is lists.
 
 ## HTML
-The HTML must be created in <a href="https://www.webflow.com">Webflow</a> for now, sign up for a free account and keep a note of the published site URL. Any changes made in webflow must be published before they can be seen in your app.
+HTML can be created in <a href="https://www.webflow.com">Webflow</a> or locally. If you are using Webflow sign up for a free account and keep a note of the published site URL. Any changes made in webflow must be published before they can be seen in your app. If you are using a local HTML file you just need the path to the file. The HTML address or path is passed into the `html_address` parameter when generating the app.
 
 ### Using HTML
-When using the HTML you must specify the id of any element you want to access in your App.py. Webflow does not support input fields that exist outside of a form. To fix this issue just add the attribute fake-form="true" to any form block you use in webflow.
+When using the HTML you must specify the id of any element you want to access in your app. Webflow does not support input fields that exist outside of a form. To fix this issue just add the attribute fake-form="true" to any form block you use in webflow.
 
 ## Events
-Any event can be added to any element, as long as it is a valid JavaScript event that can be added to a DOM element. For example 'click'. To create a new event listener declare it as a new function in App.py, within the body of this function is the code that will be run when the event is fired.
+Any event can be added to any element, as long as it is a valid JavaScript event that can be added to a DOM element. For example 'click'. To create a new event listener declare it as a new function in your app, within the body of this function is the code that will be run when the event is fired.
 <br>
 ### Tested Events
 The events below have been tested and are confirmed to work on any HTML element that will support it:
@@ -39,7 +57,7 @@ To get data from any element that supports the .value attribute can be seen belo
 ```python
 getValue_id-of-element()
 ```
-Again here the **_** is **required** for the call to work. This function can be thought of as a call to a function, with its return value the value in the element it is binded to.
+Again here the **_** is **required** for the call to work. This function can be thought of as a call to a function, with its return value the value in the element it is linked to.
 
 ## Outputting data
 Data can simply be output to a div element
@@ -64,7 +82,7 @@ To create the server simply run the command as follows.<br>
 This will generate a server.js file, an instance of the MongoDB executable, a database folder (will be empty) and a script to launch the server. If a folder already exists at the path entered a dialogue will appear asking if it is ok to proceed. To launch the server.js simply click the RUN_SERVER.bat file.
 
 ## Connect to a Database
-Connecting to a MongoDB database run from a server.js file will be done automatically, if the application is running on the same network as the server.
+Connecting to a MongoDB database run from a server.js file will be done automatically, if the application is running on the same PC as the server.
 
 ## Load Data
 To load data from the database simply use the following:
@@ -120,7 +138,7 @@ When using the update method there is some limitations to keep in mind.
 - If a record is not found using the filter, a new record will not be created
 
 ## Deleting Data
-Deleting data works in a similar way to update as a filter must be suppied.
+Deleting data works in a similar way to update as a filter must be supplied.
 ```python
 dbDeleteData("DB Name", "Collection Name", filter)
 ```
@@ -129,7 +147,7 @@ Here the filter is a dictionary to specify what is to be deleted.
 ```python
 dbDeleteData("Songs", "songs", { "Title" : "Thunder Road" })
 ```
-Here we can see that we will delete a record with the title `"Thunder Road"`. Similarily to update this will only delete the first record found using the filter.
+Here we can see that we will delete a record with the title `"Thunder Road"`. Similarly to update this will only delete the first record found using the filter.
 
 Again like above `"CONN_ERR"` will be returned if an error occurs. If it succeeds, then a dictionary will be returned with data about the operation.
 
@@ -158,7 +176,8 @@ def deleteChange():
 ```
 
 # Using the Tool
-To compile your python and webflow you have the following commands available:
+## Generating Apps
+To compile your python and HTML you have the following commands available:
 
 - gen-web-app - creates a web app
 - gen-electron-app - creates an electron app
@@ -178,3 +197,18 @@ To compile a web app run:<br>
 <br>
 To compile to an electron app run:<br>
 <kbd>npx abstract-app gen-electron-app --name "name of app" --html_address "HTML address or hyperlink" --app_path "Path to python app"</kbd>
+
+## Generating a Database Server
+To generate a database server we can run the command:<br>
+<kbd>npx abstract-app gen-db --location "Path to folder"</kbd><br>
+Then to run the server we can run the RUN_SERVER.bat file.
+
+## Web apps
+Once you have generated a web app to run the app use the following command:<br>
+<kbd>node ./app.js</kbd><br>
+This will start the server, open a browser and navigate to `localhost:80`
+
+## Electron apps
+Once you have generated an electron app to run the app use the following command:<br>
+<kbd>npm start</kbd><br>
+This will open a new window with the app running.

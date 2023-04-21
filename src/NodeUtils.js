@@ -66,13 +66,18 @@ function addMultipleNodesToEnd(tree, nodes){
 /**
  * String of code to parse into an AST
  * @param {String} codeString
- * @returns AST of the supplied code string
+ * @returns {Array} body of the AST
  */
 function codeToAST(codeString){
     let code = acorn.parse(codeString, {ecmaVersion : 2022});
     return code.body;
 }
 
+/**
+ * Takes an AST and converts it into code
+ * @param {Object} AST The AST object to convert into code
+ * @returns {String} The code string
+ */
 function ASTToCode(AST){
     let codeString = toJs(AST);
     return codeString.value;

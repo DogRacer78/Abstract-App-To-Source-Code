@@ -15,3 +15,5 @@
 - <a href="http://yargs.js.org/" target="_blank">yargs</a> - Controls the commands runnable from the command line
 
 - <a href="https://github.com/taoqf/node-html-parser" target="_blank">node-html-parser</a> - Node.JS parser for HTML
+
+- <a href="https://www.npmjs.com/package/prompt-sync" target="_blank">prompt-sync</a> - For asking users config questions, currently only used for generating a database server
