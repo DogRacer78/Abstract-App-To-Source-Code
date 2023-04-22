@@ -1418,9 +1418,7 @@ function manipulateUpdateChange(frontendJS, backendJS){
                         </li>
                         <li>
                             Can only produce a web app and an Electron app. This is limiting as it means users are missing out 
-                            on the huge mobile market. This can be easily fixed by using a framework such as
-                            <a href="https://capacitorjs.com/" target="_blank">Capacitor</a>, that runs on JavaScript, to produce
-                            mobile apps. 
+                            on the huge mobile market.
                         </li>
                         <li>
                             The tool currently only converts to JavaScript. This is because Python and JavaScript are similar allowing
@@ -1441,18 +1439,48 @@ function manipulateUpdateChange(frontendJS, backendJS){
                             the database methods simple.
                         </li>
                         <li>
-                            By default any apps will only look for a database server on the localhost, this could be easily solved by including some sort of
-                            configuration file.
+                            By default any apps will only look for a database server on the localhost.
                         </li>
                         <li>
-                            The tool is limited to being run through the command line. A GUI would be nice to have but I do not consider it a
-                            priority.
+                            The tool is limited to being run through the command line.
                         </li>
                     </ul>
 
                     <p>That is a list of the most obvious limitations that I have identified for now. I am sure as development proceeds
                         this list will become smaller.
                     </p>
+
+                    <h3 class="pt-2">Road Map</h3>
+
+                    <p>
+                        Below is a list of features that I would like to add to the tool in the future. This list is not exhaustive, and feel free to add any feature 
+                        you feel will improve the tool.
+                    </p>
+
+                    <ul>
+                        <li>
+                            Add support for <a href="https://capacitorjs.com/" target="_blank">Capacitor</a> so that mobile apps can be produced.
+                        </li>
+                        <li>
+                            Support more HTML manipulation methods, such as appending to text and modifying HTML itself. This will allow more responsive apps
+                            to be made.
+                        </li>
+                        <li>
+                            Add support for other source languages such as JavaScript, C#, Java, C++, etc. This will allow users who are not familiar with Python to
+                            use the tool.
+                        </li>
+                        <li>
+                            Add external resources such as the ability to load in images, this cannot be done currently.
+                        </li>
+                        <li>
+                            Move away from using the command line to run the tool and instead to a GUI, possibly even a web app, to avoid users having to download any
+                            additional software.
+                        </li>
+                        <li>
+                            Some sort of configuration file to allow users to change the default settings of the tool, such as the IP address the apps point to for
+                            the database server.
+                        </li>
+                    </ul>
 
                     <h3 class="pt-2">Notes for Development</h3>
                     <p>When adding a feature use the following as guidelines:</p>
